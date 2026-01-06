@@ -9,7 +9,7 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
 public class AgentPar extends Agent{
+    private String nom;
+    private String prenom;
 }

@@ -15,7 +15,7 @@ import lombok.Setter;
 public class Entreprise {
 
     @Id
-    private String Siret;
+    private String nSiret;
 
     private String raisonSoc;
 
