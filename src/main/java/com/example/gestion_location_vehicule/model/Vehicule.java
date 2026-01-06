@@ -26,8 +26,6 @@ public abstract class Vehicule {
 
     private String couleur;
 
-    private double prixJour;
-
     private int noteVehicule;
 
     private boolean vehiculeDispo;
@@ -35,5 +33,7 @@ public abstract class Vehicule {
     private Date dateDispo;
 
     private String villeDispo;
+
+    private double kilometrage;
 
 }
