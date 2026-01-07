@@ -42,4 +42,7 @@ public abstract class Vehicule {
 
     @OneToMany(mappedBy = "vehicule")
     private List<PrixAssurance> prixassurance;
+
+    @OneToMany(mappedBy = "vehicule")
+    private List<Contratlocation> contratlocations;
 }

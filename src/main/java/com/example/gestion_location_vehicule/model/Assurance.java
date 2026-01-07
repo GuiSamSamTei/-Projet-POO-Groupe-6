@@ -30,4 +30,7 @@ public class Assurance {
 
     @OneToMany(mappedBy = "assurance")
     private List<PrixAssurance> prixassurance;
+
+    @OneToMany(mappedBy = "assurance")
+    private List<Contratlocation> contratlocations;
 }
