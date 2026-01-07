@@ -2,21 +2,18 @@ package com.example.gestion_location_vehicule.model;
 
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.Date;
 
 @Entity
+@Data
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class Contratlocation {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Date datedebut;
     private Date datefin;

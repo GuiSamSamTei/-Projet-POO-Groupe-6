@@ -1,14 +1,14 @@
 package com.example.gestion_location_vehicule.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.Date;
 import java.util.List;
 
+
+@Entity
+@Data
 @Getter
 @Setter
 @NoArgsConstructor
@@ -17,7 +17,6 @@ public abstract class Vehicule {
 
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String marque;

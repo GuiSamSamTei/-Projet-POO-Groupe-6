@@ -1,12 +1,10 @@
 package com.example.gestion_location_vehicule.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
+@Data
 @Getter
 @Setter
 @NoArgsConstructor
@@ -14,7 +12,6 @@ import lombok.Setter;
 public class PrixAssurance {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private double prix;
