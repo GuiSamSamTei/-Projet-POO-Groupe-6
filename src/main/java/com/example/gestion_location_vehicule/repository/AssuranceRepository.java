@@ -14,4 +14,15 @@ public interface AssuranceRepository extends JpaRepository<Assurance, Long> {
 
     // Récupérer l'assurance par défaut (AZA)
     Assurance findByAssuranceParDefautTrue();
+
+    Assurance findByNom(String nom);
+
+    // Trouver toutes les assurances dont le prix est inférieur ou égal à une valeur
+    List<Assurance> findByPrixLessThanEqual(long prixMax);
+
+    // Trouver toutes les assurances dont le prix est supérieur ou égal à une valeur
+    List<Assurance> findByPrixGreaterThanEqual(long prixMin);
+
+    // Trouver toutes les assurances dont le prix est dans une fourchette
+    List<Assurance> findByPrixBetween(long prixMin, long prixMax);
 }
