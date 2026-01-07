@@ -8,7 +8,7 @@ import lombok.Getter;
 @Getter
 public abstract class Evaluation {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private double noteFinale;
