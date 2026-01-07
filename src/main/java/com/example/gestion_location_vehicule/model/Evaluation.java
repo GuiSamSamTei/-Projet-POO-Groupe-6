@@ -5,16 +5,12 @@ import lombok.*;
 
 import java.util.Date;
 
-@Entity
 @Data
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public abstract class Evaluation {
-
-    @Id
-    private Long id;
 
     private double note;
     private Date date;

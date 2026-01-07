@@ -13,6 +13,9 @@ import java.util.Date;
 @NoArgsConstructor
 public class EvalA extends Evaluation {
 
+    @Id
+    private Long id;
+
     @ManyToOne
     @JoinColumn(name="loueur_id")
     private Loueur loueur;
