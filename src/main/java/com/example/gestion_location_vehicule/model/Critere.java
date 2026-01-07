@@ -1,0 +1,25 @@
+package com.example.gestion_location_vehicule.model;
+
+import com.example.gestion_location_vehicule.enums.TypeCritere;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Entity
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+public class Critere {
+
+    @Id
+    private Long id;
+
+    private String nom;
+    private String description;
+    private TypeCritere type;
+
+}
