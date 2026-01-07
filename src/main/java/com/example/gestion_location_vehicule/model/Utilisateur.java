@@ -2,21 +2,16 @@ package com.example.gestion_location_vehicule.model;
 
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.List;
 
 @Entity
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class Utilisateur {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String username; //nom pour se connecter
     private String mdp;
@@ -28,12 +23,12 @@ public class Utilisateur {
     private int nombreevaluations; // recevoir
 
     //messages
-    @OneToMany(mappedBy = "utilisateur")
+    @OneToMany(mappedBy = "utilisateurreceive")
     private List<Message> messagerecus;
 
-    @OneToMany(mappedBy = "utilisateur")
-    private List<Message> messagesend;
-
+    // Messages envoyés → l'utilisateur est l'expéditeur
+    @OneToMany(mappedBy = "utilisateursend")
+    private List<Message> messagesenvoyes;
 
 
 }

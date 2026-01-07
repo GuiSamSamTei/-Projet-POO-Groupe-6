@@ -1,17 +1,19 @@
 package com.example.gestion_location_vehicule.model;
 
-import jakarta.persistence.*;
-import lombok.*;
-
-import java.util.Date;
+import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
-@Data
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class EvalA extends Evaluation {
+public class EvalL extends Evaluation{
 
     @ManyToOne
     @JoinColumn(name="loueur_id")
@@ -20,6 +22,4 @@ public class EvalA extends Evaluation {
     @ManyToOne
     @JoinColumn(name="agent_id")
     private Agent agent;
-
-
 }
