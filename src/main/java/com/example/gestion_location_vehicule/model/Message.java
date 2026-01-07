@@ -18,7 +18,7 @@ public class Message {
     @Id
     private Long id;
     private String contenu;
-    private Date date;
+    private Date dateenvoi;
     private boolean lu;
 
     @ManyToOne
