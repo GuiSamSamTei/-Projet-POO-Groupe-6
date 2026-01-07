@@ -17,7 +17,6 @@ public class Contratlocation {
     private Long id;
     private Date datedebut;
     private Date datefin;
-    private String[] options;
     //les attributs liées au classes
 
     @ManyToOne
