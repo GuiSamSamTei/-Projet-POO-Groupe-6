@@ -26,8 +26,13 @@ public abstract class Agent extends Utilisateur {
     private String bic;
     //private List<OptionPayante> optionsActives;
     //statistic
-    private int nombreVehicules;
-    private double revenusTotaux;
+    private int nombrevehicules;
+    private double revenustotaux;
 
+    @OneToMany(mappedBy = "agent")
+    private List<Vehicule> vehicules;
+
+    @OneToMany(mappedBy = "agent")
+    private List<EvalA> evalrecus;
 
 }

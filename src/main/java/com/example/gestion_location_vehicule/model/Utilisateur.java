@@ -1,14 +1,13 @@
 package com.example.gestion_location_vehicule.model;
 
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.List;
 
 @Entity
 @Getter
@@ -25,8 +24,15 @@ public class Utilisateur {
     private String telephone;
 
     // information général pour noter
-    private double noteMoyenne; // recevoir
-    private int nombreEvaluations; // recevoir
+    private double notemoyenne; // recevoir
+    private int nombreevaluations; // recevoir
+
+    //messages
+    @OneToMany(mappedBy = "utilisateur")
+    private List<Message> messagerecus;
+
+    @OneToMany(mappedBy = "utilisateur")
+    private List<Message> messagesend;
 
 
 

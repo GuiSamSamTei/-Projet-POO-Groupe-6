@@ -1,13 +1,12 @@
 package com.example.gestion_location_vehicule.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.List;
 
 @Entity
 @Getter
@@ -24,8 +23,11 @@ public class Assurance {
 
     private long prix;
 
-    private boolean assuranceParDefaut;     //assurance AZA
+    private boolean assurancepardefaut;     //assurance AZA
 
     private boolean active;     //si l'assurance n'a plus de contrat avec la plateforme ou avec un agent
 
+
+    @OneToMany(mappedBy = "assurance")
+    private List<PrixAssurance> prixassurance;
 }

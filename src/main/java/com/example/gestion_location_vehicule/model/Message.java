@@ -1,9 +1,6 @@
 package com.example.gestion_location_vehicule.model;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,7 +18,13 @@ public class Message {
     private String contenu;
     private Date date;
     private boolean lu;
+
+    @ManyToOne
+    @JoinColumn(name = "utilisateursend_id")
     private Utilisateur utilisateursend;
+
+    @ManyToOne
+    @JoinColumn(name = "utilisateurreceive_id")
     private Utilisateur utilisateurreceive;
 
 }

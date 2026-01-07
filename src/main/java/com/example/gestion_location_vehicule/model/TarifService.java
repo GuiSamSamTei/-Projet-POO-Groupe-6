@@ -20,6 +20,6 @@ public class TarifService {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private long prixEntretien;
+    private long prixentretien;
 
 }

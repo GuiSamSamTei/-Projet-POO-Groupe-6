@@ -1,15 +1,13 @@
 package com.example.gestion_location_vehicule.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.Date;
+import java.util.List;
 
 @Getter
 @Setter
@@ -28,14 +26,20 @@ public abstract class Vehicule {
 
     private String couleur;
 
-    private int noteVehicule;
+    private int notevehicule;
 
-    private boolean vehiculeDispo;
+    private boolean vehiculedispo;
 
-    private Date dateDispo;
+    private Date datedispo;
 
     private String villeDispo;
 
     private double kilometrage;
 
+    @ManyToOne
+    @JoinColumn(name = "agent_id")
+    private Agent agent;
+
+    @OneToMany(mappedBy = "vehicule")
+    private List<PrixAssurance> prixassurance;
 }

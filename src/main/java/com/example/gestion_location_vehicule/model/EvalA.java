@@ -23,6 +23,5 @@ public class EvalA extends Evaluation {
     @JoinColumn(name="agent_id")
     private Agent agent;
 
-    private double note;
-    private Date date;
+
 }

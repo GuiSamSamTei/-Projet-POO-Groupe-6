@@ -20,7 +20,7 @@ public class Tarification {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private double prixFixe;       // ex : 2€ par jour
+    private double prixfixe;       // ex : 2€ par jour
 
     private double pourcentage;  // ex : 10% de commission
 

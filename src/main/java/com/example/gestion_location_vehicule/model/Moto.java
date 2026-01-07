@@ -7,6 +7,6 @@ public class Moto extends Vehicule {
 
     private int cylindree;
 
-    private int nbChevaux;
+    private int nbchevaux;
 
 }

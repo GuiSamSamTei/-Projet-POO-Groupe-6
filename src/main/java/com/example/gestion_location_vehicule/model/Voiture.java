@@ -5,17 +5,17 @@ import jakarta.persistence.Entity;
 @Entity
 public class Voiture extends Vehicule {
 
-    private int nombrePortes;
+    private int nombreportes;
 
-    private int nombrePlaces;
+    private int nombreplaces;
 
     private boolean automatique;
 
     private String carburant;
 
-    private double coffreVolume;
+    private double coffrevolume;
 
-    private int nbChevaux;
+    private int nbchevaux;
 
     private boolean gps;
 }

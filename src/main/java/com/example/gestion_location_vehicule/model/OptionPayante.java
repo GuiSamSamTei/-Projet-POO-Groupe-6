@@ -24,7 +24,7 @@ public class OptionPayante {
 
     private String description;
 
-    private double prixMensuel;
+    private double prixmensuel;
 
     private boolean active;
 }

@@ -11,7 +11,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class AgentPro extends Agent{
-    private String raisonSociale;
+    private String raisonsociale;
     private String siret;
 
 }
