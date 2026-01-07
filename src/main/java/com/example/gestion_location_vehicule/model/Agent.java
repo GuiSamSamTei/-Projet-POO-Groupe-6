@@ -31,6 +31,8 @@ public abstract class Agent extends Utilisateur {
     private List<Vehicule> vehicules;
 
     @OneToMany(mappedBy = "agent")
-    private List<EvalA> evalrecus;
+    private List<EvalA> evalrecues;
 
+    @OneToMany(mappedBy = "agent")
+    private List<EvalL> evaldonnees;
 }

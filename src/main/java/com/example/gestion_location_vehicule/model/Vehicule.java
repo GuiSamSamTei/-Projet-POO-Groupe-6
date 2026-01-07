@@ -27,7 +27,7 @@ public abstract class Vehicule {
 
     private int notevehicule;
 
-    private boolean vehiculedispo;
+    private boolean vehiculeDispo;
 
     private Date datedispo;
 
@@ -38,6 +38,9 @@ public abstract class Vehicule {
     @ManyToOne
     @JoinColumn(name = "agent_id")
     private Agent agent;
+
+    @OneToMany(mappedBy = "vehicule")
+    private List<EvalV> evalrecues;
 
     @OneToMany(mappedBy = "vehicule")
     private List<PrixAssurance> prixassurance;

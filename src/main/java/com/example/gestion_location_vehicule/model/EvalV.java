@@ -16,9 +16,6 @@ import lombok.Setter;
 @AllArgsConstructor
 public class EvalV extends Evaluation{
 
-    @Id
-    private Long id;
-
     @ManyToOne
     @JoinColumn(name="loueur_id")
     private Loueur loueur;

@@ -23,7 +23,13 @@ public class Loueur extends Utilisateur{
 
 
     @OneToMany(mappedBy = "loueur")
-    private List<EvalA> evaldonnes;
+    private List<EvalA> evaldonnees;
+
+    @OneToMany(mappedBy = "loueur")
+    private List<EvalV> evalvehicules;
+
+    @OneToMany(mappedBy = "loueur")
+    private List<EvalL> evalrecues;
 
     @OneToMany(mappedBy = "loueur")
     private List<Contratlocation> contratlocations;

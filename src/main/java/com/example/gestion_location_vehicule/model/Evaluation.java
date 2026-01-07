@@ -5,6 +5,7 @@ import lombok.*;
 
 import java.util.Date;
 
+@Entity
 @Data
 @Getter
 @Setter
@@ -12,6 +13,9 @@ import java.util.Date;
 @NoArgsConstructor
 public abstract class Evaluation {
 
+    @Id
+    private Long id;
+
     private double note;
-    private Date date;
+    private Date datenote;
 }
