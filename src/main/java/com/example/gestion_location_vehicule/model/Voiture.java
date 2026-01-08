@@ -15,7 +15,7 @@ public class Voiture extends Vehicule {
 
     private int nombreplaces;
 
-    private boolean automatique;
+    private Boolean automatique;
 
     private String carburant;
 
@@ -23,5 +23,5 @@ public class Voiture extends Vehicule {
 
     private int nbchevaux;
 
-    private boolean gps;
+    private Boolean gps;
 }

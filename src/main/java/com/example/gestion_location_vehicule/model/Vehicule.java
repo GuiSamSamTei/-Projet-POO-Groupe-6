@@ -25,7 +25,7 @@ public abstract class Vehicule {
 
     private String couleur;
 
-    private int notevehicule;
+    private double notevehicule;
 
     private boolean vehiculedispo;
 
