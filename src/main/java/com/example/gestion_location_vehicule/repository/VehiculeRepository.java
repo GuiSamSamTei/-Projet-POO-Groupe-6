@@ -22,6 +22,9 @@ public interface VehiculeRepository extends JpaRepository<Vehicule, Long> {
     // Filtrer par modèle exact
     List<Vehicule> findByModele(String modele);
 
+    //Filtrer par prix/jour
+    List<Vehicule> findByPrixjour(double prixjour);
+
     // Filtrer par marque ou modèle partiel (insensible à la casse)
     List<Vehicule> findByMarqueContainingIgnoreCaseOrModeleContainingIgnoreCase(String marque, String modele);
 

@@ -35,6 +35,8 @@ public class Vehicule {
 
     private double kilometrage;
 
+    private double prixjour;
+
     @ManyToOne
     @JoinColumn(name = "agent_id")
     private Agent agent;

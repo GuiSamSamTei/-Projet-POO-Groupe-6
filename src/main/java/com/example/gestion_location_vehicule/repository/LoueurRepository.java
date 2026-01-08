@@ -21,9 +21,6 @@ public interface LoueurRepository extends JpaRepository<Loueur, Long> {
             String prenom
     );
 
-    // Trouver par date de naissance
-    List<Loueur> findByDatenaissance(String datenaissance);
-
     // Nom + prénom exacts
     Loueur findByNomAndPrenom(String nom, String prenom);
 }
