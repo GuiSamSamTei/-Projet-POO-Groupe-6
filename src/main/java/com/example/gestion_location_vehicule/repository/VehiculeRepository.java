@@ -11,10 +11,10 @@ import java.util.List;
 public interface VehiculeRepository extends JpaRepository<Vehicule, Long> {
 
     // Filtrer les véhicules disponibles
-    List<Vehicule> findByVehiculeDispoTrue();
+    List<Vehicule> findByVehiculedispoTrue();
 
     // Filtrer par ville de disponibilité
-    List<Vehicule> findByVilleDispo(String villeDispo);
+    List<Vehicule> findByVilledispo(String villeDispo);
 
     // Filtrer par marque exacte
     List<Vehicule> findByMarque(String marque);
@@ -38,5 +38,5 @@ public interface VehiculeRepository extends JpaRepository<Vehicule, Long> {
     List<Vehicule> findByAgent(Agent agent);
 
     // Combinaison : disponible + ville + note minimum
-    List<Vehicule> findByVehiculeDispoTrueAndVilleDispoAndNotevehiculeGreaterThanEqual(String ville, int noteMin);
+    List<Vehicule> findByVehiculedispoTrueAndVilledispoAndNotevehiculeGreaterThanEqual(String ville, int noteMin);
 }

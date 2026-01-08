@@ -21,5 +21,5 @@ public interface EvalVRepository extends JpaRepository<EvalV, Long> {
     List<EvalV> findByVehiculeAndLoueur(Vehicule vehicule, Loueur loueur);
 
     // Optionnel : récupérer toutes les évaluations d'un véhicule avec note finale >= seuil
-    List<EvalV> findByVehiculeAndNoteFinaleGreaterThanEqual(Vehicule vehicule, double noteMin);
+    List<EvalV> findByVehiculeAndNoteGreaterThanEqual(Vehicule vehicule, double noteMin);
 }

@@ -1,4 +1,46 @@
 package com.example.gestion_location_vehicule.service.LoueurService;
 
-public class LoueurService implements ILoueurService{
+import com.example.gestion_location_vehicule.model.Loueur;
+import com.example.gestion_location_vehicule.repository.LoueurRepository;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+public class LoueurService implements ILoueurService {
+
+    private final LoueurRepository loueurRepository;
+
+    public LoueurService(LoueurRepository loueurRepository) {
+        this.loueurRepository = loueurRepository;
+    }
+
+    @Override
+    public List<Loueur> getAll() {
+        return loueurRepository.findAll();
+    }
+
+    @Override
+    public Loueur getById(Long id) {
+        return loueurRepository.findById(id)
+                .orElseThrow(() ->
+                        new RuntimeException("Loueur introuvable avec id " + id));
+    }
+
+    @Override
+    public Loueur create(Loueur loueur) {
+        return loueurRepository.save(loueur);
+    }
+
+    @Override
+    public List<Loueur> searchByNomOrPrenom(String keyword) {
+        return loueurRepository
+                .findByNomContainingIgnoreCaseOrPrenomContainingIgnoreCase(
+                        keyword, keyword);
+    }
+
+    @Override
+    public Loueur getByNomAndPrenom(String nom, String prenom) {
+        return loueurRepository.findByNomAndPrenom(nom, prenom);
+    }
 }

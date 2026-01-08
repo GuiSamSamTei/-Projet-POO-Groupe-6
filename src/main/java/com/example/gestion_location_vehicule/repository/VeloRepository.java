@@ -11,10 +11,10 @@ import java.util.List;
 public interface VeloRepository extends JpaRepository<Velo, Long> {
 
     // Vélos disponibles
-    List<Velo> findByVehiculeDispoTrue();
+    List<Velo> findByVehiculedispoTrue();
 
     // Vélos par ville
-    List<Velo> findByVilleDispo(String ville);
+    List<Velo> findByVilledispo(String ville);
 
     // Vélos électriques
     List<Velo> findByElectriqueTrue();
@@ -29,8 +29,8 @@ public interface VeloRepository extends JpaRepository<Velo, Long> {
     List<Velo> findByAgent(Agent agent);
 
     // Combinaison : disponible + ville + électrique
-    List<Velo> findByVehiculeDispoTrueAndVilleDispoAndElectriqueTrue(String ville);
+    List<Velo> findByVehiculedispoTrueAndVilledispoAndElectriqueTrue(String ville);
 
     // Combinaison : ville + vitesses minimum
-    List<Velo> findByVilleDispoAndNombreVitessesGreaterThanEqual(String ville, int vitessesMin);
+    List<Velo> findByVilledispoAndNombreVitessesGreaterThanEqual(String ville, int vitessesMin);
 }

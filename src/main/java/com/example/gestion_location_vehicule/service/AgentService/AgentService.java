@@ -16,6 +16,6 @@ public class AgentService implements IAgentService{
 
 
 
-        return vehiculeRepository.findByVehiculeDispoTrue();
+        return vehiculeRepository.findByVehiculedispoTrue();
     }
 }

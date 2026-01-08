@@ -11,13 +11,13 @@ import java.util.List;
 public interface VoitureRepository extends JpaRepository<Voiture, Long> {
 
     // Vraiment disponible
-    List<Voiture> findByVehiculeDispoTrue();
+    List<Voiture> findByVehiculedispoTrue();
 
     // Par ville
-    List<Voiture> findByVilleDispo(String ville);
+    List<Voiture> findByVilledispo(String ville);
 
     // Par ville et dispo
-    List<Voiture> findByVilleDispoAndVehiculeDispoTrue(String ville);
+    List<Voiture> findByVilledispoAndVehiculedispoTrue(String ville);
 
     // Par nombre de portes
     List<Voiture> findByNombreportes(int nbPortes);
@@ -52,8 +52,8 @@ public interface VoitureRepository extends JpaRepository<Voiture, Long> {
     List<Voiture> findByAgent(Agent agent);
 
     // Combinaisons utiles : ville + dispo + automatique
-    List<Voiture> findByVehiculeDispoTrueAndVilleDispoAndAutomatiqueTrue(String ville);
+    List<Voiture> findByVehiculedispoTrueAndVilledispoAndAutomatiqueTrue(String ville);
 
     // Ville + places minimum + GPS
-    List<Voiture> findByVilleDispoAndNombreplacesGreaterThanEqualAndGpsTrue(String ville, int nbPlacesMin);
+    List<Voiture> findByVilledispoAndNombreplacesGreaterThanEqualAndGpsTrue(String ville, int nbPlacesMin);
 }

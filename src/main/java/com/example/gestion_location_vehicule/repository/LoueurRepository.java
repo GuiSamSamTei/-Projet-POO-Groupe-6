@@ -15,18 +15,15 @@ public interface LoueurRepository extends JpaRepository<Loueur, Long> {
     // Trouver par prénom exact
     List<Loueur> findByPrenom(String prenom);
 
-    // Trouver par nom ou prénom partiel (insensible à la casse)
-    List<Loueur> findByNomContainingIgnoreCaseOrPrenomContainingIgnoreCase(String nom, String prenom);
+    // Recherche partielle (nom ou prénom)
+    List<Loueur> findByNomContainingIgnoreCaseOrPrenomContainingIgnoreCase(
+            String nom,
+            String prenom
+    );
 
-    // Trouver par date de naissance exacte
+    // Trouver par date de naissance
     List<Loueur> findByDatenaissance(String datenaissance);
 
-    // Combinaison nom + prénom
+    // Nom + prénom exacts
     Loueur findByNomAndPrenom(String nom, String prenom);
-
-    // Filtrer par nombre d’évaluations données (via noteMoyenne / nombreEvaluations hérité de Utilisateur)
-    List<Loueur> findByNombreEvaluationsGreaterThan(int minEvaluations);
-
-    // Filtrer par note moyenne
-    List<Loueur> findByNoteMoyenneGreaterThanEqual(double noteMin);
 }
