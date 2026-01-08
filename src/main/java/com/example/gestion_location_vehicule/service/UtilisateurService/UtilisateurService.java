@@ -27,6 +27,7 @@ public class UtilisateurService implements IUtilisateurService{
             return false;
 
         Utilisateur utilisateur = utilisateurOptional.get();
+
         if(utilisateur.getMdp()==connexionRequest.getPassword())
             return true;
         else
