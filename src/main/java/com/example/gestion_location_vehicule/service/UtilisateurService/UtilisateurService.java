@@ -3,8 +3,15 @@ package com.example.gestion_location_vehicule.service.UtilisateurService;
 import com.example.gestion_location_vehicule.model.Utilisateur;
 import com.example.gestion_location_vehicule.repository.UtilisateurRepository;
 import com.example.gestion_location_vehicule.request.ConnexionRequest;
+import lombok.RequiredArgsConstructor;
 import org.apache.catalina.User;
+import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
+
+@Service
+@RequiredArgsConstructor
 public class UtilisateurService implements IUtilisateurService{
 
     private final UtilisateurRepository utilisateurRepository;
@@ -13,11 +20,13 @@ public class UtilisateurService implements IUtilisateurService{
         if (connexionRequest==null)
             return false;
 
-        Utilisateur utilisateur = utilisateurRepository.findByUsername(connexionRequest.getUsername());
+        Optional<Utilisateur> utilisateurOptional = utilisateurRepository.findByUsername(connexionRequest.getUsername());
 
-        if(utilisateur==null)
+
+        if(utilisateurOptional.isEmpty())
             return false;
 
+        Utilisateur utilisateur = utilisateurOptional.get();
         if(utilisateur.getMdp()==connexionRequest.getPassword())
             return true;
         else
