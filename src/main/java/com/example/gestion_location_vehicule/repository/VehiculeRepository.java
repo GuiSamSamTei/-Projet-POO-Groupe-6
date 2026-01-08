@@ -40,5 +40,5 @@ public interface VehiculeRepository extends JpaRepository<Vehicule, Long> {
     // Combinaison : disponible + ville + note minimum
     List<Vehicule> findByVehiculedispoTrueAndVilledispoAndNotevehiculeGreaterThanEqual(String ville, int noteMin);
 
-    List<Vehicule> findByVehiculeDispoTrue();
+    List<Vehicule> findByAgentId(Long agent_id);
 }

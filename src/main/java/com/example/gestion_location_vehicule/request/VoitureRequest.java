@@ -1,16 +1,13 @@
-package com.example.gestion_location_vehicule.model;
+package com.example.gestion_location_vehicule.request;
 
-import jakarta.persistence.Entity;
-import lombok.*;
+import com.example.gestion_location_vehicule.model.Vehicule;
+import lombok.Data;
+import lombok.Getter;
 
-@Entity
 @Data
 @Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-public class Voiture extends Vehicule {
 
+public class VoitureRequest extends Vehicule {
     private int nombreportes;
 
     private int nombreplaces;

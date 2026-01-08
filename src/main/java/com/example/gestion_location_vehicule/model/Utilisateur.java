@@ -12,7 +12,6 @@ import java.util.List;
 @AllArgsConstructor
 public class Utilisateur {
     @Id
-    private Long id;
     private String username; //nom pour se connecter
     private String mdp;
     private String email;
