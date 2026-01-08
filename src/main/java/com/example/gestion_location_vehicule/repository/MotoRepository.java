@@ -10,10 +10,10 @@ import java.util.List;
 public interface MotoRepository extends JpaRepository<Moto, Long> {
 
     // Filtrer les motos disponibles
-    List<Moto> findByVehiculeDispoTrue();
+    List<Moto> findByVehiculedispoTrue();
 
     // Filtrer par ville de disponibilité
-    List<Moto> findByVilleDispo(String ville);
+    List<Moto> findByVilledispo(String ville);
 
     // Filtrer par cylindrée minimale ou maximale
     List<Moto> findByCylindreeGreaterThanEqual(int cylindreeMin);
@@ -26,8 +26,8 @@ public interface MotoRepository extends JpaRepository<Moto, Long> {
     List<Moto> findByNbchevauxBetween(int min, int max);
 
     // Combinaison possible : ville + dispo + cylindrée
-    List<Moto> findByVilleDispoAndVehiculeDispoTrueAndCylindreeGreaterThanEqual(String ville, int cylindreeMin);
+    List<Moto> findByVilledispoAndVehiculedispoTrueAndCylindreeGreaterThanEqual(String ville, int cylindreeMin);
 
     // Combinaison possible : ville + dispo + nbchevaux
-    List<Moto> findByVilleDispoAndVehiculeDispoTrueAndNbchevauxGreaterThanEqual(String ville, int nbChevauxMin);
+    List<Moto> findByVilledispoAndVehiculedispoTrueAndNbchevauxGreaterThanEqual(String ville, int nbChevauxMin);
 }

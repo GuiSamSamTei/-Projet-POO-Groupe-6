@@ -11,11 +11,11 @@ public interface CamionRepository extends JpaRepository<Camion, Long> {
 
     List<Camion> findByVehiculedispoTrue();
 
-    List<Camion> findByVilleDispo(String ville);
+    List<Camion> findByVilledispo(String ville);
 
     List<Camion> findByChargemaxGreaterThanEqual(double chargeMin);
 
     List<Camion> findByVolumeGreaterThanEqual(double volumeMin);
 
-    List<Camion> findByVilleDispoAndVehiculeDispoTrueAndChargemaxGreaterThanEqual(String ville, double chargeMin);
+    List<Camion> findByVilledispoAndVehiculedispoTrueAndChargemaxGreaterThanEqual(String ville, double chargeMin);
 }

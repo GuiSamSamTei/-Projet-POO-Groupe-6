@@ -10,10 +10,10 @@ import java.util.List;
 public interface VanRepository extends JpaRepository<Van, Long> {
 
     // Filtrer les vans disponibles
-    List<Van> findByVehiculeDispoTrue();
+    List<Van> findByVehiculedispoTrue();
 
     // Filtrer par ville de disponibilité
-    List<Van> findByVilleDispo(String ville);
+    List<Van> findByVilledispo(String ville);
 
     // Filtrer par nombre de places minimum
     List<Van> findByNombreplacesGreaterThanEqual(int minPlaces);
@@ -25,7 +25,7 @@ public interface VanRepository extends JpaRepository<Van, Long> {
     List<Van> findByNombreplacesBetween(int minPlaces, int maxPlaces);
 
     // Combinaison : van disponible dans une ville avec nombre de places minimum
-    List<Van> findByVehiculeDispoTrueAndVilleDispoAndNombreplacesGreaterThanEqual(
+    List<Van> findByVehiculedispoTrueAndVilledispoAndNombreplacesGreaterThanEqual(
             String ville, int minPlaces
     );
 }

@@ -10,10 +10,10 @@ import java.util.List;
 public interface ScooterRepository extends JpaRepository<Scooter, Long> {
 
     // Filtrer les scooters disponibles
-    List<Scooter> findByVehiculeDispoTrue();
+    List<Scooter> findByVehiculedispoTrue();
 
     // Filtrer par ville de disponibilité
-    List<Scooter> findByVilleDispo(String ville);
+    List<Scooter> findByVilledispo(String ville);
 
     // Filtrer par cylindrée minimale ou maximale
     List<Scooter> findByCylindreeGreaterThanEqual(int cylindreeMin);
@@ -25,8 +25,8 @@ public interface ScooterRepository extends JpaRepository<Scooter, Long> {
     List<Scooter> findByElectriqueFalse();
 
     // Combinaison possible : ville + dispo + cylindrée
-    List<Scooter> findByVilleDispoAndVehiculeDispoTrueAndCylindreeGreaterThanEqual(String ville, int cylindreeMin);
+    List<Scooter> findByVilledispoAndVehiculedispoTrueAndCylindreeGreaterThanEqual(String ville, int cylindreeMin);
 
     // Combinaison possible : ville + dispo + électrique
-    List<Scooter> findByVilleDispoAndVehiculeDispoTrueAndElectriqueTrue(String ville);
+    List<Scooter> findByVilledispoAndVehiculedispoTrueAndElectriqueTrue(String ville);
 }

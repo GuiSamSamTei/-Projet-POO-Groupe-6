@@ -21,5 +21,5 @@ public interface EvalLRepository extends JpaRepository<EvalL, Long> {
     List<EvalL> findByLoueurAndAgent(Loueur loueur, Agent agent);
 
     // Optionnel : récupérer toutes les évaluations avec une note finale >= un certain seuil
-    List<EvalL> findByNoteFinaleGreaterThanEqual(double noteMin);
+    List<EvalL> findByNoteGreaterThanEqual(double noteMin);
 }

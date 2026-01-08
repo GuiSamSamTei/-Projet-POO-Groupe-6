@@ -27,11 +27,11 @@ public abstract class Vehicule {
 
     private int notevehicule;
 
-    private boolean vehiculeDispo;
+    private boolean vehiculedispo;
 
     private Date datedispo;
 
-    private String villeDispo;
+    private String villedispo;
 
     private double kilometrage;
 
