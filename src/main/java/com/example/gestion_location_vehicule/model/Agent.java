@@ -14,7 +14,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public abstract class Agent extends Utilisateur {
+public class Agent extends Utilisateur {
 
 
     private String adreese;
