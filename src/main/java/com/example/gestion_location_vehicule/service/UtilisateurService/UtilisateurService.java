@@ -3,6 +3,7 @@ package com.example.gestion_location_vehicule.service.UtilisateurService;
 import com.example.gestion_location_vehicule.model.Utilisateur;
 import com.example.gestion_location_vehicule.repository.UtilisateurRepository;
 import com.example.gestion_location_vehicule.request.ConnexionRequest;
+import com.example.gestion_location_vehicule.request.UtilisateurRequest;
 import lombok.RequiredArgsConstructor;
 import org.apache.catalina.User;
 import org.springframework.stereotype.Service;
@@ -33,5 +34,6 @@ public class UtilisateurService implements IUtilisateurService{
         else
             return false;
     }
+
 
 }

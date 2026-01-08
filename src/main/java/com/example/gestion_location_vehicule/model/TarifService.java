@@ -17,6 +17,6 @@ public class TarifService {
     @Id
     private Long id;
 
-    private long prixentretien;
+    private Double prixentretien;
 
 }
