@@ -18,8 +18,6 @@ public class Assurance {
 
     private String nom;
 
-    private long prix;
-
     private boolean assurancepardefaut;     //assurance AZA
 
     private boolean active;     //si l'assurance n'a plus de contrat avec la plateforme ou avec un agent
