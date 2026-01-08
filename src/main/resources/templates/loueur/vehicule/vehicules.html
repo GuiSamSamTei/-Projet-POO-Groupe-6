@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Liste des Véhicules</title>
+</head>
+<body>
+<h1>Véhicules Disponibles à la Location</h1>
+
+<table border="1">
+    <thead>
+    <tr>
+        <th>Type</th>
+        <th>Marque</th>
+        <th>Modèle</th>
+        <th>Ville</th>
+        <th>Disponibilité</th>
+        <th>Prix</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="vehicule : ${vehicules}">
+        <td th:text="${vehicule.class.simpleName}"></td>
+        <td th:text="${vehicule.marque}"></td>
+        <td th:text="${vehicule.modele}"></td>
+        <td th:text="${vehicule.villedispo}"></td>
+        <td th:text="${vehicule.vehiculedispo ? 'Oui' : 'Non'}"></td>
+        <td th:text="${vehicule.prix} + ' €'"></td>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>
