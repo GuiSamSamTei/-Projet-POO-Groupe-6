@@ -7,7 +7,7 @@ import lombok.Getter;
 @Data
 @Getter
 
-public class VoitureRequest extends Vehicule {
+public class VoitureRequest extends VehiculeRequest {
     private int nombreportes;
 
     private int nombreplaces;
@@ -21,4 +21,5 @@ public class VoitureRequest extends Vehicule {
     private int nbchevaux;
 
     private Boolean gps;
+
 }
