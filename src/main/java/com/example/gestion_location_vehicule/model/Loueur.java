@@ -18,6 +18,7 @@ public class Loueur extends Utilisateur{
     private String numeropermis;
     private String dateexpirationpermis;
     private String pieceidentite;
+
     private String nom;
     private String prenom;
 
