@@ -20,7 +20,15 @@ public class VoitureService implements IVoitureService{
 
     @Override
     public Voiture ajouterVoiture(VoitureRequest voitureRequest) {
-        return null;
+        Voiture voiture = new Voiture();
+
+        voiture.setAutomatique(voitureRequest.getAutomatique());
+        voiture.setCarburant(voitureRequest.getCarburant());
+        voiture.setCoffrevolume(voitureRequest.getCoffrevolume());
+        voiture.setNbchevaux(voitureRequest.getNbchevaux());
+        voiture.setGps(voitureRequest.getGps());
+        voiture.setNombreplaces(voitureRequest.getNombreplaces());
+        voiture.setNombreportes(voitureRequest.getNombreportes());
     }
 
     @Override
