@@ -15,9 +15,8 @@ public interface AgentRepository extends JpaRepository<Agent, Long> {
     // Trouver tous les agents actifs (tu pourrais ajouter un boolean 'active' si besoin)
     List<Agent> findByNombrevehiculesGreaterThan(int minVehicules);
 
-    // Trouver les agents avec un revenu total supérieur à un certain montant
-    List<Agent> findByRevenustotauxGreaterThan(double montant);
-
     // Trouver les agents par adresse
-    List<Agent> findByAdreeseContainingIgnoreCase(String adresse);
+    List<Agent> findByAdresseContainingIgnoreCase(String adresse);
+
+    List<Agent> findByRevenustotauxGreaterThan(double montant);
 }

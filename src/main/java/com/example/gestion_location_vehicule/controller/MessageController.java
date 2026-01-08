@@ -1,5 +1,6 @@
 package com.example.gestion_location_vehicule.controller;
 
+import com.example.gestion_location_vehicule.model.Loueur;
 import com.example.gestion_location_vehicule.model.Message;
 import com.example.gestion_location_vehicule.model.Utilisateur;
 import com.example.gestion_location_vehicule.service.MessageService.MessageService;
@@ -53,14 +54,14 @@ public class MessageController {
     // 🔹 GET : messages envoyés ou reçus par un utilisateur
     @GetMapping("/utilisateur/{id}")
     public List<Message> getByUtilisateur(@PathVariable Long id) {
-        Utilisateur user = new Utilisateur();
+        Utilisateur user = new Loueur();
         return messageService.getMessagesByUtilisateur(user);
     }
 
     // 🔹 GET : messages non lus pour un utilisateur
     @GetMapping("/utilisateur/{id}/non-lus")
     public List<Message> getNonLus(@PathVariable Long id) {
-        Utilisateur user = new Utilisateur();
+        Utilisateur user = new Loueur();
         return messageService.getMessagesNonLus(user);
     }
 
@@ -70,7 +71,7 @@ public class MessageController {
             @PathVariable Long id,
             @RequestParam Date date
     ) {
-        Utilisateur user = new Utilisateur();
+        Utilisateur user = new Loueur();
         return messageService.getMessagesEnvoyesAfter(user, date);
     }
 
@@ -80,7 +81,7 @@ public class MessageController {
             @PathVariable Long id,
             @RequestParam Date date
     ) {
-        Utilisateur user = new Utilisateur();
+        Utilisateur user = new Loueur();
         return messageService.getMessagesRecusAfter(user, date);
     }
 }
