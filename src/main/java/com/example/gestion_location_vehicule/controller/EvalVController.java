@@ -54,7 +54,6 @@ public class EvalVController {
     @GetMapping("/loueur/{loueurId}")
     public List<EvalV> getByLoueur(@PathVariable Long loueurId) {
         Loueur loueur = new Loueur();
-        loueur.setId(loueurId);
         return evalVService.getByLoueur(loueur);
     }
 
@@ -75,7 +74,6 @@ public class EvalVController {
         Vehicule vehicule = new Vehicule();
         vehicule.setId(vehiculeId);
         Loueur loueur = new Loueur();
-        loueur.setId(loueurId);
         return evalVService.getByVehiculeAndLoueur(vehicule, loueur);
     }
 

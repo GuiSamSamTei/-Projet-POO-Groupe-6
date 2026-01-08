@@ -54,7 +54,6 @@ public class MessageController {
     @GetMapping("/utilisateur/{id}")
     public List<Message> getByUtilisateur(@PathVariable Long id) {
         Utilisateur user = new Utilisateur();
-        user.setId(id);
         return messageService.getMessagesByUtilisateur(user);
     }
 
@@ -62,7 +61,6 @@ public class MessageController {
     @GetMapping("/utilisateur/{id}/non-lus")
     public List<Message> getNonLus(@PathVariable Long id) {
         Utilisateur user = new Utilisateur();
-        user.setId(id);
         return messageService.getMessagesNonLus(user);
     }
 
@@ -73,7 +71,6 @@ public class MessageController {
             @RequestParam Date date
     ) {
         Utilisateur user = new Utilisateur();
-        user.setId(id);
         return messageService.getMessagesEnvoyesAfter(user, date);
     }
 
@@ -84,7 +81,6 @@ public class MessageController {
             @RequestParam Date date
     ) {
         Utilisateur user = new Utilisateur();
-        user.setId(id);
         return messageService.getMessagesRecusAfter(user, date);
     }
 }

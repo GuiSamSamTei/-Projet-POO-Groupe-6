@@ -63,6 +63,6 @@ public class AgentService implements IAgentService {
 
     @Override
     public List<Vehicule> afficherVehiculeDispo() {
-        return vehiculeRepository.findByVehiculeDispoTrue();
+        return vehiculeRepository.findByVehiculedispoTrue();
     }
 }

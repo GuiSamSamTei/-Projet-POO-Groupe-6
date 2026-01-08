@@ -38,7 +38,6 @@ public class AgentController {
     // 🔹 PUT /agents/{id}
     @PutMapping("/{id}")
     public Agent updateAgent(@PathVariable Long id, @RequestBody Agent agent) {
-        agent.setId(id);
         return agentService.saveAgent(agent);
     }
 

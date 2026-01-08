@@ -54,7 +54,6 @@ public class EvalLController {
     @GetMapping("/loueur/{loueurId}")
     public List<EvalL> getByLoueur(@PathVariable Long loueurId) {
         Loueur loueur = new Loueur();
-        loueur.setId(loueurId);
         return evalLService.getByLoueur(loueur);
     }
 
@@ -62,7 +61,6 @@ public class EvalLController {
     @GetMapping("/agent/{agentId}")
     public List<EvalL> getByAgent(@PathVariable Long agentId) {
         Agent agent = new Agent();
-        agent.setId(agentId);
         return evalLService.getByAgent(agent);
     }
 
@@ -73,9 +71,7 @@ public class EvalLController {
             @PathVariable Long agentId
     ) {
         Loueur loueur = new Loueur();
-        loueur.setId(loueurId);
         Agent agent = new Agent();
-        agent.setId(agentId);
         return evalLService.getByLoueurAndAgent(loueur, agent);
     }
 
