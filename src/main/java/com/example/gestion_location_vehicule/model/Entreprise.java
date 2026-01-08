@@ -18,7 +18,7 @@ public class Entreprise {
 
     private String nsiret;
 
-    private String raisonSoc;
+    private String raisonsoc;
 
     private String ville;
 
