@@ -14,11 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Loueur extends Utilisateur{
-    private String datenaissance;
-    private String numeropermis;
-    private String dateexpirationpermis;
-    private String pieceidentite;
-
+    private String typepermis;
     private String nom;
     private String prenom;
 

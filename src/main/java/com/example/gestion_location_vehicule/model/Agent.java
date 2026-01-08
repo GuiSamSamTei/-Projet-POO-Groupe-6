@@ -17,8 +17,8 @@ import java.util.List;
 public class Agent extends Utilisateur {
 
 
-    private String adreese;
-    private String telephonePro;
+    private String adresse;
+    private String telephonepro;
     // obtenir l'argent
     private String iban;
     private String bic;
