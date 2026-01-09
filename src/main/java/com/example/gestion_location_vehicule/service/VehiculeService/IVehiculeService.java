@@ -18,6 +18,9 @@ public interface IVehiculeService {
 
     List<Vehicule> getVehiculesParAgent(Long agentId);
 
+    Vehicule addVehicule(Vehicule vehicule);
+
+
     //List<Vehicule> filtreVehicules(FiltreVehiculeRequest filtre);
 
     /**
