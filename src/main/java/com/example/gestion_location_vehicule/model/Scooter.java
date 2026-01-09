@@ -1,5 +1,6 @@
 package com.example.gestion_location_vehicule.model;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import lombok.*;
 
@@ -13,5 +14,6 @@ public class Scooter extends Vehicule {
 
     private int cylindree;
 
+    @Column(nullable = false)
     private boolean electrique;
 }

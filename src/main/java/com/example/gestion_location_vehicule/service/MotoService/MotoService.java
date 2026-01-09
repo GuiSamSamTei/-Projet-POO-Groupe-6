@@ -29,6 +29,9 @@ public class MotoService implements IMotoService {
 
     @Override
     public Moto saveMoto(Moto moto) {
+        if (moto.getVehiculedispo() == null) {
+            moto.setVehiculedispo(true);
+        } // ou false
         return motoRepository.save(moto);
     }
 
