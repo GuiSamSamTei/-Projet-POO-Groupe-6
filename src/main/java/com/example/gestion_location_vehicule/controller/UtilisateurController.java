@@ -24,9 +24,9 @@ public class UtilisateurController {
     public ResponseEntity<?> connexionUser (@RequestBody ConnexionRequest connexionRequest)
     {
         try{
-            Boolean connexionOk = utilisateurService.connexionUser(connexionRequest);
+            long connexionOk = utilisateurService.connexionUser(connexionRequest);
 
-            if(connexionOk)
+            if(connexionOk != -1)
                 return ResponseEntity.ok("Connexion ok");
             else
                 return ResponseEntity.ok("Connexion not ok");

@@ -6,7 +6,7 @@ import com.example.gestion_location_vehicule.request.UtilisateurRequest;
 
 public interface IUtilisateurService{
 
-    Boolean connexionUser(ConnexionRequest connexionRequest);
+    long connexionUser(ConnexionRequest connexionRequest);
 
 
 }

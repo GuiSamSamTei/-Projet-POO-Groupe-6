@@ -5,6 +5,7 @@ import com.example.gestion_location_vehicule.model.Loueur;
 import com.example.gestion_location_vehicule.repository.UtilisateurRepository;
 import com.example.gestion_location_vehicule.request.ConnexionRequest;
 import com.example.gestion_location_vehicule.service.UtilisateurService.UtilisateurService;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -31,12 +32,13 @@ public class UtilisateurMVCController {
     }
 
     @PostMapping ("/connexion")
-    public String connexion(@ModelAttribute ConnexionRequest connexionRequest) {
+    public String connexion(@ModelAttribute ConnexionRequest connexionRequest, HttpSession session) {
 
-        boolean connexionOk = utilisateurService.connexionUser(connexionRequest);
+        long user = utilisateurService.connexionUser(connexionRequest);
 
-        if (connexionOk) {
-            return "redirect:/loueur/success";
+        if (user != -1) {
+            session.setAttribute("user", user);
+            return "redirect:/loueur/profil";
         } else {
             return "redirect:/utilisateur/connexion?error=true";
         }

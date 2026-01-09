@@ -36,10 +36,10 @@ public class LoueurMVCController {
         loueurService.create(loueur);
 
         // Stocker le loueur en session
-        session.setAttribute("user", loueur);
+        session.setAttribute("user", loueur.getId());
 
         // Redirection vers le dashboard
-        return "redirect:/loueur/success";
+        return "redirect:/loueur/profil";
     }
 
     // Déconnexion
@@ -50,9 +50,9 @@ public class LoueurMVCController {
     }
 
     @GetMapping("/profil")
-    public String success(HttpSession session, Model model) {
+    public String profil(HttpSession session, Model model) {
         // Récupère le loueur depuis la session
-        Loueur loueur = (Loueur) session.getAttribute("user");
+        Loueur loueur = loueurService.getById((Long) session.getAttribute("user"));
         if (loueur != null) {
             model.addAttribute("loueur", loueur);
         }
