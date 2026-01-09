@@ -1,5 +1,6 @@
 package com.example.gestion_location_vehicule.service.LoueurService;
 
+import com.example.gestion_location_vehicule.model.AgentPro;
 import com.example.gestion_location_vehicule.model.Loueur;
 import com.example.gestion_location_vehicule.repository.LoueurRepository;
 import org.springframework.stereotype.Service;
@@ -42,5 +43,11 @@ public class LoueurService implements ILoueurService {
     @Override
     public Loueur getByNomAndPrenom(String nom, String prenom) {
         return loueurRepository.findByNomAndPrenom(nom, prenom);
+    }
+
+    @Override
+    public void ajouterListLoueur(List<Loueur> loueurList)
+    {
+        loueurRepository.saveAll(loueurList);
     }
 }

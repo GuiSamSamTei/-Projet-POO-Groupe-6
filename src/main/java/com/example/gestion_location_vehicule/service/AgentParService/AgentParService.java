@@ -1,6 +1,7 @@
 package com.example.gestion_location_vehicule.service.AgentParService;
 
 import com.example.gestion_location_vehicule.model.AgentPar;
+import com.example.gestion_location_vehicule.model.AgentPro;
 import com.example.gestion_location_vehicule.repository.AgentParRepository;
 import org.springframework.stereotype.Service;
 
@@ -54,4 +55,11 @@ public class AgentParService implements IAgentParService {
     public List<AgentPar> getByNomAndPrenom(String nom, String prenom) {
         return agentParRepository.findAllByNomAndPrenom(nom, prenom);
     }
+
+    public void ajouterListAgentPar(List<AgentPar> agentParList)
+    {
+       agentParRepository.saveAll(agentParList);
+    }
+
+
 }

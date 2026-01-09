@@ -15,4 +15,6 @@ public interface ILoueurService {
     List<Loueur> searchByNomOrPrenom(String keyword);
 
     Loueur getByNomAndPrenom(String nom, String prenom);
+
+    void ajouterListLoueur(List<Loueur> loueurList);
 }

@@ -1,11 +1,15 @@
 package com.example.gestion_location_vehicule.controller;
 
+import com.example.gestion_location_vehicule.model.AgentPar;
 import com.example.gestion_location_vehicule.model.AgentPro;
 import com.example.gestion_location_vehicule.service.AgentProService.AgentProService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
 @RestController
 @RequestMapping("/api/agents-professionnels")
@@ -45,5 +49,18 @@ public class AgentProController {
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Long id) {
         agentProService.deleteAgentPro(id);
+    }
+
+
+    @PostMapping("/list")
+    public ResponseEntity<?> ajouterListAgentPro(@RequestBody List<AgentPro> agentProList)
+    {
+        try{
+            agentProService.ajouterListAgentPro(agentProList);
+            return ResponseEntity.ok("La liste a ete bien ajoutés");
+        } catch (Exception e)
+        {
+            return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(null);
+        }
     }
 }

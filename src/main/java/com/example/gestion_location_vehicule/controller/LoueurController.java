@@ -1,10 +1,14 @@
 package com.example.gestion_location_vehicule.controller;
 
+import com.example.gestion_location_vehicule.model.AgentPro;
 import com.example.gestion_location_vehicule.model.Loueur;
 import com.example.gestion_location_vehicule.service.LoueurService.ILoueurService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
 @RestController
 @RequestMapping("/api/loueurs")
@@ -46,5 +50,17 @@ public class LoueurController {
             @RequestParam String nom,
             @RequestParam String prenom) {
         return loueurService.getByNomAndPrenom(nom, prenom);
+    }
+
+    @PostMapping("/list")
+    public ResponseEntity<?> ajouterListLoueur(@RequestBody List<Loueur> loueurList)
+    {
+        try{
+            loueurService.ajouterListLoueur(loueurList);
+            return ResponseEntity.ok("La liste a ete bien ajoutés");
+        } catch (Exception e)
+        {
+            return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(null);
+        }
     }
 }

@@ -1,5 +1,6 @@
 package com.example.gestion_location_vehicule.service.AgentProService;
 
+import com.example.gestion_location_vehicule.model.AgentPar;
 import com.example.gestion_location_vehicule.model.AgentPro;
 import com.example.gestion_location_vehicule.repository.AgentProRepository;
 import org.springframework.stereotype.Service;
@@ -48,5 +49,11 @@ public class AgentProService implements IAgentProService {
     @Override
     public AgentPro getBySiret(String siret) {
         return agentProRepository.findBySiret(siret);
+    }
+
+
+    public void ajouterListAgentPro(List<AgentPro> agentProList)
+    {
+        agentProRepository.saveAll(agentProList);
     }
 }

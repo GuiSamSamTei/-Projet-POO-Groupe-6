@@ -2,10 +2,14 @@ package com.example.gestion_location_vehicule.controller;
 
 import com.example.gestion_location_vehicule.model.AgentPar;
 import com.example.gestion_location_vehicule.service.AgentParService.AgentParService;
+import org.apache.coyote.Response;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
 @RestController
 @RequestMapping("/api/agents-particuliers")
@@ -50,6 +54,19 @@ public class AgentParController {
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Long id) {
         agentParService.deleteAgentPar(id);
+    }
+
+
+    @PostMapping("/list")
+    public ResponseEntity<?> ajouterListAgentPar(@RequestBody List<AgentPar> agentParList)
+    {
+        try{
+            agentParService.ajouterListAgentPar(agentParList);
+            return ResponseEntity.ok("La liste a ete bien ajoutés");
+        } catch (Exception e)
+        {
+            return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(null);
+        }
     }
 }
 
