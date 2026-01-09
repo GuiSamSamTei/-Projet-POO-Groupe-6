@@ -10,8 +10,9 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Utilisateur {
+public abstract class Utilisateur {
     @Id
+    private Long id;
     private String username; //nom pour se connecter
     private String mdp;
     private String email;

@@ -58,7 +58,7 @@ public class AgentService implements IAgentService {
 
     @Override
     public List<Agent> searchByAdresse(String adresse) {
-        return agentRepository.findByAdreeseContainingIgnoreCase(adresse);
+        return agentRepository.findByAdresseContainingIgnoreCase(adresse);
     }
 
     @Override

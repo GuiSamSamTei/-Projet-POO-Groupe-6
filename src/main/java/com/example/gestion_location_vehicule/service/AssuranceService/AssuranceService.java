@@ -54,19 +54,4 @@ public class AssuranceService implements IAssuranceService {
     public Assurance getByNom(String nom) {
         return assuranceRepository.findByNom(nom);
     }
-
-    @Override
-    public List<Assurance> getByPrixMax(long prixMax) {
-        return assuranceRepository.findByPrixLessThanEqual(prixMax);
-    }
-
-    @Override
-    public List<Assurance> getByPrixMin(long prixMin) {
-        return assuranceRepository.findByPrixGreaterThanEqual(prixMin);
-    }
-
-    @Override
-    public List<Assurance> getByPrixBetween(long prixMin, long prixMax) {
-        return assuranceRepository.findByPrixBetween(prixMin, prixMax);
-    }
 }

@@ -23,9 +23,4 @@ public interface IAssuranceService {
 
     Assurance getByNom(String nom);
 
-    List<Assurance> getByPrixMax(long prixMax);
-
-    List<Assurance> getByPrixMin(long prixMin);
-
-    List<Assurance> getByPrixBetween(long prixMin, long prixMax);
 }
