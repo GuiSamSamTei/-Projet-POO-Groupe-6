@@ -4,12 +4,37 @@
     <title>Inscription Loueur</title>
 </head>
 <body>
-<h1>Formulaire Loueur</h1>
-<p>Si vous voyez ceci, le template fonctionne.</p>
-<form th:action="@{/loueur/inscription}" th:object="${loueur}" method="post">
-    <label>Nom: <input type="text" th:field="*{nom}"/></label><br/>
-    <label>Prénom: <input type="text" th:field="*{prenom}"/></label><br/>
+
+<h1>Inscription Loueur</h1>
+
+<form th:action="@{/loueur/inscription}"
+      th:object="${loueur}"
+      method="post">
+
+    <label>Nom :</label><br/>
+    <input type="text" th:field="*{nom}" required/><br/><br/>
+
+    <label>Prénom :</label><br/>
+    <input type="text" th:field="*{prenom}" required/><br/><br/>
+
+    <label>Type de permis :</label><br/>
+    <input type="text" th:field="*{typepermis}" required/><br/><br/>
+
+    <label>Nom d'utilisateur :</label><br/>
+    <input type="text" th:field="*{username}" required/><br/><br/>
+
+    <label>Email :</label><br/>
+    <input type="email" th:field="*{email}" required/><br/><br/>
+
+    <label>Téléphone :</label><br/>
+    <input type="text" th:field="*{telephone}" required/><br/><br/>
+
+    <label>Mot de passe :</label><br/>
+    <input type="password" th:field="*{mdp}" required/><br/><br/>
+
     <button type="submit">S’inscrire</button>
+
 </form>
+
 </body>
 </html>

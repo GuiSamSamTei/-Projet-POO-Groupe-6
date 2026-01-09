@@ -1,6 +1,8 @@
 package com.example.gestion_location_vehicule.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
 import lombok.*;
@@ -9,15 +11,13 @@ import java.util.List;
 
 @Entity
 @Data
-@Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@DiscriminatorValue("Loueur")
 public class Loueur extends Utilisateur{
     private String typepermis;
     private String nom;
     private String prenom;
-
 
     @OneToMany(mappedBy = "loueur")
     private List<EvalA> evaldonnees;
@@ -28,6 +28,7 @@ public class Loueur extends Utilisateur{
     @OneToMany(mappedBy = "loueur")
     private List<EvalL> evalrecues;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "loueur")
     private List<Contratlocation> contratlocations;
 
