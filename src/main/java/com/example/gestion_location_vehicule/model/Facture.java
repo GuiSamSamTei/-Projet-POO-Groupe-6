@@ -1,9 +1,6 @@
 package com.example.gestion_location_vehicule.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -23,5 +20,6 @@ public class Facture {
 
     private LocalDate dateFacture;
 
+    @Column(nullable = false)
     private boolean payee;
 }

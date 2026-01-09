@@ -19,6 +19,8 @@ public class Message {
     private Long id;
     private String contenu;
     private Date dateenvoi;
+
+    @Column(nullable = false)
     private boolean lu;
 
     @ManyToOne

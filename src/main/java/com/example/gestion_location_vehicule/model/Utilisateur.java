@@ -1,6 +1,7 @@
 package com.example.gestion_location_vehicule.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -14,6 +15,7 @@ public abstract class Utilisateur {
     @Id
     private Long id;
     private String username; //nom pour se connecter
+    @JsonIgnore
     private String mdp;
     private String email;
     private String telephone;

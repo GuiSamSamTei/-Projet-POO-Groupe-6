@@ -25,9 +25,11 @@ public class Vehicule {
 
     private String couleur;
 
+
     private double notevehicule;
 
-    private boolean vehiculedispo;
+    @Column(nullable = false)
+    private Boolean vehiculedispo;
 
     private Date datedispo;
 

@@ -11,8 +11,8 @@ import lombok.*;
 @AllArgsConstructor
 public class Moto extends Vehicule {
 
-    private int cylindree;
+    private Integer cylindree;
 
-    private int nbchevaux;
+    private Integer nbchevaux;
 
 }

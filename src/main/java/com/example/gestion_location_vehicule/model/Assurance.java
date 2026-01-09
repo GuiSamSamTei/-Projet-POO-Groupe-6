@@ -18,8 +18,10 @@ public class Assurance {
 
     private String nom;
 
-    private boolean assurancepardefaut;     //assurance AZA
-
+    @Column(nullable = false)
+    private boolean assurancepardefaut;
+    //assurance AZA
+    @Column(nullable = false)
     private boolean active;     //si l'assurance n'a plus de contrat avec la plateforme ou avec un agent
 
 
