@@ -6,13 +6,13 @@ import java.util.List;
 
 public interface ILoueurService {
 
-    List<Loueur> getAll();
+    public List<Loueur> getAll();
 
-    Loueur getById(Long id);
+    public Loueur getById(Long id);
 
-    Loueur create(Loueur loueur);
+    public Loueur create(Loueur loueur);
 
-    List<Loueur> searchByNomOrPrenom(String keyword);
+    public List<Loueur> searchByNomOrPrenom(String keyword);
 
-    Loueur getByNomAndPrenom(String nom, String prenom);
+    public Loueur getByNomAndPrenom(String nom, String prenom);
 }

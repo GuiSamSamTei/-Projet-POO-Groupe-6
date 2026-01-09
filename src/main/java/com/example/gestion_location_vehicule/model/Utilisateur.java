@@ -11,8 +11,23 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public abstract class Utilisateur {
+@DiscriminatorColumn(
+        name = "DTYPE",
+        discriminatorType = DiscriminatorType.STRING,
+        length = 20
+)
+@Inheritance(strategy = InheritanceType.JOINED)
+public class Utilisateur {
     @Id
+    @GeneratedValue(
+            strategy = GenerationType.SEQUENCE,
+            generator = "utilisateur_seq"
+    )
+    @SequenceGenerator(
+            name = "utilisateur_seq",
+            sequenceName = "UTILISATEUR_SEQ",
+            allocationSize = 1
+    )
     private Long id;
     private String username; //nom pour se connecter
     @JsonIgnore
@@ -21,8 +36,8 @@ public abstract class Utilisateur {
     private String telephone;
 
     // information général pour noter
-    private double notemoyenne; // recevoir
-    private int nombreevaluations; // recevoir
+    private double notemoyenne = 0.0; // recevoir
+    private int nombreevaluations = 0; // recevoir
 
     //messages
     @OneToMany(mappedBy = "utilisateurreceive")
