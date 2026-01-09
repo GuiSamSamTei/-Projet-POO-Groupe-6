@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Inscription réussie</title>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        var loueur = [[${loueur}]];
+        console.log("Loueur depuis session :", loueur);
+        /*]]>*/
+    </script>
+</head>
+<body>
+<h1>Inscription réussie !</h1>
+
+<p th:if="${loueur != null}">
+    Bienvenue <span th:text="${loueur.username}">Username</span> !<br>
+    Email : <span th:text="${loueur.email}">Email</span><br>
+    Nombre d'évaluations : <span th:text="${loueur.nombreevaluations}">0</span><br>
+    Note moyenne : <span th:text="${loueur.notemoyenne}">0</span>
+</p>
+
+<a href="/loueur/inscription">Retour à l’inscription</a>
+</body>
+</html>
