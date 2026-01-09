@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Louer un véhicule</title>
+</head>
+<body>
+
+<h1>Louer un véhicule</h1>
+
+<form th:action="@{/location/valider}" method="post">
+
+    <!-- Dates de location -->
+    <h3>Dates de location</h3>
+
+    <label>Date de début :</label>
+    <input type="date" name="dateDebut" required><br><br>
+
+    <label>Date de fin :</label>
+    <input type="date" name="dateFin" required><br><br>
+
+    <hr>
+
+    <!-- Assurance -->
+    <h3>Choisir une assurance</h3>
+
+    <input type="radio" name="assurance" value="Par Défaut" checked>
+    <label>Assurance par défaut (AZA)</label><br>
+
+    <input type="radio" name="assurance" value="Basique">
+    <label>Assurance basique</label><br>
+
+    <input type="radio" name="assurance" value="Premium">
+    <label>Assurance premium</label><br><br>
+
+    <hr>
+
+    <!-- Lieu de dépose -->
+    <h3>Lieu de dépose du véhicule</h3>
+
+    <p>Choisissez un lieu de dépose si l’option est disponible :</p>
+
+    <select name="lieuDepose">
+        <option value="">Même lieu que le retrait</option>
+        <option value="AGENCE_CENTRE">Agence centre-ville</option>
+        <option value="GARE">Gare</option>
+        <option value="AEROPORT">Aéroport</option>
+    </select>
+
+    <br><br>
+    <hr>
+
+    <!-- Bouton -->
+    <button type="submit">Confirmer la location</button>
+
+</form>
+
+</body>
+</html>
