@@ -71,4 +71,10 @@ public class VehiculeService implements IVehiculeService{
     public Vehicule mettreAJourDisponibilite(Long vehiculeId, boolean disponible) {
         return null;
     }
+
+    @Override
+    public Vehicule addVehicule(Vehicule vehicule) {
+        return vehiculeRepository.save(vehicule);
+    }
+
 }
