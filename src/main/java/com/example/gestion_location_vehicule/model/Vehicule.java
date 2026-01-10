@@ -13,6 +13,11 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@DiscriminatorColumn(
+        name = "DTYPE",
+        discriminatorType = DiscriminatorType.STRING,
+        length = 20
+)
 public class Vehicule {
 
 
@@ -51,4 +56,9 @@ public class Vehicule {
 
     @OneToMany(mappedBy = "vehicule")
     private List<Contratlocation> contratlocations;
+
+    public String getTypeVehicule() {
+        return this.getClass().getSimpleName();
+    }
+
 }

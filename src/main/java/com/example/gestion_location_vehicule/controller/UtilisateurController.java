@@ -1,6 +1,7 @@
 package com.example.gestion_location_vehicule.controller;
 
 
+import com.example.gestion_location_vehicule.model.Utilisateur;
 import com.example.gestion_location_vehicule.request.ConnexionRequest;
 import com.example.gestion_location_vehicule.service.UtilisateurService.UtilisateurService;
 import lombok.RequiredArgsConstructor;
@@ -9,6 +10,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Optional;
 
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
@@ -24,9 +27,9 @@ public class UtilisateurController {
     public ResponseEntity<?> connexionUser (@RequestBody ConnexionRequest connexionRequest)
     {
         try{
-            long connexionOk = utilisateurService.connexionUser(connexionRequest);
+            Optional<Utilisateur> user = utilisateurService.connexionUser(connexionRequest);
 
-            if(connexionOk != -1)
+            if(user.isPresent())
                 return ResponseEntity.ok("Connexion ok");
             else
                 return ResponseEntity.ok("Connexion not ok");

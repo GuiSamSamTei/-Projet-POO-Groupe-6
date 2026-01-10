@@ -42,13 +42,6 @@ public class LoueurMVCController {
         return "redirect:/loueur/profil";
     }
 
-    // Déconnexion
-    @GetMapping("/logout")
-    public String logout(HttpSession session) {
-        session.invalidate(); // détruit la session
-        return "redirect:/loueur/inscription";
-    }
-
     @GetMapping("/profil")
     public String profil(HttpSession session, Model model) {
         // Récupère le loueur depuis la session

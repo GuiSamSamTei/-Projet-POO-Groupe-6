@@ -1,12 +1,15 @@
 package com.example.gestion_location_vehicule.controller;
 
 import com.example.gestion_location_vehicule.model.Loueur;
+import com.example.gestion_location_vehicule.model.Utilisateur;
 import com.example.gestion_location_vehicule.request.ConnexionRequest;
 import com.example.gestion_location_vehicule.service.UtilisateurService.IUtilisateurService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/connexion")
@@ -29,11 +32,11 @@ public class ConnexionController {
             Model model,
             HttpSession session
     ) {
-        long loueur = utilisateurService.connexionUser(connexionRequest);
+        Optional<Utilisateur> loueur = utilisateurService.connexionUser(connexionRequest);
 
-        if (loueur != -1) {
+        if (loueur.isPresent()) {
             // Guardar en sesión exactamente igual que en inscripción
-            session.setAttribute("user", loueur);
+            session.setAttribute("user", loueur.get().getId());
             return "redirect:/vehicules/liste";
         }
 

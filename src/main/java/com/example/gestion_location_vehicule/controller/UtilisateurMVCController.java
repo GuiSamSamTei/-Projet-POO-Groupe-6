@@ -1,7 +1,10 @@
 package com.example.gestion_location_vehicule.controller;
 
 
+import com.example.gestion_location_vehicule.model.AgentPar;
+import com.example.gestion_location_vehicule.model.AgentPro;
 import com.example.gestion_location_vehicule.model.Loueur;
+import com.example.gestion_location_vehicule.model.Utilisateur;
 import com.example.gestion_location_vehicule.repository.UtilisateurRepository;
 import com.example.gestion_location_vehicule.request.ConnexionRequest;
 import com.example.gestion_location_vehicule.service.UtilisateurService.UtilisateurService;
@@ -13,6 +16,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/utilisateur")
@@ -31,17 +36,45 @@ public class UtilisateurMVCController {
         return "utilisateur/connexion/login";
     }
 
-    @PostMapping ("/connexion")
+    @PostMapping("/connexion")
     public String connexion(@ModelAttribute ConnexionRequest connexionRequest, HttpSession session) {
 
-        long user = utilisateurService.connexionUser(connexionRequest);
+        Optional<Utilisateur> userOpt = utilisateurService.connexionUser(connexionRequest);
 
-        if (user != -1) {
-            session.setAttribute("user", user);
-            return "redirect:/loueur/profil";
-        } else {
+        if (userOpt.isEmpty()) {
+            // Login échoué
             return "redirect:/utilisateur/connexion?error=true";
         }
 
+        Utilisateur user = userOpt.get();
+        session.setAttribute("user", user.getId());
+
+        // 🔥 Redirection selon le type réel
+        if (user instanceof Loueur) {
+            session.setAttribute("role", "LOUEUR");
+            return "redirect:/loueur/profil";
+        }
+
+        if (user instanceof AgentPar) {
+            session.setAttribute("role", "AGENT_PAR");
+            return "redirect:/agent-par/profil";
+        }
+
+        if (user instanceof AgentPro) {
+            session.setAttribute("role", "AGENT_PRO");
+            return "redirect:/agent-pro/profil";
+        }
+
+        // Sécurité : type inconnu
+        session.invalidate();
+        return "redirect:/utilisateur/connexion?error=true";
+    }
+
+
+    // Déconnexion
+    @GetMapping("/logout")
+    public String logout(HttpSession session) {
+        session.invalidate();
+        return "redirect:/utilisateur/connexion";
     }
 }

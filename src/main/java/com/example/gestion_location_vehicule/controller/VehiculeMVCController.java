@@ -24,6 +24,6 @@ public class VehiculeMVCController {
         // Récupère tous les véhicules disponibles
         List<Vehicule> vehicules = vehiculeService.getAllVehicules();
         model.addAttribute("vehicules", vehicules);
-        return "loueur/vehicule/vehicules"; // Correspond à src/main/resources/templates/vehicule/vehicules.html
+        return "vehicule/vehicules"; // Correspond à src/main/resources/templates/vehicule/vehicules.html
     }
 }

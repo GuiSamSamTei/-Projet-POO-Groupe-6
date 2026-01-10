@@ -15,17 +15,10 @@ public class UtilisateurService implements IUtilisateurService {
     private final UtilisateurRepository utilisateurRepository;
 
     @Override
-    public long connexionUser(ConnexionRequest connexionRequest) {
+    public Optional<Utilisateur> connexionUser(ConnexionRequest connexionRequest) {
 
-        Optional<Utilisateur> utilisateurOpt =
-                utilisateurRepository.findByUsername(connexionRequest.getUsername());
-
-        if (utilisateurOpt.isEmpty()) {
-            return -1;
-        }
-
-        Utilisateur utilisateur = utilisateurOpt.get();
-
-        return utilisateur.getMdp().equals(connexionRequest.getPassword()) ? utilisateur.getId() : -1;
+        return utilisateurRepository.findByUsername(connexionRequest.getUsername())
+                .filter(u -> u.getMdp().equals(connexionRequest.getPassword()));
     }
 }
+
