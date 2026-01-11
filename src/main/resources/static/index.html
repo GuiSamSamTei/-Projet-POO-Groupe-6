@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>AutoPartage - Test Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 40px;
+            text-align: center;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 30px;
+            border-radius: 10px;
+            background: #f8f9fa;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .success {
+            color: #28a745;
+            font-size: 48px;
+        }
+        .error {
+            color: #dc3545;
+        }
+        .links a {
+            display: block;
+            margin: 10px 0;
+            padding: 10px;
+            background: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+        .links a:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>🚗 AutoPartage - Plateforme de Location</h1>
+    <div class="success">✅</div>
+    <h2>Frontend Static Page Loaded!</h2>
+    <p>Cette page est servie depuis <code>src/main/resources/static/index.html</code></p>
+
+    <div class="links">
+        <h3>Testez ces URLs :</h3>
+        <a href="/index.html">/index.html</a>
+        <a href="/api/vehicules">/api/vehicules (API)</a>
+        <a href="/actuator/health">/actuator/health (Health Check)</a>
+        <a href="/loueur/inscription">/loueur/inscription (Template Thymeleaf)</a>
+        <a href="/h2-console" target="_blank">/h2-console (Database Console)</a>
+    </div>
+
+    <div style="margin-top: 30px; padding: 20px; background: #e9ecef; border-radius: 5px;">
+        <h4>Informations de débogage :</h4>
+        <p><strong>Timestamp:</strong> <span id="timestamp"></span></p>
+        <p><strong>User Agent:</strong> <span id="userAgent"></span></p>
+        <button onclick="testApi()">Tester l'API Véhicules</button>
+        <div id="apiResult" style="margin-top: 10px;"></div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('timestamp').textContent = new Date().toLocaleString('fr-FR');
+    document.getElementById('userAgent').textContent = navigator.userAgent;
+
+    function testApi() {
+        const resultDiv = document.getElementById('apiResult');
+        resultDiv.innerHTML = 'Test en cours...';
+
+        fetch('/api/vehicules')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('HTTP ' + response.status);
+                }
+                return response.json();
+            })
+            .then(data => {
+                resultDiv.innerHTML = `
+                    <div style="color: green;">
+                        ✅ API fonctionne!<br>
+                        Retourne: ${JSON.stringify(data).substring(0, 100)}...
+                    </div>
+                `;
+            })
+            .catch(error => {
+                resultDiv.innerHTML = `
+                    <div style="color: red;">
+                        ❌ Erreur API: ${error.message}<br>
+                        <small>Assurez-vous que VehiculeController est implémenté</small>
+                    </div>
+                `;
+            });
+    }
+</script>
+</body>
+</html>
