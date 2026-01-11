@@ -5,7 +5,9 @@ import com.example.gestion_location_vehicule.model.Vehicule;
 import com.example.gestion_location_vehicule.request.VehiculeRequest;
 
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public interface IVehiculeService {
@@ -21,7 +23,7 @@ public interface IVehiculeService {
     Vehicule addVehicule(Vehicule vehicule);
 
 
-    //List<Vehicule> filtreVehicules(FiltreVehiculeRequest filtre);
+    List<Vehicule> filtrer(Map<String, String> filters);
 
     /**
      * Calcule le prix total d'une location pour un véhicule donné.

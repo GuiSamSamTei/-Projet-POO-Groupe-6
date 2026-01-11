@@ -11,10 +11,15 @@
         th, td {
             border: 1px solid #aaa;
             padding: 8px;
-            text-align: left;
         }
         th {
             background-color: #eee;
+        }
+        .filtres {
+            margin-bottom: 20px;
+            padding: 10px;
+            border: 1px solid #aaa;
+            background: #f9f9f9;
         }
     </style>
 </head>
@@ -22,6 +27,88 @@
 
 <h2>Liste des véhicules</h2>
 
+<!-- 🔎 FILTRES -->
+<form class="filtres" th:action="@{/vehicule/filtres}" method="get">
+
+    <!-- Type -->
+    <label>Type :</label>
+    <select name="type">
+        <option value="">-- Tous --</option>
+        <option value="voiture">Voiture</option>
+        <option value="velo">Vélo</option>
+        <option value="camion">Camion</option>
+        <option value="van">Van</option>
+        <option value="scooter">Scooter</option>
+        <option value="moto">Moto</option>
+    </select>
+
+    <!-- Marque -->
+    <label>Marque :</label>
+    <input type="text" name="marque"/>
+
+    <!-- Ville -->
+    <label>Ville :</label>
+    <input type="text" name="villedispo"/>
+
+    <!-- Prix max -->
+    <label>Prix max :</label>
+    <input type="number" name="prixjour" step="0.01"/>
+
+    <!-- Note min -->
+    <label>Note min :</label>
+    <input type="number" name="notevehicule" step="0.1"/>
+
+    <!-- Spécifique Voiture -->
+    <div>
+        <label>Automatique :</label>
+        <select name="automatique">
+            <option value="">--</option>
+            <option value="true">Oui</option>
+            <option value="false">Non</option>
+        </select>
+
+        <label>Carburant :</label>
+        <input type="text" name="carburant"/>
+    </div>
+
+    <!-- Spécifique Vélo -->
+    <div>
+        <label>Électrique :</label>
+        <select name="electrique">
+            <option value="">--</option>
+            <option value="true">Oui</option>
+            <option value="false">Non</option>
+        </select>
+    </div>
+
+    <!-- Spécifique Camion -->
+    <div>
+        <label>Charge min (kg) :</label>
+        <input type="number" name="chargemax"/>
+    </div>
+    <!-- Spécifique Moto -->
+    <div>
+        <label>Cylindrée min :</label>
+        <input type="number" name="cylindree"/>
+
+        <label>Chevaux min :</label>
+        <input type="number" name="nbchevaux"/>
+    </div>
+    <!-- Spécifique Van -->
+    <div>
+        <label>Places min :</label>
+        <input type="number" name="nombreplaces"/>
+    </div>
+
+
+
+    <br/>
+    <button type="submit">Appliquer les filtres</button>
+    <a th:href="@{/vehicule/liste}">Réinitialiser</a>
+
+</form>
+
+<!-- 📋 TABLEAU -->
 <table>
     <thead>
     <tr>
@@ -31,38 +118,70 @@
         <th>Couleur</th>
         <th>Disponibilité</th>
         <th>Ville</th>
-        <th>Type spécifique</th>
-        <th>Attributs spécifiques</th>
+        <th>Type</th>
+        <th>Détails</th>
     </tr>
     </thead>
+
     <tbody>
     <tr th:each="v : ${vehicules}">
-        <!-- Champs communs -->
-        <td th:text="${v.marque}">Marque</td>
-        <td th:text="${v.modele}">Modèle</td>
-        <td th:text="${v.prixjour}">Prix/jour</td>
-        <td th:text="${v.couleur}">Couleur</td>
-        <td th:text="${v.vehiculedispo ? 'Disponible' : 'Indisponible'}">Disponibilité</td>
-        <td th:text="${v.villedispo}">Ville</td>
+        <td th:text="${v.marque}"></td>
+        <td th:text="${v.modele}"></td>
+        <td th:text="${v.prixjour}"></td>
+        <td th:text="${v.couleur}"></td>
+        <td th:text="${v.vehiculedispo ? 'Disponible' : 'Indisponible'}"></td>
+        <td th:text="${v.villedispo}"></td>
 
-        <!-- Type réel -->
-        <td th:text="${v.typeVehicule}">Type</td>
+        <!-- Type -->
+        <td th:text="${v.typeVehicule}"></td>
 
-        <!-- Champs spécifiques selon le type -->
+        <!-- Attributs spécifiques -->
         <td>
-                <span th:if="${v.class.simpleName == 'Voiture'}">
-                    Portes: <span th:text="${v.portes}"></span>,
-                    Coffre: <span th:text="${v.coffre}"></span>
-                </span>
-            <span th:if="${v.class.simpleName == 'Moto'}">
-                    Cylindrée: <span th:text="${v.cylindree}"></span>,
-                    Type: <span th:text="${v.typeMoto}"></span>
-                </span>
-            <!-- Ajouter d'autres types si nécessaire -->
+            <span th:if="${v.typeVehicule == 'Voiture'}">
+                Portes: <span th:text="${v.nombreportes}"></span>,
+                Places: <span th:text="${v.nombreplaces}"></span>,
+                Auto: <span th:text="${v.automatique}"></span>
+            </span>
+
+            <span th:if="${v.typeVehicule == 'Velo'}">
+                Électrique: <span th:text="${v.electrique}"></span>,
+                Vitesses: <span th:text="${v.nombreVitesses}"></span>
+            </span>
+
+            <span th:if="${v.typeVehicule == 'Camion'}">
+                Charge max: <span th:text="${v.chargemax}"></span> kg
+            </span>
+
+            <span th:if="${v.typeVehicule == 'Moto'}">
+                Cylindrée: <span th:text="${v.cylindree}"></span> cc,
+                Chevaux: <span th:text="${v.nbchevaux}"></span>
+            </span>
+
+            <span th:if="${v.typeVehicule == 'Van'}">
+                Places: <span th:text="${v.nombreplaces}"></span>
+            </span>
         </td>
     </tr>
     </tbody>
 </table>
+<script>
+    const form = document.querySelector('form.filtres');
 
+    form.addEventListener('submit', function(e) {
+        const formData = new FormData(form);
+        const params = new URLSearchParams();
+
+        // Only add non-empty fields
+        formData.forEach((value, key) => {
+            if (value !== null && value.trim() !== '') {
+                params.append(key, value);
+            }
+        });
+
+        // Redirect with filtered params
+        window.location.href = form.action + '?' + params.toString();
+        e.preventDefault(); // stop normal form submission
+    });
+</script>
 </body>
 </html>

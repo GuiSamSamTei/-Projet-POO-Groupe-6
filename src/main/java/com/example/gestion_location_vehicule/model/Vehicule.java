@@ -36,6 +36,7 @@ public class Vehicule {
     @Column(nullable = false)
     private Boolean vehiculedispo;
 
+    @Temporal(TemporalType.DATE)
     private Date datedispo;
 
     private String villedispo;
