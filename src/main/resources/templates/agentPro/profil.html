@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Profil Agent Professionnel</title>
+</head>
+<body>
+
+<h2>Profil Agent Professionnel</h2>
+
+<p><strong>Raison sociale :</strong> <span th:text="${user.raisonsociale}"></span></p>
+<p><strong>SIRET :</strong> <span th:text="${user.siret}"></span></p>
+<p><strong>Username :</strong> <span th:text="${user.username}"></span></p>
+<p><strong>Email :</strong> <span th:text="${user.email}"></span></p>
+<p><strong>Téléphone :</strong> <span th:text="${user.telephone}"></span></p>
+
+<hr/>
+
+<p><strong>Adresse :</strong> <span th:text="${user.adresse}"></span></p>
+<p><strong>Téléphone pro :</strong> <span th:text="${user.telephonepro}"></span></p>
+
+<hr/>
+
+<p><strong>Note moyenne :</strong> <span th:text="${user.notemoyenne}"></span></p>
+<p><strong>Nombre d'évaluations :</strong> <span th:text="${user.nombreevaluations}"></span></p>
+<p><strong>Nombre de véhicules :</strong> <span th:text="${user.nombrevehicules}"></span></p>
+<p><strong>Revenus totaux :</strong> <span th:text="${user.revenustotaux}"></span> €</p>
+
+<a th:href="@{/utilisateur/logout}">Déconnexion</a>
+
+</body>
+</html>

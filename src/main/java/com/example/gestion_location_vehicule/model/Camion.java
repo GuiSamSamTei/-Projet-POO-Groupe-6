@@ -1,5 +1,6 @@
 package com.example.gestion_location_vehicule.model;
 
+import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import lombok.*;
 
@@ -9,6 +10,7 @@ import lombok.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@DiscriminatorValue("Camion")
 public class Camion extends Vehicule {
 
     private double chargemax; // kg

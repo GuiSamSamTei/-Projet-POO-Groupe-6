@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Inscription Agent Particulier</title>
+</head>
+<body>
+
+<h2>Inscription Agent Particulier</h2>
+
+<form th:action="@{/agent-par/inscription}" th:object="${user}" method="post">
+
+    <label>Username :</label>
+    <input type="text" th:field="*{username}" required /><br/>
+
+    <label>Mot de passe :</label>
+    <input type="password" th:field="*{mdp}" required /><br/>
+
+    <label>Email :</label>
+    <input type="email" th:field="*{email}" required /><br/>
+
+    <label>Téléphone :</label>
+    <input type="text" th:field="*{telephone}" /><br/>
+
+    <label>Nom :</label>
+    <input type="text" th:field="*{nom}" required /><br/>
+
+    <label>Prénom :</label>
+    <input type="text" th:field="*{prenom}" required /><br/>
+
+    <label>Adresse :</label>
+    <input type="text" th:field="*{adresse}" /><br/>
+
+    <label>Téléphone pro :</label>
+    <input type="text" th:field="*{telephonepro}" /><br/>
+
+    <label>IBAN :</label>
+    <input type="text" th:field="*{iban}" /><br/>
+
+    <label>BIC :</label>
+    <input type="text" th:field="*{bic}" /><br/>
+
+    <button type="submit">S'inscrire</button>
+
+</form>
+
+</body>
+</html>

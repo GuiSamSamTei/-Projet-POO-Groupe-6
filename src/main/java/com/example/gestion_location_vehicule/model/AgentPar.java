@@ -1,5 +1,7 @@
 package com.example.gestion_location_vehicule.model;
 
+import jakarta.persistence.DiscriminatorColumn;
+import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import lombok.*;
 
@@ -9,6 +11,7 @@ import lombok.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@DiscriminatorValue("AgentPar")
 public class AgentPar extends Agent{
     private String nom;
     private String prenom;

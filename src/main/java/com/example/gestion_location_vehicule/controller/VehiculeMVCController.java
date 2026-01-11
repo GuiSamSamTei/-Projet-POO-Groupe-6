@@ -20,8 +20,10 @@ public class VehiculeMVCController {
     }
 
     @GetMapping("/liste")
-    public List<Vehicule> showVehicules() {
-     // Correspond à src/main/resources/templates/vehicule/vehicules.html
-        return vehiculeService.getAllVehicules();
+    public String showVehicules(Model model) {
+        // Récupère tous les véhicules disponibles
+        List<Vehicule> vehicules = vehiculeService.getAllVehicules();
+        model.addAttribute("vehicules", vehicules);
+        return "vehicule/vehicules"; // Correspond à src/main/resources/templates/vehicule/vehicules.html
     }
 }
