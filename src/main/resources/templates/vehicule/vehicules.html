@@ -112,6 +112,7 @@
 <table>
     <thead>
     <tr>
+        <th></th>
         <th>Marque</th>
         <th>Modèle</th>
         <th>Prix/jour</th>
@@ -124,7 +125,11 @@
     </thead>
 
     <tbody>
+
     <tr th:each="v : ${vehicules}">
+        <td>
+            <a th:href="@{/loueur/louer-vehicule/{id}(id=${v.id})}">Consulter/Louer</a>
+        </td>
         <td th:text="${v.marque}"></td>
         <td th:text="${v.modele}"></td>
         <td th:text="${v.prixjour}"></td>

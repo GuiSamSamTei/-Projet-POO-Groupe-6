@@ -4,6 +4,7 @@ package com.example.gestion_location_vehicule.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @Entity
@@ -14,9 +15,19 @@ import java.util.Date;
 @AllArgsConstructor
 public class Contratlocation {
     @Id
+    @GeneratedValue(
+            strategy = GenerationType.SEQUENCE,
+            generator = "contratlocation_seq"
+    )
+    @SequenceGenerator(
+            name = "contratlocation_seq",
+            sequenceName = "CONTRATLOCATION_SEQ",
+            allocationSize = 1
+    )
     private Long id;
-    private Date datedebut;
-    private Date datefin;
+    private LocalDate datedebut;
+    private LocalDate  datefin;
+    private String lieudepot;
     //les attributs liées au classes
 
     @ManyToOne

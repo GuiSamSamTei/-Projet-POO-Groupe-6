@@ -19,6 +19,8 @@ public interface VehiculeRepository extends JpaRepository<Vehicule, Long>,
     // Filtrer les véhicules disponibles
     List<Vehicule> findByVehiculedispoTrue();
 
+    List<Vehicule> findByVehiculedispo(Boolean dipso);
+
     // Filtrer par ville de disponibilité
     List<Vehicule> findByVilledispo(String villeDispo);
 
@@ -48,6 +50,7 @@ public interface VehiculeRepository extends JpaRepository<Vehicule, Long>,
 
     // Combinaison : disponible + ville + note minimum
     List<Vehicule> findByVehiculedispoTrueAndVilledispoAndNotevehiculeGreaterThanEqual(String ville, int noteMin);
+
 
     List<Vehicule> findByAgentId(Long agent_id);
 

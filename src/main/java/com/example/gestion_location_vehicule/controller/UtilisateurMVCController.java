@@ -30,7 +30,30 @@ public class UtilisateurMVCController {
 
     // Afficher le formulaire
     @GetMapping("/connexion")
-    public String showForm(Model model) {
+    public String showForm(Model model, HttpSession session) {
+
+        Long userid = (Long) session.getAttribute("user");
+        if(session.getAttribute("user")!=null)
+        {
+            Utilisateur user = utilisateurService.getUserbyID(userid);
+            if (user instanceof Loueur) {
+
+                return "redirect:/loueur/profil";
+            }
+
+            if (user instanceof AgentPar) {
+
+                return "redirect:/agent-par/profil";
+            }
+
+            if (user instanceof AgentPro) {
+
+                return "redirect:/agent-pro/profil";
+            }
+
+        }
+
+
         model.addAttribute("connexionRequest", new ConnexionRequest());
 
         return "utilisateur/connexion/login";

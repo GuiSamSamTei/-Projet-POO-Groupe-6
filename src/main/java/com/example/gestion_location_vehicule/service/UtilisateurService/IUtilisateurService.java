@@ -8,6 +8,7 @@ import java.util.Optional;
 public interface IUtilisateurService{
 
     Optional<Utilisateur> connexionUser(ConnexionRequest connexionRequest);
+    Utilisateur getUserbyID (Long id);
 
 
 }

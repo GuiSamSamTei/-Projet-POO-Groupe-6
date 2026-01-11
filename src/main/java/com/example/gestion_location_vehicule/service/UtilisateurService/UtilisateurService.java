@@ -20,5 +20,12 @@ public class UtilisateurService implements IUtilisateurService {
         return utilisateurRepository.findByUsername(connexionRequest.getUsername())
                 .filter(u -> u.getMdp().equals(connexionRequest.getPassword()));
     }
+
+    @Override
+    public Utilisateur getUserbyID(Long id) {
+        Optional<Utilisateur> utilisateurOptional = utilisateurRepository.findById(id);
+
+        return utilisateurOptional.get();
+    }
 }
 

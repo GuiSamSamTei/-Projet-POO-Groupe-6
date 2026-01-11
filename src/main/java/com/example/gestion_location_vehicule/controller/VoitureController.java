@@ -36,7 +36,7 @@ public class VoitureController {
             Voiture voiture = voitureService.ajouterVoiture(voitureRequest);
             return ResponseEntity.ok(voiture);
         } catch (Exception e) {
-            return ResponseEntity.status(INTERNAL_SERVER_ERROR).build();
+            return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(e);
         }
     }
 

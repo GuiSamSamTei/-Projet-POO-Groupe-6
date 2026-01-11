@@ -3,14 +3,83 @@
 <head>
     <meta charset="UTF-8">
     <title>Louer un véhicule</title>
+
+    <style>
+        .vehicule-card {
+            border: 1px solid #ccc;
+            padding: 15px;
+            margin-bottom: 20px;
+            background: #f9f9f9;
+        }
+        .vehicule-card h2 {
+            margin-top: 0;
+        }
+        .vehicule-info span {
+            display: block;
+            margin-bottom: 5px;
+        }
+    </style>
 </head>
 <body>
 
 <h1>Louer un véhicule</h1>
 
-<form th:action="@{/location/valider}" method="post">
+<!-- 🚗 INFOS VEHICULE -->
+<div class="vehicule-card">
+    <h2 th:text="${vehicule.marque + ' ' + vehicule.modele}"></h2>
 
-    <!-- Dates de location -->
+    <div class="vehicule-info">
+        <span><strong>Type :</strong> <span th:text="${vehicule.typeVehicule}"></span></span>
+        <span><strong>Couleur :</strong> <span th:text="${vehicule.couleur}"></span></span>
+        <span><strong>Ville :</strong> <span th:text="${vehicule.villedispo}"></span></span>
+        <span><strong>Prix / jour :</strong> <span th:text="${vehicule.prixjour}"></span> €</span>
+    </div>
+
+    <hr>
+
+    <!-- 🚘 VOITURE -->
+    <div th:if="${vehicule instanceof T(com.example.gestion_location_vehicule.model.Voiture)}">
+        <h4>Détails voiture</h4>
+        <span>Portes : <span th:text="${vehicule.nombreportes}"></span></span>
+        <span>Places : <span th:text="${vehicule.nombreplaces}"></span></span>
+        <span>Automatique : <span th:text="${vehicule.automatique ? 'Oui' : 'Non'}"></span></span>
+        <span>Carburant : <span th:text="${vehicule.carburant}"></span></span>
+        <span>GPS : <span th:text="${vehicule.gps ? 'Oui' : 'Non'}"></span></span>
+    </div>
+
+    <!-- 🚲 VELO -->
+    <div th:if="${vehicule instanceof T(com.example.gestion_location_vehicule.model.Velo)}">
+        <h4>Détails vélo</h4>
+        <span>Électrique : <span th:text="${vehicule.electrique ? 'Oui' : 'Non'}"></span></span>
+        <span>Vitesses : <span th:text="${vehicule.nombreVitesses}"></span></span>
+        <span>Type : <span th:text="${vehicule.typeVelo}"></span></span>
+    </div>
+
+    <!-- 🏍 MOTO -->
+    <div th:if="${vehicule instanceof T(com.example.gestion_location_vehicule.model.Moto)}">
+        <h4>Détails moto</h4>
+        <span>Cylindrée : <span th:text="${vehicule.cylindree}"></span> cc</span>
+        <span>Chevaux : <span th:text="${vehicule.nbchevaux}"></span></span>
+    </div>
+
+    <!-- 🚚 CAMION -->
+    <div th:if="${vehicule instanceof T(com.example.gestion_location_vehicule.model.Camion)}">
+        <h4>Détails camion</h4>
+        <span>Charge max : <span th:text="${vehicule.chargemax}"></span> kg</span>
+        <span>Volume : <span th:text="${vehicule.volume}"></span> m³</span>
+    </div>
+
+    <!-- 🚐 VAN -->
+    <div th:if="${vehicule instanceof T(com.example.gestion_location_vehicule.model.Van)}">
+        <h4>Détails van</h4>
+        <span>Places : <span th:text="${vehicule.nombreplaces}"></span></span>
+    </div>
+
+</div>
+
+<!-- 📄 FORMULAIRE LOCATION -->
+<form th:action="@{/loueur/location/valider}" method="post">
+
     <h3>Dates de location</h3>
 
     <label>Date de début :</label>
@@ -21,26 +90,16 @@
 
     <hr>
 
-    <!-- Assurance -->
     <h3>Choisir une assurance</h3>
 
-    <input type="radio" name="assurance" value="Par Défaut" checked>
-    <label>Assurance par défaut (AZA)</label><br>
-
-    <input type="radio" name="assurance" value="Basique">
-    <label>Assurance basique</label><br>
-
-    <input type="radio" name="assurance" value="Premium">
-    <label>Assurance premium</label><br><br>
+    <input type="radio" name="assurance" value="Par Défaut" checked> Assurance par défaut<br>
+    <input type="radio" name="assurance" value="Basique"> Assurance basique<br>
+    <input type="radio" name="assurance" value="Premium"> Assurance premium<br>
 
     <hr>
 
-    <!-- Lieu de dépose -->
-    <h3>Lieu de dépose du véhicule</h3>
-
-    <p>Choisissez un lieu de dépose si l’option est disponible :</p>
-
-    <select name="lieuDepose">
+    <h3>Lieu de dépose</h3>
+    <select name="lieuDepot">
         <option value="">Même lieu que le retrait</option>
         <option value="AGENCE_CENTRE">Agence centre-ville</option>
         <option value="GARE">Gare</option>
@@ -48,9 +107,7 @@
     </select>
 
     <br><br>
-    <hr>
 
-    <!-- Bouton -->
     <button type="submit">Confirmer la location</button>
 
 </form>

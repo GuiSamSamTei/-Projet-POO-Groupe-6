@@ -22,6 +22,15 @@ public class Vehicule {
 
 
     @Id
+    @GeneratedValue(
+            strategy = GenerationType.SEQUENCE,
+            generator = "vehicule_seq"
+    )
+    @SequenceGenerator(
+            name = "vehicule_seq",
+            sequenceName = "VEHICULE_SEQ",
+            allocationSize = 1
+    )
     private Long id;
 
     private String marque;

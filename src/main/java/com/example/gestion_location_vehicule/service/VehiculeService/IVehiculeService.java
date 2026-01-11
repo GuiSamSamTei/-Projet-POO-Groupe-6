@@ -14,6 +14,8 @@ public interface IVehiculeService {
 
     List<Vehicule> getAllVehicules();
 
+    List<Vehicule> getAllVehiculesDispo();
+
     List<Vehicule> getVehiculesDisponibles(LocalDate dateDebut, LocalDate dateFin);
 
     List<Vehicule> getVehiculesParVille(String ville);

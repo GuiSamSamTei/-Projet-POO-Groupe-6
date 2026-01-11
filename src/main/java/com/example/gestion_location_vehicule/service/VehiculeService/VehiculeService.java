@@ -27,9 +27,15 @@ public class VehiculeService implements IVehiculeService{
     }
 
     @Override
+    public List<Vehicule> getAllVehiculesDispo() {
+        return List.of();
+    }
+
+    @Override
     public List<Vehicule> getVehiculesDisponibles(LocalDate dateDebut, LocalDate dateFin) {
 
-        return List.of();
+        return vehiculeRepository.findByVehiculedispo(true);
+
     }
 
     @Override

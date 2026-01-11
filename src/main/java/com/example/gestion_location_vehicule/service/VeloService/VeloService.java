@@ -33,11 +33,17 @@ public class VeloService implements IVeloService{
         velo.setTypeVelo(veloRequest.getTypeVelo());
         velo.setNombreVitesses(veloRequest.getNombrevitesses());
 
-        Optional<Agent> agentOptional = agentRepository.findById(veloRequest.getAgent_id());
-        velo.setAgent(agentOptional.get());
+        if(veloRequest.getAgent_id()!=null) {
+            Optional<Agent> agentOptional = agentRepository.findById(veloRequest.getAgent_id());
+            velo.setAgent(agentOptional.get());
+        }
 
         velo.setMarque(veloRequest.getMarque());
         velo.setModele(veloRequest.getModele());
+        velo.setPrixjour(veloRequest.getPrixjour());
+        velo.setCouleur(veloRequest.getCouleur());
+        velo.setVehiculedispo(veloRequest.getVehiculedispo());
+        velo.setVilledispo(veloRequest.getVilledispo());
 
         return veloRepository.save(velo);
     }

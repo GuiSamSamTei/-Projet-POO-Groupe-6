@@ -110,7 +110,7 @@ public class VehiculeSpecification {
         };
     }
 
-    // 🔁 Mapping String → Class
+    //  Mapping String → Class
     private static Class<? extends Vehicule> getClassByType(String type) {
         return switch (type.toLowerCase()) {
             case "voiture" -> Voiture.class;

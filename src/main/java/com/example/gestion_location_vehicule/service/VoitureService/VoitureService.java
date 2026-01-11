@@ -33,11 +33,16 @@ public class VoitureService implements IVoitureService{
         voiture.setGps(voitureRequest.getGps());
         voiture.setNombreplaces(voitureRequest.getNombreplaces());
         voiture.setNombreportes(voitureRequest.getNombreportes());
-
-        Optional<Agent> agentOptional = agentRepository.findById(voitureRequest.getAgent_id());
-        voiture.setAgent(agentOptional.get());
+        if(voitureRequest.getAgent_id()!=null) {
+            Optional<Agent> agentOptional = agentRepository.findById(voitureRequest.getAgent_id());
+            voiture.setAgent(agentOptional.get());
+        }
         voiture.setMarque(voitureRequest.getMarque());
         voiture.setModele(voitureRequest.getModele());
+        voiture.setPrixjour(voitureRequest.getPrixjour());
+        voiture.setCouleur(voitureRequest.getCouleur());
+        voiture.setVehiculedispo(voitureRequest.getVehiculedispo());
+        voiture.setVilledispo(voitureRequest.getVilledispo());
 
         return  voitureRepository.save(voiture);
     }
