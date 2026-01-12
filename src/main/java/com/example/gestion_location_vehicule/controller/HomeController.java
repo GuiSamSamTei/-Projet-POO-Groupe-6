@@ -29,11 +29,6 @@ public class HomeController {
         return "home/home";
     }
 
-    @GetMapping("/login")
-    public String login() {
-        // 重定向到已有的登录页面
-        return "redirect:/utilisateur.connexion/login";
-    }
 
     @GetMapping("/map")
     public String showMap() {

@@ -107,7 +107,7 @@
             <a th:href="@{/vehicule/liste}" class="btn btn-outline-primary me-2">
                 <i class="fas fa-search me-1"></i> Voir tous les véhicules
             </a>
-            <a th:href="@{/utilisateur.connexion/login}" class="btn btn-primary">
+            <a th:href="@{/utilisateur/connexion}" class="btn btn-primary">
                 <i class="fas fa-sign-in-alt me-1"></i> Se connecter
             </a>
         </div>
@@ -311,7 +311,7 @@
     <div class="text-center p-5 bg-primary text-white rounded">
         <h3 class="mb-3">Prêt à louer votre premier véhicule ?</h3>
         <p class="mb-4">Inscrivez-vous en 2 minutes et commencez à explorer</p>
-        <a th:href="@{/loueur/inscription}" class="btn btn-light btn-lg">
+        <a th:href="@{/register-choice}" class="btn btn-light btn-lg">
             <i class="fas fa-user-plus me-2"></i> S'inscrire gratuitement
         </a>
     </div>
@@ -329,7 +329,7 @@
                 <h5>Liens utiles</h5>
                 <ul class="list-unstyled">
                     <li><a th:href="@{/vehicule/liste}" class="text-white-50 text-decoration-none">Tous les véhicules</a></li>
-                    <li><a th:href="@{/loueur/inscription}" class="text-white-50 text-decoration-none">Inscription</a></li>
+                    <li><a th:href="@{/register-choice}" class="text-white-50 text-decoration-none">Inscription</a></li>
                     <li><a href="#" class="text-white-50 text-decoration-none">Comment ça marche ?</a></li>
                 </ul>
             </div>
@@ -348,58 +348,299 @@
 
 <!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-<!-- Leaflet JS -->
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<!-- Google Maps API -->
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB-8BMh0DN05o7KtELzcn93fK4_sS1U5Ic&callback=initMap" async defer></script>
 
 <script>
+    // 全局变量
+    let map;
+    let markers = [];
+    let infoWindow;
+    let userLocation = { lat: 48.8566, lng: 2.3522 }; // 默认巴黎
+
     // 初始化地图
-    document.addEventListener('DOMContentLoaded', function() {
-        initMap();
-    });
-
     function initMap() {
-        // 默认中心设为法国
-        var map = L.map('map').setView([46.603354, 1.888334], 6);
-
-        // 添加OpenStreetMap图层
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '© OpenStreetMap contributors'
-        }).addTo(map);
-
-        // 城市坐标映射（法国主要城市）
-        var cities = {
-            'Paris': [48.8566, 2.3522],
-            'Lyon': [45.7640, 4.8357],
-            'Marseille': [43.2965, 5.3698],
-            'Bordeaux': [44.8378, -0.5792],
-            'Lille': [50.6292, 3.0573],
-            'Toulouse': [43.6047, 1.4442],
-            'Nice': [43.7102, 7.2620],
-            'Nantes': [47.2184, -1.5536],
-            'Strasbourg': [48.5734, 7.7521],
-            'Montpellier': [43.6109, 3.8772]
-        };
-
-        // 为每个城市添加标记
-        Object.keys(cities).forEach(function(city) {
-            var marker = L.marker(cities[city]).addTo(map);
-            marker.bindPopup(`
-                <b>${city}</b><br>
-                Véhicules disponibles<br>
-                <a href="/vehicule/filtres?villedispo=${city}" class="btn btn-sm btn-primary mt-2">
-                    Voir les véhicules
-                </a>
-            `);
+        // 创建地图
+        map = new google.maps.Map(document.getElementById('map'), {
+            center: userLocation,
+            zoom: 12,
+            styles: [
+                {
+                    featureType: "poi",
+                    elementType: "labels",
+                    stylers: [{ visibility: "off" }]
+                }
+            ]
         });
+
+        // 创建信息窗口
+        infoWindow = new google.maps.InfoWindow();
+
+        // 加载车辆数据
+        loadVehicles();
 
         // 尝试获取用户位置
-        map.locate({setView: false, maxZoom: 10});
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    userLocation = {
+                        lat: position.coords.latitude,
+                        lng: position.coords.longitude
+                    };
+                    map.setCenter(userLocation);
+                    addUserMarker();
+                },
+                () => {
+                    console.log("Location permission denied");
+                }
+            );
+        }
 
-        map.on('locationfound', function(e) {
-            L.marker(e.latlng).addTo(map)
-                .bindPopup("Vous êtes ici").openPopup();
+        // "Ma position" 按钮事件
+        document.getElementById('locateMe').addEventListener('click', function() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        userLocation = {
+                            lat: position.coords.latitude,
+                            lng: position.coords.longitude
+                        };
+                        map.setCenter(userLocation);
+                        map.setZoom(15);
+                        addUserMarker();
+                    }
+                );
+            }
         });
     }
+
+    // 添加用户位置标记
+    function addUserMarker() {
+        new google.maps.Marker({
+            position: userLocation,
+            map: map,
+            icon: {
+                path: google.maps.SymbolPath.CIRCLE,
+                scale: 8,
+                fillColor: "#4285F4",
+                fillOpacity: 1,
+                strokeWeight: 2,
+                strokeColor: "#FFFFFF"
+            },
+            title: "Votre position"
+        });
+    }
+
+    // 加载车辆数据
+    function loadVehicles() {
+        // 这里调用后端API获取车辆数据
+        // 示例：从后端API获取数据
+        fetch('/api/vehicules/nearby?lat=' + userLocation.lat + '&lng=' + userLocation.lng + '&radius=10')
+            .then(response => response.json())
+            .then(vehicles => {
+                // 清除现有标记
+                clearMarkers();
+
+                // 为每辆车添加标记
+                vehicles.forEach(vehicle => {
+                    addVehicleMarker(vehicle);
+                });
+            })
+            .catch(error => {
+                console.error('Error loading vehicles:', error);
+                // 如果没有API，使用模拟数据
+                loadMockVehicles();
+            });
+    }
+
+    // 添加车辆标记
+    function addVehicleMarker(vehicle) {
+        const icon = getVehicleIcon(vehicle.type);
+
+        const marker = new google.maps.Marker({
+            position: { lat: vehicle.latitude, lng: vehicle.longitude },
+            map: map,
+            icon: icon,
+            title: vehicle.marque + ' ' + vehicle.modele
+        });
+
+        // 点击标记显示信息窗口
+        marker.addListener('click', () => {
+            const content = createInfoWindowContent(vehicle);
+            infoWindow.setContent(content);
+            infoWindow.open(map, marker);
+        });
+
+        markers.push(marker);
+    }
+
+    // 根据车辆类型获取图标
+    function getVehicleIcon(vehicleType) {
+        const baseIcon = {
+            url: `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(`
+                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40">
+                    <circle cx="20" cy="20" r="18" fill="${getVehicleColor(vehicleType)}" stroke="white" stroke-width="3"/>
+                    <text x="20" y="25" font-family="Arial" font-size="18" fill="white" text-anchor="middle">
+                        ${getVehicleIconLetter(vehicleType)}
+                    </text>
+                </svg>
+            `)}`,
+            scaledSize: new google.maps.Size(40, 40),
+            origin: new google.maps.Point(0, 0),
+            anchor: new google.maps.Point(20, 20)
+        };
+
+        return baseIcon;
+    }
+
+    // 获取车辆颜色
+    function getVehicleColor(type) {
+        const colors = {
+            'voiture': '#3498db',    // 蓝色
+            'moto': '#2ecc71',       // 绿色
+            'camion': '#f39c12',     // 橙色
+            'van': '#9b59b6',        // 紫色
+            'scooter': '#1abc9c',    // 青色
+            'velo': '#e74c3c'        // 红色
+        };
+        return colors[type] || '#3498db';
+    }
+
+    // 获取车辆图标字母
+    function getVehicleIconLetter(type) {
+        const letters = {
+            'voiture': 'V',
+            'moto': 'M',
+            'camion': 'C',
+            'van': 'V',
+            'scooter': 'S',
+            'velo': 'B'
+        };
+        return letters[type] || 'V';
+    }
+
+    // 创建信息窗口内容
+    function createInfoWindowContent(vehicle) {
+        return `
+            <div class="vehicle-info-window">
+                <h6 class="fw-bold">${vehicle.marque} ${vehicle.modele}</h6>
+                <p class="mb-1">
+                    <i class="fas fa-tag me-1"></i>
+                    <span class="badge bg-${getVehicleColorClass(vehicle.type)}">
+                        ${vehicle.type.charAt(0).toUpperCase() + vehicle.type.slice(1)}
+                    </span>
+                </p>
+                <p class="mb-1"><i class="fas fa-euro-sign me-1"></i> ${vehicle.prixJournalier} €/jour</p>
+                <p class="mb-1"><i class="fas fa-gas-pump me-1"></i> ${vehicle.carburant}</p>
+                <p class="mb-3"><i class="fas fa-calendar-alt me-1"></i> Disponible maintenant</p>
+                <div class="d-grid gap-2">
+                    <a href="/vehicule/details/${vehicle.id}" class="btn btn-sm btn-primary">
+                        <i class="fas fa-info-circle me-1"></i> Détails
+                    </a>
+                    <a href="/reservation/nouvelle/${vehicle.id}" class="btn btn-sm btn-success">
+                        <i class="fas fa-calendar-check me-1"></i> Réserver
+                    </a>
+                </div>
+            </div>
+        `;
+    }
+
+    // 获取车辆颜色类
+    function getVehicleColorClass(type) {
+        const classes = {
+            'voiture': 'primary',
+            'moto': 'success',
+            'camion': 'warning',
+            'van': 'info',
+            'scooter': 'secondary',
+            'velo': 'danger'
+        };
+        return classes[type] || 'primary';
+    }
+
+    // 清除所有标记
+    function clearMarkers() {
+        markers.forEach(marker => marker.setMap(null));
+        markers = [];
+    }
+
+    // 加载模拟数据（用于测试）
+    function loadMockVehicles() {
+        const mockVehicles = [
+            {
+                id: 1,
+                marque: 'Peugeot',
+                modele: '208',
+                type: 'voiture',
+                latitude: 48.8566,
+                longitude: 2.3522,
+                prixJournalier: 45,
+                carburant: 'Essence'
+            },
+            {
+                id: 2,
+                marque: 'Renault',
+                modele: 'Clio',
+                type: 'voiture',
+                latitude: 48.8600,
+                longitude: 2.3400,
+                prixJournalier: 40,
+                carburant: 'Diesel'
+            },
+            {
+                id: 3,
+                marque: 'Yamaha',
+                modele: 'MT-07',
+                type: 'moto',
+                latitude: 48.8500,
+                longitude: 2.3600,
+                prixJournalier: 65,
+                carburant: 'Essence'
+            },
+            {
+                id: 4,
+                marque: 'Mercedes',
+                modele: 'Sprinter',
+                type: 'van',
+                latitude: 48.8550,
+                longitude: 2.3300,
+                prixJournalier: 120,
+                carburant: 'Diesel'
+            },
+            {
+                id: 5,
+                marque: 'Peugeot',
+                modele: 'Partner',
+                type: 'camion',
+                latitude: 48.8650,
+                longitude: 2.3200,
+                prixJournalier: 85,
+                carburant: 'Diesel'
+            }
+        ];
+
+        mockVehicles.forEach(vehicle => {
+            addVehicleMarker(vehicle);
+        });
+    }
+
+    // 地图加载完成后初始化
+    document.addEventListener('DOMContentLoaded', function() {
+        // 设置日期输入框的语言为法语
+        const dateInputs = document.querySelectorAll('input[type="date"]');
+        dateInputs.forEach(input => {
+            // 设置最小值（可选）
+            const today = new Date().toISOString().split('T')[0];
+            input.min = today;
+
+            // 添加法语标签
+            input.setAttribute('lang', 'fr-FR');
+            input.setAttribute('title', 'Choisissez une date');
+        });
+
+        // 初始化地图
+        initMap();
+    });
 </script>
 </body>
 </html>
