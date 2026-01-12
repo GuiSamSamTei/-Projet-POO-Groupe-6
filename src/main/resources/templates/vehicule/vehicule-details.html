@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Détails du véhicule - AutoPartage</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome 图标 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <style>
+        body {
+            background-color: #f8f9fa;
+            padding-top: 20px;
+        }
+
+        .details-container {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 40px;
+        }
+
+        .vehicle-header {
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+
+        .info-card {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 4px solid #3498db;
+        }
+
+        .spec-badge {
+            background-color: #e3f2fd;
+            color: #1565c0;
+            padding: 5px 10px;
+            border-radius: 20px;
+            margin-right: 5px;
+            margin-bottom: 5px;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+<!-- 导航栏 -->
+<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+    <div class="container">
+        <a class="navbar-brand" th:href="@{/}">
+            <i class="fas fa-car me-2 text-primary"></i>
+            <span class="fw-bold">AutoPartage</span>
+        </a>
+        <div class="d-flex align-items-center">
+            <a th:href="@{/vehicule/liste}" class="btn btn-outline-primary me-2">
+                <i class="fas fa-list me-1"></i> Liste
+            </a>
+            <a th:href="@{/}" class="btn btn-primary">
+                <i class="fas fa-home me-1"></i> Accueil
+            </a>
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a th:href="@{/}">Accueil</a></li>
+            <li class="breadcrumb-item"><a th:href="@{/vehicule/liste}">Véhicules</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Détails</li>
+        </ol>
+    </nav>
+
+    <div class="details-container">
+        <div id="loading" class="text-center">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Chargement...</span>
+            </div>
+            <p class="mt-2">Chargement des détails...</p>
+        </div>
+
+        <div id="vehicleDetails" style="display: none;">
+            <!-- Les détails seront chargés ici via JavaScript -->
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const type = '[[${type}]]';
+        const id = '[[${id}]]';
+
+        loadVehicleDetails(type, id);
+    });
+
+    function loadVehicleDetails(type, id) {
+        let apiUrl = '';
+
+        switch(type) {
+            case 'voiture':
+                apiUrl = `/api/voitures/${id}`;
+                break;
+            case 'velo':
+                apiUrl = `/api/velos/${id}`;
+                break;
+            case 'scooter':
+                apiUrl = `/api/scooters/${id}`;
+                break;
+            // Ajouter d'autres types ici...
+            default:
+                document.getElementById('loading').innerHTML = '<p class="text-danger">Type de véhicule non supporté</p>';
+                return;
+        }
+
+        fetch(apiUrl)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Véhicule non trouvé');
+                }
+                return response.json();
+            })
+            .then(vehicle => {
+                displayVehicleDetails(vehicle, type);
+            })
+            .catch(error => {
+                document.getElementById('loading').innerHTML = `
+                    <div class="alert alert-danger" role="alert">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        Erreur: ${error.message}
+                    </div>
+                    <a href="/vehicule/liste" class="btn btn-primary mt-3">
+                        <i class="fas fa-arrow-left me-2"></i> Retour à la liste
+                    </a>
+                `;
+            });
+    }
+
+    function displayVehicleDetails(vehicle, type) {
+        document.getElementById('loading').style.display = 'none';
+        const container = document.getElementById('vehicleDetails');
+        container.style.display = 'block';
+
+        // Formater le type pour l'affichage
+        const typeDisplay = {
+            'voiture': 'Voiture',
+            'velo': 'Vélo',
+            'scooter': 'Scooter'
+        }[type] || type;
+
+        container.innerHTML = `
+            <div class="vehicle-header">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <h2>${vehicle.marque || ''} ${vehicle.modele || ''}</h2>
+                        <p class="text-muted">
+                            <i class="fas fa-tag me-2"></i>
+                            <span class="badge bg-primary">${typeDisplay}</span>
+                            <span class="badge ${vehicle.vehiculedispo ? 'bg-success' : 'bg-danger'} ms-2">
+                                ${vehicle.vehiculedispo ? 'Disponible' : 'Indisponible'}
+                            </span>
+                        </p>
+                    </div>
+                    <div class="btn-group">
+                        <a href="/vehicule/formulaire/modifier/${type}/${vehicle.id}" class="btn btn-warning">
+                            <i class="fas fa-edit me-2"></i> Modifier
+                        </a>
+                        <button class="btn btn-danger" onclick="deleteVehicle('${type}', ${vehicle.id})">
+                            <i class="fas fa-trash me-2"></i> Supprimer
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="info-card">
+                        <h5><i class="fas fa-info-circle me-2"></i> Informations générales</h5>
+                        <ul class="list-unstyled">
+                            <li class="mb-2"><strong>Marque:</strong> ${vehicle.marque || 'Non spécifié'}</li>
+                            <li class="mb-2"><strong>Modèle:</strong> ${vehicle.modele || 'Non spécifié'}</li>
+                            <li class="mb-2"><strong>Couleur:</strong> ${vehicle.couleur || 'Non spécifié'}</li>
+                            <li class="mb-2"><strong>Prix/jour:</strong> ${vehicle.prixjour ? vehicle.prixjour + ' €' : 'Non spécifié'}</li>
+                            <li class="mb-2"><strong>Note:</strong> ${vehicle.notevehicule ? vehicle.notevehicule + '/5' : 'Non évalué'}</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="info-card">
+                        <h5><i class="fas fa-map-marker-alt me-2"></i> Localisation</h5>
+                        <ul class="list-unstyled">
+                            <li class="mb-2"><strong>Ville:</strong> ${vehicle.villedispo || 'Non spécifié'}</li>
+                            <li class="mb-2"><strong>Disponibilité:</strong> ${vehicle.vehiculedispo ? 'Immédiate' : 'Non disponible'}</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            ${getSpecificDetails(vehicle, type)}
+
+            <div class="mt-4 pt-3 border-top">
+                <div class="d-flex justify-content-between">
+                    <a href="/vehicule/liste" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left me-2"></i> Retour à la liste
+                    </a>
+                    <div>
+                        <a href="#" class="btn btn-outline-primary me-2">
+                            <i class="fas fa-calendar me-2"></i> Voir disponibilités
+                        </a>
+                        <a href="#" class="btn btn-success">
+                            <i class="fas fa-shopping-cart me-2"></i> Réserver
+                        </a>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    function getSpecificDetails(vehicle, type) {
+        if (type === 'voiture') {
+            return `
+                <div class="info-card">
+                    <h5><i class="fas fa-car me-2"></i> Spécificités Voiture</h5>
+                    <div class="d-flex flex-wrap">
+                        ${vehicle.nombreportes ? `<span class="spec-badge"><i class="fas fa-door-open me-1"></i> ${vehicle.nombreportes} portes</span>` : ''}
+                        ${vehicle.nombreplaces ? `<span class="spec-badge"><i class="fas fa-users me-1"></i> ${vehicle.nombreplaces} places</span>` : ''}
+                        ${vehicle.carburant ? `<span class="spec-badge"><i class="fas fa-gas-pump me-1"></i> ${vehicle.carburant}</span>` : ''}
+                        ${vehicle.automatique ? `<span class="spec-badge"><i class="fas fa-cog me-1"></i> ${vehicle.automatique === 'true' ? 'Automatique' : 'Manuelle'}</span>` : ''}
+                        ${vehicle.gps ? `<span class="spec-badge"><i class="fas fa-map-marked-alt me-1"></i> ${vehicle.gps === 'true' ? 'Avec GPS' : 'Sans GPS'}</span>` : ''}
+                        ${vehicle.coffrevolume ? `<span class="spec-badge"><i class="fas fa-suitcase me-1"></i> ${vehicle.coffrevolume}L coffre</span>` : ''}
+                        ${vehicle.nbchevaux ? `<span class="spec-badge"><i class="fas fa-horse me-1"></i> ${vehicle.nbchevaux} chevaux</span>` : ''}
+                    </div>
+                </div>
+            `;
+        } else if (type === 'velo') {
+            return `
+                <div class="info-card">
+                    <h5><i class="fas fa-bicycle me-2"></i> Spécificités Vélo</h5>
+                    <div class="d-flex flex-wrap">
+                        ${vehicle.typeVelo ? `<span class="spec-badge"><i class="fas fa-bicycle me-1"></i> ${vehicle.typeVelo}</span>` : ''}
+                        ${vehicle.nombrevitesses ? `<span class="spec-badge"><i class="fas fa-cogs me-1"></i> ${vehicle.nombrevitesses} vitesses</span>` : ''}
+                        ${vehicle.electrique ? `<span class="spec-badge"><i class="fas fa-bolt me-1"></i> ${vehicle.electrique === 'true' ? 'Électrique' : 'Non électrique'}</span>` : ''}
+                    </div>
+                </div>
+            `;
+        }
+        return '';
+    }
+
+    function deleteVehicle(type, id) {
+        Swal.fire({
+            title: 'Êtes-vous sûr?',
+            text: "Cette action ne peut pas être annulée!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Oui, supprimer!',
+            cancelButtonText: 'Annuler'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                let apiUrl = '';
+
+                switch(type) {
+                    case 'voiture':
+                        apiUrl = `/api/voitures/${id}`;
+                        break;
+                    case 'velo':
+                        apiUrl = `/api/velos/${id}`;
+                        break;
+                    case 'scooter':
+                        apiUrl = `/api/scooters/${id}`;
+                        break;
+                    default:
+                        Swal.fire('Erreur', 'Type de véhicule non supporté', 'error');
+                        return;
+                }
+
+                fetch(apiUrl, {
+                    method: 'DELETE'
+                })
+                .then(response => {
+                    if (response.ok) {
+                        Swal.fire(
+                            'Supprimé!',
+                            'Le véhicule a été supprimé.',
+                            'success'
+                        ).then(() => {
+                            window.location.href = '/vehicule/liste';
+                        });
+                    } else {
+                        Swal.fire(
+                            'Erreur!',
+                            'Erreur lors de la suppression.',
+                            'error'
+                        );
+                    }
+                })
+                .catch(error => {
+                    Swal.fire(
+                        'Erreur!',
+                        'Erreur réseau: ' + error.message,
+                        'error'
+                    );
+                });
+            }
+        });
+    }
+</script>
+</body>
+</html>

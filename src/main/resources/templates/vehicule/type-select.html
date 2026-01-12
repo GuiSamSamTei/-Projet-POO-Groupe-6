@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ajouter un véhicule - AutoPartage</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome 图标 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2c3e50;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            padding-top: 20px;
+        }
+
+        .hero-section {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 60px 0;
+            margin-bottom: 40px;
+            border-radius: 0 0 20px 20px;
+        }
+
+        .card {
+            border-radius: 15px;
+            border: none;
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+            height: 100%;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+        }
+
+        .card-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .card-voiture { background: linear-gradient(135deg, #e3f2fd, #bbdefb); }
+        .card-moto { background: linear-gradient(135deg, #f3e5f5, #e1bee7); }
+        .card-camion { background: linear-gradient(135deg, #e8f5e9, #c8e6c9); }
+        .card-van { background: linear-gradient(135deg, #fff3e0, #ffe0b2); }
+        .card-scooter { background: linear-gradient(135deg, #e0f7fa, #b2ebf2); }
+        .card-velo { background: linear-gradient(135deg, #fce4ec, #f8bbd9); }
+
+        .type-label {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(255,255,255,0.9);
+            padding: 3px 10px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .search-container {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-top: -30px;
+            position: relative;
+            z-index: 10;
+        }
+    </style>
+</head>
+<body>
+<!-- 导航栏 -->
+<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+    <div class="container">
+        <!-- Logo -->
+        <a class="navbar-brand" th:href="@{/}">
+            <i class="fas fa-car me-2 text-primary"></i>
+            <span class="fw-bold">AutoPartage</span>
+        </a>
+
+        <!-- 导航链接 -->
+        <div class="d-flex align-items-center">
+            <a th:href="@{/vehicule/liste}" class="btn btn-outline-primary me-2">
+                <i class="fas fa-list me-1"></i> Voir tous les véhicules
+            </a>
+            <a th:href="@{/}" class="btn btn-primary">
+                <i class="fas fa-home me-1"></i> Accueil
+            </a>
+        </div>
+    </div>
+</nav>
+
+<!-- Hero 区域 -->
+<section class="hero-section">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <h1 class="display-5 fw-bold mb-3">Ajouter un nouveau véhicule</h1>
+                <p class="lead mb-4">Sélectionnez le type de véhicule que vous souhaitez ajouter à la plateforme.</p>
+            </div>
+            <div class="col-lg-4">
+                <img src="https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80"
+                     class="img-fluid rounded shadow" alt="Ajouter véhicule">
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="container">
+    <div class="row g-4">
+        <!-- Voiture -->
+        <div class="col-md-4 col-sm-6">
+            <div class="card card-voiture" onclick="selectType('voiture')">
+                <div class="card-body text-center p-5">
+                    <div class="type-label">Voiture</div>
+                    <i class="fas fa-car card-icon text-primary"></i>
+                    <h4 class="card-title">Voiture</h4>
+                    <p class="card-text">Voitures particulières, berlines, SUV, etc.</p>
+                    <div class="mt-3">
+                        <span class="badge bg-light text-dark me-1">4-5 places</span>
+                        <span class="badge bg-light text-dark">GPS</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Moto -->
+        <div class="col-md-4 col-sm-6">
+            <div class="card card-moto" onclick="selectType('moto')">
+                <div class="card-body text-center p-5">
+                    <div class="type-label">Moto</div>
+                    <i class="fas fa-motorcycle card-icon text-success"></i>
+                    <h4 class="card-title">Moto</h4>
+                    <p class="card-text">Motos, scooters, motos-cross, etc.</p>
+                    <div class="mt-3">
+                        <span class="badge bg-light text-dark me-1">2 roues</span>
+                        <span class="badge bg-light text-dark">Cylindrée</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Camion -->
+        <div class="col-md-4 col-sm-6">
+            <div class="card card-camion" onclick="selectType('camion')">
+                <div class="card-body text-center p-5">
+                    <div class="type-label">Camion</div>
+                    <i class="fas fa-truck card-icon text-danger"></i>
+                    <h4 class="card-title">Camion</h4>
+                    <p class="card-text">Camions, poids lourds, utilitaires</p>
+                    <div class="mt-3">
+                        <span class="badge bg-light text-dark me-1">Transport</span>
+                        <span class="badge bg-light text-dark">Grand volume</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Van -->
+        <div class="col-md-4 col-sm-6">
+            <div class="card card-van" onclick="selectType('van')">
+                <div class="card-body text-center p-5">
+                    <div class="type-label">Van</div>
+                    <i class="fas fa-shuttle-van card-icon text-warning"></i>
+                    <h4 class="card-title">Van</h4>
+                    <p class="card-text">Vans, minibus, véhicules familiaux</p>
+                    <div class="mt-3">
+                        <span class="badge bg-light text-dark me-1">Famille</span>
+                        <span class="badge bg-light text-dark">7+ places</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Scooter -->
+        <div class="col-md-4 col-sm-6">
+            <div class="card card-scooter" onclick="selectType('scooter')">
+                <div class="card-body text-center p-5">
+                    <div class="type-label">Scooter</div>
+                    <i class="fas fa-motorcycle card-icon text-info"></i>
+                    <h4 class="card-title">Scooter</h4>
+                    <p class="card-text">Scooters électriques et thermiques</p>
+                    <div class="mt-3">
+                        <span class="badge bg-light text-dark me-1">Économique</span>
+                        <span class="badge bg-light text-dark">Ville</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Vélo -->
+        <div class="col-md-4 col-sm-6">
+            <div class="card card-velo" onclick="selectType('velo')">
+                <div class="card-body text-center p-5">
+                    <div class="type-label">Vélo</div>
+                    <i class="fas fa-bicycle card-icon text-secondary"></i>
+                    <h4 class="card-title">Vélo</h4>
+                    <p class="card-text">Vélos classiques et électriques</p>
+                    <div class="mt-3">
+                        <span class="badge bg-light text-dark me-1">Écologique</span>
+                        <span class="badge bg-light text-dark">Santé</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center mt-5">
+        <a th:href="@{/vehicule/liste}" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left me-2"></i> Retour à la liste des véhicules
+        </a>
+    </div>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    function selectType(type) {
+        // 跳转到对应的添加页面
+        window.location.href = '/vehicule/formulaire/ajouter/' + type;
+    }
+</script>
+</body>
+</html>

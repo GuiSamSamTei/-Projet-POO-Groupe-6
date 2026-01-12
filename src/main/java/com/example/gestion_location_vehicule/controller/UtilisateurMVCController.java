@@ -7,15 +7,15 @@ import com.example.gestion_location_vehicule.model.Loueur;
 import com.example.gestion_location_vehicule.model.Utilisateur;
 import com.example.gestion_location_vehicule.repository.UtilisateurRepository;
 import com.example.gestion_location_vehicule.request.ConnexionRequest;
+import com.example.gestion_location_vehicule.service.AgentParService.AgentParService;
+import com.example.gestion_location_vehicule.service.AgentProService.AgentProService;
+import com.example.gestion_location_vehicule.service.LoueurService.LoueurService;
 import com.example.gestion_location_vehicule.service.UtilisateurService.UtilisateurService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
@@ -26,6 +26,9 @@ public class UtilisateurMVCController {
 
     private final UtilisateurService utilisateurService;
     private final UtilisateurRepository utilisateurRepository;
+    private final AgentParService agentParService;
+    private final AgentProService agentProService;
+    private final LoueurService loueurService;
 
 
     // Afficher le formulaire
@@ -91,6 +94,37 @@ public class UtilisateurMVCController {
         // Sécurité : type inconnu
         session.invalidate();
         return "redirect:/utilisateur/connexion?error=true";
+    }
+
+
+    @GetMapping("/profile/{id}")
+    public String profil(@PathVariable Long id, Model model) {
+
+        Utilisateur user = utilisateurService.getUserbyID(id);
+
+        if (user instanceof AgentPar) {
+
+            model.addAttribute("utilisateur", user);
+            return "agentPar/profilVisitAgentPar";
+        }
+        if (user instanceof AgentPro) {
+            model.addAttribute("utilisateur", user);
+
+            return "agentPro/profilVisitAgentPro";
+        }
+        if (user instanceof Loueur) {
+            model.addAttribute("utilisateur", user);
+
+            return "loueur/profilVisitLoueur";
+
+        }
+
+
+        return "redirect:/utilisateur/profil?error=true";
+
+
+
+
     }
 
 

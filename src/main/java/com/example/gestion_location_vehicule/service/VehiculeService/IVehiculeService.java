@@ -8,6 +8,8 @@ import com.example.gestion_location_vehicule.model.Vehicule;
 
 public interface IVehiculeService {
 
+    Vehicule getVehciuleByid(Long id);
+
     List<Vehicule> getAllVehicules();
 
     List<Vehicule> getAllVehiculesDispo();
