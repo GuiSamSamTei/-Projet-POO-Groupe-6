@@ -16,6 +16,12 @@ public class Message {
 
 
     @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "message_seq")
+    @SequenceGenerator(
+        name = "message_seq",
+        sequenceName = "MESSAGE_SEQ",
+        allocationSize = 1
+    )
     private Long id;
     private String contenu;
     private Date dateenvoi;
