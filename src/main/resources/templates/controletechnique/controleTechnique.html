@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Contrôle technique</title>
+</head>
+<body>
+
+<h1>Contrôle technique du véhicule</h1>
+
+<p>
+    Véhicule :
+    <span th:text="${vehicule.marque}"></span>
+    <span th:text="${vehicule.modele}"></span>
+</p>
+
+<form th:action="@{/loueur/controle-technique/enregistrer}"
+      th:object="${controleTechnique}"
+      method="post">
+
+    <!-- Lien avec le véhicule -->
+    <input type="hidden" th:field="*{vehicule.id}"/>
+
+    <label>Date du contrôle :</label><br>
+    <input type="date" th:field="*{dateControle}" required><br><br>
+
+    <label>Date d'expiration :</label><br>
+    <input type="date" th:field="*{dateExpiration}" required><br><br>
+
+    <label>Contrôle valide :</label><br>
+    <select th:field="*{valide}">
+        <option value="true">Oui</option>
+        <option value="false">Non</option>
+    </select><br><br>
+
+    <label>Commentaire :</label><br>
+    <textarea th:field="*{commentaire}" rows="4" cols="40"></textarea><br><br>
+
+    <button type="submit">Enregistrer</button>
+
+</form>
+
+</body>
+</html>
