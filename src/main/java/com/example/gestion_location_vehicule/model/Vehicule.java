@@ -3,25 +3,8 @@ package com.example.gestion_location_vehicule.model;
 import java.util.Date;
 import java.util.List;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.DiscriminatorColumn;
-import jakarta.persistence.DiscriminatorType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.SequenceGenerator;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
+import jakarta.persistence.*;
+import lombok.*;
 
 @Entity
 @Data
@@ -36,7 +19,6 @@ import lombok.Setter;
 )
 public class Vehicule {
 
-
     @Id
     @GeneratedValue(
             strategy = GenerationType.SEQUENCE,
@@ -50,11 +32,8 @@ public class Vehicule {
     private Long id;
 
     private String marque;
-
     private String modele;
-
     private String couleur;
-
 
     private double notevehicule;
 
@@ -66,7 +45,7 @@ public class Vehicule {
 
     private String villedispo;
 
-    private double kilometrage;
+    private double kilometrage; // kilometrage total du véhicule
 
     private double prixjour;
 
@@ -83,8 +62,11 @@ public class Vehicule {
     @OneToMany(mappedBy = "vehicule")
     private List<Contratlocation> contratlocations;
 
+    // ⚡ Nouvelle ligne pour lier les kilométrages
+    @OneToMany(mappedBy = "vehicule", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<KilometrageVehicule> kilometrages;
+
     public String getTypeVehicule() {
         return this.getClass().getSimpleName();
     }
-
 }
