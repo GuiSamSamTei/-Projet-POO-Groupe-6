@@ -1,9 +1,6 @@
 package com.example.gestion_location_vehicule.model;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.List;
@@ -35,4 +32,7 @@ public class Agent extends Utilisateur {
 
     @OneToMany(mappedBy = "agent")
     private List<EvalL> evaldonnees;
+
+    @OneToMany(mappedBy = "agent")
+    private List<ConventionneParking> conventionneParkingList;
 }
