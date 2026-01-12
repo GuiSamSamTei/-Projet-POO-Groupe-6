@@ -22,8 +22,8 @@ public class Agent extends Utilisateur {
     private String bic;
     //private List<OptionPayante> optionsActives;
     //statistic
-    private int nombrevehicules;
-    private double revenustotaux;
+    private Integer nombrevehicules;
+    private Double revenustotaux;
 
     @OneToMany(mappedBy = "agent")
     private List<Vehicule> vehicules;
