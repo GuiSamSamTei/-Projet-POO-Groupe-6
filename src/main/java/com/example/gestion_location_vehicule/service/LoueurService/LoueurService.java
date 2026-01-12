@@ -1,11 +1,11 @@
 package com.example.gestion_location_vehicule.service.LoueurService;
 
-import com.example.gestion_location_vehicule.model.AgentPro;
-import com.example.gestion_location_vehicule.model.Loueur;
-import com.example.gestion_location_vehicule.repository.LoueurRepository;
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import com.example.gestion_location_vehicule.model.Loueur;
+import com.example.gestion_location_vehicule.repository.LoueurRepository;
 
 @Service
 public class LoueurService implements ILoueurService {

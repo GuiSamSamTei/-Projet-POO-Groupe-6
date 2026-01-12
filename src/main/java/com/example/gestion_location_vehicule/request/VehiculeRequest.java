@@ -1,11 +1,8 @@
 package com.example.gestion_location_vehicule.request;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
-import lombok.Data;
-
 import java.util.Date;
+
+import lombok.Data;
 
 @Data
 public class VehiculeRequest {

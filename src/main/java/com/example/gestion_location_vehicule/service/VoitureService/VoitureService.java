@@ -1,7 +1,7 @@
 package com.example.gestion_location_vehicule.service.VoitureService;
 
 import com.example.gestion_location_vehicule.model.Agent;
-import com.example.gestion_location_vehicule.repository.AgentRepository;;
+import com.example.gestion_location_vehicule.repository.AgentRepository;
 import com.example.gestion_location_vehicule.model.Voiture;
 import com.example.gestion_location_vehicule.repository.VoitureRepository;
 import com.example.gestion_location_vehicule.request.VoitureRequest;
