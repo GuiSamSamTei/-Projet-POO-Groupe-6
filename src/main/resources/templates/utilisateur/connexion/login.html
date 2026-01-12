@@ -212,15 +212,8 @@
                             <div class="mb-3">
                                 <label class="form-label fw-semibold">Identifiant</label>
                                 <div class="input-group">
-                                    <span class="input-group-text bg-light">
-                                        <i class="fas fa-user me-1"></i>
-                                    </span>
-                                    <input type="text"
-                                           th:field="*{username}"
-                                           class="form-control form-control-lg"
-                                           placeholder="votre identifiant"
-                                           required
-                                           id="username">
+                                    <span class="input-group-text bg-light"><i class="fas fa-envelope"></i></span>
+                                    <input type="text" th:field="*{username}" class="form-control form-control-lg" placeholder="Email ou nom d'utilisateur" required id="username">
                                 </div>
                             </div>
 
@@ -247,7 +240,7 @@
 
                     <div class="text-center border-top pt-4 mt-4">
                         <p class="text-muted mb-2">Nouveau sur AutoPartage ?</p>
-                        <a th:href="@{/loueur/inscription}" class="btn btn-outline-primary btn-sm">
+                        <a th:href="@{/register-choice}" class="btn btn-outline-primary btn-sm">
                             Créer un compte
                         </a>
                     </div>
@@ -259,7 +252,7 @@
 
 <footer class="bg-dark text-white py-4 mt-auto">
     <div class="container text-center">
-        <p class="text-muted mb-0">© 2024 AutoPartage.</p>
+        <p class="text-muted mb-0">© 2026 AutoPartage.</p>
     </div>
 </footer>
 
