@@ -5,11 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title th:text="'Ajouter une ' + ${type}">Ajouter un véhicule - AutoPartage</title>
 
-    <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome  -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <style>
@@ -53,398 +50,380 @@
     </style>
 </head>
 <body>
-    <!-- 导航栏 -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
-        <div class="container">
-            <a class="navbar-brand" th:href="@{/}">
-                <i class="fas fa-car me-2 text-primary"></i>
-                <span class="fw-bold">AutoPartage</span>
+<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+    <div class="container">
+        <a class="navbar-brand" th:href="@{/}">
+            <i class="fas fa-car me-2 text-primary"></i>
+            <span class="fw-bold">AutoPartage</span>
+        </a>
+        <div class="d-flex align-items-center">
+            <span class="me-3 fw-bold text-primary" th:text="${type} ? 'Ajouter ' + ${type} : 'Ajouter véhicule'"></span>
+            <a th:href="@{/vehicule/liste}" class="btn btn-outline-primary me-2">
+                <i class="fas fa-list me-1"></i> Liste
             </a>
-            <div class="d-flex align-items-center">
-                <span class="me-3 fw-bold text-primary" th:text="${type} ? 'Ajouter une ' + ${type} : 'Ajouter véhicule'"></span>
-                <a th:href="@{/vehicule/liste}" class="btn btn-outline-primary me-2">
-                    <i class="fas fa-list me-1"></i> Liste
-                </a>
-                <a th:href="@{/}" class="btn btn-primary">
-                    <i class="fas fa-home me-1"></i> Accueil
-                </a>
-            </div>
+            <a th:href="@{/}" class="btn btn-primary">
+                <i class="fas fa-home me-1"></i> Accueil
+            </a>
         </div>
+    </div>
+</nav>
+
+<div class="container">
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a th:href="@{/}">Accueil</a></li>
+            <li class="breadcrumb-item"><a th:href="@{/vehicule/liste}">Véhicules</a></li>
+            <li class="breadcrumb-item"><a th:href="@{/vehicule/type-select}">Type</a></li>
+            <li class="breadcrumb-item active" aria-current="page" th:text="'Ajouter ' + ${type}"></li>
+        </ol>
     </nav>
 
-    <div class="container">
-        <nav aria-label="breadcrumb" class="mb-4">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a th:href="@{/}">Accueil</a></li>
-                <li class="breadcrumb-item"><a th:href="@{/vehicule/liste}">Véhicules</a></li>
-                <li class="breadcrumb-item"><a th:href="@{/vehicule/type-select}">Type</a></li>
-                <li class="breadcrumb-item active" aria-current="page" th:text="'Ajouter ' + ${type}"></li>
-            </ol>
-        </nav>
-
-        <div class="row justify-content-center">
-            <div class="col-lg-10">
-                <div class="form-container">
-                    <div class="d-flex justify-content-between align-items-center mb-4">
-                        <h3>
-                            <i class="fas fa-plus-circle me-2 text-primary"></i>
-                            <span th:text="'Ajouter une ' + ${type}">Ajouter un véhicule</span>
-                        </h3>
-                        <span class="badge bg-primary" th:text="${type}">Type</span>
-                    </div>
-
-                    <!-- Loading indicator -->
-                    <div id="loading" class="loading">
-                        <div class="spinner-border text-primary" role="status">
-                            <span class="visually-hidden">Chargement...</span>
-                        </div>
-                        <p class="mt-2">Enregistrement en cours...</p>
-                    </div>
-
-                    <!-- Voiture form -->
-                    <div id="form-voiture" th:if="${type == 'voiture'}">
-                        <form id="voitureForm">
-                            <!-- Agent ID (从session获取) -->
-                            <input type="hidden" id="agent_id" name="agent_id" th:value="${agentId}">
-
-                            <!-- 显示当前Agent信息 -->
-                            <div class="alert alert-info mb-4" th:if="${agentName}">
-                                <i class="fas fa-user-tie me-2"></i>
-                                <strong>Ajouté par:</strong>
-                                <span th:text="${agentName}">Utilisateur</span>
-                            </div>
-                            <!-- Informations générales -->
-                            <div class="form-section">
-                                <h5><i class="fas fa-info-circle me-2"></i>Informations générales</h5>
-                                <div class="row">
-                                    <div class="col-md-6 mb-3">
-                                        <label class="form-label required">Marque</label>
-                                        <input type="text" class="form-control" id="marque" name="marque" required>
-                                    </div>
-                                    <div class="col-md-6 mb-3">
-                                        <label class="form-label required">Modèle</label>
-                                        <input type="text" class="form-control" id="modele" name="modele" required>
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-md-4 mb-3">
-                                        <label class="form-label required">Prix par jour (€)</label>
-                                        <input type="number" step="0.01" class="form-control" id="prixjour" name="prixjour" required>
-                                    </div>
-                                    <div class="col-md-4 mb-3">
-                                        <label class="form-label">Couleur</label>
-                                        <input type="text" class="form-control" id="couleur" name="couleur">
-                                    </div>
-                                    <div class="col-md-4 mb-3">
-                                        <label class="form-label">Note du véhicule</label>
-                                        <input type="number" step="0.1" min="0" max="5" class="form-control" id="notevehicule" name="notevehicule">
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Localisation -->
-                            <div class="form-section">
-                                <h5><i class="fas fa-map-marker-alt me-2"></i>Localisation</h5>
-                                <div class="row">
-                                    <div class="col-md-6 mb-3">
-                                        <label class="form-label required">Ville de disponibilité</label>
-                                        <input type="text" class="form-control" id="villedispo" name="villedispo" required>
-                                    </div>
-                                    <div class="col-md-6 mb-3">
-                                        <label class="form-label">Disponibilité</label>
-                                        <div class="form-check mt-2">
-                                            <input class="form-check-input" type="checkbox" id="vehiculedispo" name="vehiculedispo" checked>
-                                            <label class="form-check-label">
-                                                Véhicule disponible immédiatement
-                                            </label>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Spécificités Voiture -->
-                            <div class="form-section">
-                                <h5><i class="fas fa-car me-2"></i>Spécificités Voiture</h5>
-                                <div class="row">
-                                    <div class="col-md-3 mb-3">
-                                        <label class="form-label">Nombre de portes</label>
-                                        <input type="number" class="form-control" id="nombreportes" name="nombreportes" min="2" max="5">
-                                    </div>
-                                    <div class="col-md-3 mb-3">
-                                        <label class="form-label">Nombre de places</label>
-                                        <input type="number" class="form-control" id="nombreplaces" name="nombreplaces" min="2" max="9">
-                                    </div>
-                                    <div class="col-md-3 mb-3">
-                                        <label class="form-label">Volume coffre (L)</label>
-                                        <input type="number" step="0.1" class="form-control" id="coffrevolume" name="coffrevolume">
-                                    </div>
-                                    <div class="col-md-3 mb-3">
-                                        <label class="form-label">Nombre de chevaux</label>
-                                        <input type="number" class="form-control" id="nbchevaux" name="nbchevaux">
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-md-4 mb-3">
-                                        <label class="form-label">Carburant</label>
-                                        <select class="form-select" id="carburant" name="carburant">
-                                            <option value="">Sélectionner</option>
-                                            <option value="Essence">Essence</option>
-                                            <option value="Diesel">Diesel</option>
-                                            <option value="Electrique">Électrique</option>
-                                            <option value="Hybride">Hybride</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-4 mb-3">
-                                        <label class="form-label">Boîte automatique</label>
-                                        <select class="form-select" id="automatique" name="automatique">
-                                            <option value="">Sélectionner</option>
-                                            <option value="true">Oui</option>
-                                            <option value="false">Non</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-4 mb-3">
-                                        <label class="form-label">GPS</label>
-                                        <select class="form-select" id="gps" name="gps">
-                                            <option value="">Sélectionner</option>
-                                            <option value="true">Oui</option>
-                                            <option value="false">Non</option>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Agent ID (pour l'instant caché, à implémenter plus tard) -->
-                            <input type="hidden" id="agent_id" name="agent_id" value="1">
-
-                            <!-- Boutons -->
-                            <div class="mt-4 pt-3 border-top">
-                                <div class="d-flex justify-content-between">
-                                    <a th:href="@{/vehicule/type-select}" class="btn btn-outline-secondary">
-                                        <i class="fas fa-arrow-left me-2"></i>Retour
-                                    </a>
-                                    <button type="submit" class="btn btn-primary">
-                                        <i class="fas fa-save me-2"></i>Enregistrer la voiture
-                                    </button>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-
-                    <!-- Velo form -->
-                    <div id="form-velo" th:if="${type == 'velo'}">
-                        <form id="veloForm">
-                            <!-- Informations générales -->
-                            <div class="form-section">
-                                <h5><i class="fas fa-info-circle me-2"></i>Informations générales</h5>
-                                <div class="row">
-                                    <div class="col-md-6 mb-3">
-                                        <label class="form-label required">Marque</label>
-                                        <input type="text" class="form-control" id="marque" name="marque" required>
-                                    </div>
-                                    <div class="col-md-6 mb-3">
-                                        <label class="form-label required">Modèle</label>
-                                        <input type="text" class="form-control" id="modele" name="modele" required>
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-md-4 mb-3">
-                                        <label class="form-label required">Prix par jour (€)</label>
-                                        <input type="number" step="0.01" class="form-control" id="prixjour" name="prixjour" required>
-                                    </div>
-                                    <div class="col-md-4 mb-3">
-                                        <label class="form-label">Couleur</label>
-                                        <input type="text" class="form-control" id="couleur" name="couleur">
-                                    </div>
-                                    <div class="col-md-4 mb-3">
-                                        <label class="form-label">Note du véhicule</label>
-                                        <input type="number" step="0.1" min="0" max="5" class="form-control" id="notevehicule" name="notevehicule">
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Localisation -->
-                            <div class="form-section">
-                                <h5><i class="fas fa-map-marker-alt me-2"></i>Localisation</h5>
-                                <div class="row">
-                                    <div class="col-md-6 mb-3">
-                                        <label class="form-label required">Ville de disponibilité</label>
-                                        <input type="text" class="form-control" id="villedispo" name="villedispo" required>
-                                    </div>
-                                    <div class="col-md-6 mb-3">
-                                        <label class="form-label">Disponibilité</label>
-                                        <div class="form-check mt-2">
-                                            <input class="form-check-input" type="checkbox" id="vehiculedispo" name="vehiculedispo" checked>
-                                            <label class="form-check-label">
-                                                Véhicule disponible immédiatement
-                                            </label>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Spécificités Vélo -->
-                            <div class="form-section">
-                                <h5><i class="fas fa-bicycle me-2"></i>Spécificités Vélo</h5>
-                                <div class="row">
-                                    <div class="col-md-4 mb-3">
-                                        <label class="form-label">Type de vélo</label>
-                                        <select class="form-select" id="typeVelo" name="typeVelo">
-                                            <option value="">Sélectionner</option>
-                                            <option value="Ville">Ville</option>
-                                            <option value="VTT">VTT</option>
-                                            <option value="Route">Route</option>
-                                            <option value="Electrique">Électrique</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-4 mb-3">
-                                        <label class="form-label">Nombre de vitesses</label>
-                                        <input type="number" class="form-control" id="nombrevitesses" name="nombrevitesses" min="1" max="30">
-                                    </div>
-                                    <div class="col-md-4 mb-3">
-                                        <label class="form-label">Électrique</label>
-                                        <select class="form-select" id="electrique" name="electrique">
-                                            <option value="">Sélectionner</option>
-                                            <option value="true">Oui</option>
-                                            <option value="false">Non</option>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Agent ID (pour l'instant caché, à implémenter plus tard) -->
-                            <input type="hidden" id="agent_id" name="agent_id" value="1">
-
-                            <!-- Boutons -->
-                            <div class="mt-4 pt-3 border-top">
-                                <div class="d-flex justify-content-between">
-                                    <a th:href="@{/vehicule/type-select}" class="btn btn-outline-secondary">
-                                        <i class="fas fa-arrow-left me-2"></i>Retour
-                                    </a>
-                                    <button type="submit" class="btn btn-primary">
-                                        <i class="fas fa-save me-2"></i>Enregistrer le vélo
-                                    </button>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-
-                    <!-- Scooter form -->
-                    <div id="form-scooter" th:if="${type == 'scooter'}">
-                        <!-- Similar form for scooter -->
-                        <p>Formulaire pour scooter à implémenter...</p>
-                    </div>
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="form-container">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h3>
+                        <i class="fas fa-plus-circle me-2 text-primary"></i>
+                        <span th:text="'Ajouter ' + ${type}">Ajouter un véhicule</span>
+                    </h3>
+                    <span class="badge bg-primary text-uppercase" th:text="${type}">Type</span>
                 </div>
+
+                <input type="hidden" id="agent_id" name="agent_id" th:value="${agentId}">
+
+                <div class="alert alert-info mb-4" th:if="${agentName}">
+                    <i class="fas fa-user-tie me-2"></i>
+                    <strong>Ajouté par:</strong> <span th:text="${agentName}">Utilisateur</span>
+                </div>
+
+                <div id="loading" class="loading">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Chargement...</span>
+                    </div>
+                    <p class="mt-2">Enregistrement en cours...</p>
+                </div>
+
+                <div id="form-voiture" th:if="${type == 'voiture'}">
+                    <form id="voitureForm">
+                        <div class="form-section">
+                            <h5><i class="fas fa-info-circle me-2"></i>Informations générales</h5>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label required">Marque</label>
+                                    <input type="text" class="form-control" id="marque" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label required">Modèle</label>
+                                    <input type="text" class="form-control" id="modele" required>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label required">Prix par jour (€)</label>
+                                    <input type="number" step="0.01" class="form-control" id="prixjour" required>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label">Couleur</label>
+                                    <input type="text" class="form-control" id="couleur">
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label">Note du véhicule</label>
+                                    <input type="number" step="0.1" min="0" max="5" class="form-control" id="notevehicule">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-section">
+                            <h5><i class="fas fa-map-marker-alt me-2"></i>Localisation</h5>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label required">Ville de disponibilité</label>
+                                    <input type="text" class="form-control" id="villedispo" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Disponibilité</label>
+                                    <div class="form-check mt-2">
+                                        <input class="form-check-input" type="checkbox" id="vehiculedispo" checked>
+                                        <label class="form-check-label">Véhicule disponible immédiatement</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-section">
+                            <h5><i class="fas fa-car me-2"></i>Spécificités Voiture</h5>
+                            <div class="row">
+                                <div class="col-md-3 mb-3">
+                                    <label class="form-label">Nombre de portes</label>
+                                    <input type="number" class="form-control" id="nombreportes" min="2" max="5">
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label class="form-label">Nombre de places</label>
+                                    <input type="number" class="form-control" id="nombreplaces" min="2" max="9">
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label class="form-label">Volume coffre (L)</label>
+                                    <input type="number" step="0.1" class="form-control" id="coffrevolume">
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label class="form-label">Nombre de chevaux</label>
+                                    <input type="number" class="form-control" id="nbchevaux">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label">Carburant</label>
+                                    <select class="form-select" id="carburant">
+                                        <option value="">Sélectionner</option>
+                                        <option value="Essence">Essence</option>
+                                        <option value="Diesel">Diesel</option>
+                                        <option value="Electrique">Électrique</option>
+                                        <option value="Hybride">Hybride</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label">Boîte automatique</label>
+                                    <select class="form-select" id="automatique">
+                                        <option value="">Sélectionner</option>
+                                        <option value="true">Oui</option>
+                                        <option value="false">Non</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label">GPS</label>
+                                    <select class="form-select" id="gps">
+                                        <option value="">Sélectionner</option>
+                                        <option value="true">Oui</option>
+                                        <option value="false">Non</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-4 pt-3 border-top d-flex justify-content-between">
+                            <a th:href="@{/vehicule/type-select}" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left me-2"></i>Retour
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-2"></i>Enregistrer la voiture
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <div id="form-velo" th:if="${type == 'velo'}">
+                    <form id="veloForm">
+                        <div class="form-section">
+                            <h5><i class="fas fa-info-circle me-2"></i>Informations générales</h5>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label required">Marque</label>
+                                    <input type="text" class="form-control" id="marque_velo" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label required">Modèle</label>
+                                    <input type="text" class="form-control" id="modele_velo" required>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label required">Prix par jour (€)</label>
+                                    <input type="number" step="0.01" class="form-control" id="prixjour_velo" required>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label">Couleur</label>
+                                    <input type="text" class="form-control" id="couleur_velo">
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label">Note du véhicule</label>
+                                    <input type="number" step="0.1" min="0" max="5" class="form-control" id="notevehicule_velo">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-section">
+                            <h5><i class="fas fa-map-marker-alt me-2"></i>Localisation</h5>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label required">Ville de disponibilité</label>
+                                    <input type="text" class="form-control" id="villedispo_velo" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Disponibilité</label>
+                                    <div class="form-check mt-2">
+                                        <input class="form-check-input" type="checkbox" id="vehiculedispo_velo" checked>
+                                        <label class="form-check-label">Véhicule disponible immédiatement</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-section">
+                            <h5><i class="fas fa-bicycle me-2"></i>Spécificités Vélo</h5>
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label">Type de vélo</label>
+                                    <select class="form-select" id="typeVelo">
+                                        <option value="">Sélectionner</option>
+                                        <option value="Ville">Ville</option>
+                                        <option value="VTT">VTT</option>
+                                        <option value="Route">Route</option>
+                                        <option value="Electrique">Électrique</option>
+                                        <option value="Pliant">Pliant</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label">Nombre de vitesses</label>
+                                    <input type="number" class="form-control" id="nombrevitesses" min="1" max="30">
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label">Assistance Électrique</label>
+                                    <select class="form-select" id="electrique">
+                                        <option value="">Sélectionner</option>
+                                        <option value="true">Oui</option>
+                                        <option value="false">Non</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-4 pt-3 border-top d-flex justify-content-between">
+                            <a th:href="@{/vehicule/type-select}" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left me-2"></i>Retour
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-2"></i>Enregistrer le vélo
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <div th:if="${type != 'voiture' and type != 'velo'}" class="alert alert-warning text-center">
+                    <i class="fas fa-tools me-2"></i>
+                    Le formulaire pour <strong>[[${type}]]</strong> est en cours de développement.
+                </div>
+
             </div>
         </div>
     </div>
+</div>
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 
-    <script>
-        // Voiture form submission
-        document.getElementById('voitureForm')?.addEventListener('submit', function(e) {
+<script>
+    // Gestionnaire pour Voiture
+    const voitureForm = document.getElementById('voitureForm');
+    if (voitureForm) {
+        voitureForm.addEventListener('submit', function(e) {
             e.preventDefault();
             saveVoiture();
         });
+    }
 
-        // Velo form submission
-        document.getElementById('veloForm')?.addEventListener('submit', function(e) {
+    // Gestionnaire pour Velo
+    const veloForm = document.getElementById('veloForm');
+    if (veloForm) {
+        veloForm.addEventListener('submit', function(e) {
             e.preventDefault();
             saveVelo();
         });
+    }
 
-        function showLoading(show) {
-            document.getElementById('loading').style.display = show ? 'block' : 'none';
-        }
+    function showLoading(show) {
+        document.getElementById('loading').style.display = show ? 'block' : 'none';
+    }
 
-        function saveVoiture() {
+    // --- FONCTION SAVE VOITURE ---
+    function saveVoiture() {
         showLoading(true);
 
-       const formData = {
+        const formData = {
             marque: document.getElementById('marque').value,
             modele: document.getElementById('modele').value,
             prixjour: parseFloat(document.getElementById('prixjour').value) || 0,
             couleur: document.getElementById('couleur').value || null,
-            notevehicule: document.getElementById('notevehicule').value ?
-                         parseFloat(document.getElementById('notevehicule').value) : null,
+            notevehicule: document.getElementById('notevehicule').value ? parseFloat(document.getElementById('notevehicule').value) : null,
             villedispo: document.getElementById('villedispo').value,
             vehiculedispo: document.getElementById('vehiculedispo').checked,
-            nombreportes: document.getElementById('nombreportes').value ?
-                         parseInt(document.getElementById('nombreportes').value) : null,
-            nombreplaces: document.getElementById('nombreplaces').value ?
-                         parseInt(document.getElementById('nombreplaces').value) : null,
-            coffrevolume: document.getElementById('coffrevolume').value ?
-                         parseFloat(document.getElementById('coffrevolume').value) : null,
-            nbchevaux: document.getElementById('nbchevaux').value ?
-                      parseInt(document.getElementById('nbchevaux').value) : null,
+            nombreportes: document.getElementById('nombreportes').value ? parseInt(document.getElementById('nombreportes').value) : null,
+            nombreplaces: document.getElementById('nombreplaces').value ? parseInt(document.getElementById('nombreplaces').value) : null,
+            coffrevolume: document.getElementById('coffrevolume').value ? parseFloat(document.getElementById('coffrevolume').value) : null,
+            nbchevaux: document.getElementById('nbchevaux').value ? parseInt(document.getElementById('nbchevaux').value) : null,
             carburant: document.getElementById('carburant').value || null,
-            automatique: document.getElementById('automatique').value === '' ?
-                        null : (document.getElementById('automatique').value === 'true'),
-            gps: document.getElementById('gps').value === '' ?
-                null : (document.getElementById('gps').value === 'true'),
+            automatique: document.getElementById('automatique').value === '' ? null : (document.getElementById('automatique').value === 'true'),
+            gps: document.getElementById('gps').value === '' ? null : (document.getElementById('gps').value === 'true'),
 
-            // CORRECTION ICI : Utilisez "agentId" (comme en Java) et non "agent_id"
-            agentId: document.getElementById('agent_id').value ?
-                     parseInt(document.getElementById('agent_id').value) : null
+            agentId: document.getElementById('agent_id').value ? parseInt(document.getElementById('agent_id').value) : null
         };
 
-        // 清理空字符串
+        // Nettoyage
         Object.keys(formData).forEach(key => {
-            if (formData[key] === '' || formData[key] === undefined) {
-                formData[key] = null;
-            }
+            if (formData[key] === '' || formData[key] === undefined) formData[key] = null;
         });
 
-        console.log('Sending form data:', formData);
-        console.log('JSON string:', JSON.stringify(formData));
+        sendData('/api/voitures', formData);
+    }
 
-        // 发送请求
-        fetch('/api/voitures', {
+    // --- FONCTION SAVE VELO ---
+    function saveVelo() {
+        showLoading(true);
+
+        const formData = {
+            marque: document.getElementById('marque_velo').value,
+            modele: document.getElementById('modele_velo').value,
+            prixjour: parseFloat(document.getElementById('prixjour_velo').value) || 0,
+            couleur: document.getElementById('couleur_velo').value || null,
+            notevehicule: document.getElementById('notevehicule_velo').value ? parseFloat(document.getElementById('notevehicule_velo').value) : null,
+            villedispo: document.getElementById('villedispo_velo').value,
+            vehiculedispo: document.getElementById('vehiculedispo_velo').checked,
+
+            // Velo
+            typeVelo: document.getElementById('typeVelo').value || null,
+            nombrevitesses: document.getElementById('nombrevitesses').value ? parseInt(document.getElementById('nombrevitesses').value) : 0,
+            electrique: document.getElementById('electrique').value === '' ? null : (document.getElementById('electrique').value === 'true'),
+
+            agentId: document.getElementById('agent_id').value ? parseInt(document.getElementById('agent_id').value) : null
+        };
+
+        // Nettoyage
+        Object.keys(formData).forEach(key => {
+            if (formData[key] === '' || formData[key] === undefined) formData[key] = null;
+        });
+
+        console.log('Envoi Velo:', formData);
+        sendData('/api/velos', formData);
+    }
+
+    function sendData(url, data) {
+        fetch(url, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json'
             },
-            body: JSON.stringify(formData)
+            body: JSON.stringify(data)
         })
         .then(response => {
-            console.log('Response status:', response.status);
-
-            // 先检查内容类型
             const contentType = response.headers.get('content-type');
             if (contentType && contentType.includes('application/json')) {
-                return response.json().then(data => {
-                    if (!response.ok) {
-                        throw new Error(`HTTP ${response.status}: ${JSON.stringify(data)}`);
-                    }
-                    return data;
+                return response.json().then(json => {
+                    if (!response.ok) throw new Error(json.message || `Erreur ${response.status}`);
+                    return json;
                 });
             } else {
                 return response.text().then(text => {
-                    console.error('Non-JSON response:', text);
-                    if (!response.ok) {
-                        throw new Error(`HTTP ${response.status}: ${text.substring(0, 100)}...`);
-                    }
-                    // 如果不是JSON但状态码是成功的，尝试解析为JSON
-                    try {
-                        return JSON.parse(text);
-                    } catch {
-                        return { message: text };
-                    }
+                    if (!response.ok) throw new Error(text);
+                    return { message: "Opération réussie" };
                 });
             }
         })
         .then(data => {
             showLoading(false);
-            console.log('Success response:', data);
             Swal.fire({
                 icon: 'success',
                 title: 'Succès!',
-                text: data.message || 'Voiture ajoutée avec succès!',
+                text: data.message || 'Véhicule ajouté avec succès!',
                 confirmButtonText: 'OK'
             }).then(() => {
                 window.location.href = '/vehicule/liste';
@@ -452,67 +431,15 @@
         })
         .catch(error => {
             showLoading(false);
-            console.error('Error details:', error);
+            console.error('Erreur:', error);
             Swal.fire({
                 icon: 'error',
                 title: 'Erreur',
-                text: 'Erreur lors de l\'ajout de la voiture: ' + (error.message || 'Erreur inconnue'),
+                text: 'Erreur lors de l\'ajout: ' + error.message,
                 confirmButtonText: 'OK'
             });
         });
     }
-
-        function saveVelo() {
-            showLoading(true);
-
-            const veloData = {
-                marque: document.getElementById('marque').value,
-                modele: document.getElementById('modele').value,
-                prixjour: parseFloat(document.getElementById('prixjour').value),
-                couleur: document.getElementById('couleur').value,
-                notevehicule: document.getElementById('notevehicule').value ? parseFloat(document.getElementById('notevehicule').value) : null,
-                villedispo: document.getElementById('villedispo').value,
-                vehiculedispo: document.getElementById('vehiculedispo').checked,
-                typeVelo: document.getElementById('typeVelo').value,
-                nombrevitesses: document.getElementById('nombrevitesses').value ? parseInt(document.getElementById('nombrevitesses').value) : 0,
-                electrique: document.getElementById('electrique').value,
-                agent_id: document.getElementById('agent_id').value ? parseInt(document.getElementById('agent_id').value) : null
-            };
-
-            fetch('/api/velos', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(veloData)
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Erreur réseau');
-                }
-                return response.json();
-            })
-            .then(data => {
-                showLoading(false);
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Succès!',
-                    text: 'Vélo ajouté avec succès!',
-                    confirmButtonText: 'OK'
-                }).then(() => {
-                    window.location.href = '/vehicule/liste';
-                });
-            })
-            .catch(error => {
-                showLoading(false);
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Erreur',
-                    text: 'Erreur lors de l\'ajout du vélo: ' + error.message,
-                    confirmButtonText: 'OK'
-                });
-            });
-        }
-    </script>
+</script>
 </body>
 </html>
