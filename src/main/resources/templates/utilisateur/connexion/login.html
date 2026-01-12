@@ -5,9 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Connexion - AutoPartage</title>
 
-    <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome 图标 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
     <style>
@@ -91,147 +89,119 @@
 
         .login-step {
             display: none;
+            animation: fadeIn 0.5s;
         }
 
         .login-step.active {
             display: block;
         }
 
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         .role-option {
-            padding: 20px;
+            padding: 25px;
             border: 2px solid #e9ecef;
-            border-radius: 10px;
+            border-radius: 15px;
             cursor: pointer;
-            transition: all 0.3s;
-            margin-bottom: 15px;
+            transition: all 0.2s ease-in-out;
+            margin-bottom: 0;
+            height: 100%;
+            background: white;
         }
 
         .role-option:hover {
             border-color: var(--primary-color);
-            background-color: #f8f9fa;
-        }
-
-        .role-option.active {
-            border-color: var(--primary-color);
-            background-color: #e3f2fd;
+            background-color: #f0f7ff;
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.15);
         }
 
         .role-icon {
-            font-size: 2rem;
-            margin-bottom: 10px;
+            font-size: 2.5rem;
+            margin-bottom: 15px;
             color: var(--primary-color);
-        }
-
-        .btn-back-home {
-            position: absolute;
-            top: 20px;
-            left: 20px;
         }
 
         .alert-error {
             border-radius: 10px;
             border-left: 4px solid #dc3545;
         }
-
-        @media (max-width: 576px) {
-            .login-card {
-                padding: 25px;
-                margin: 0 15px;
-            }
-        }
     </style>
 </head>
 <body>
 
-<!-- 导航栏 -->
 <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
     <div class="container">
-        <!-- Logo -->
         <a class="navbar-brand" href="/">
             <i class="fas fa-car me-2 text-primary"></i>
             <span class="fw-bold">AutoPartage</span>
         </a>
 
-        <!-- 返回主页按钮 -->
         <div class="d-flex align-items-center">
             <a href="/" class="btn btn-outline-primary">
-                <i class="fas fa-home me-1"></i> Retour à l'accueil
+                <i class="fas fa-home me-1"></i> Accueil
             </a>
         </div>
     </div>
 </nav>
 
-<!-- 登录容器 -->
 <div class="login-container">
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-8 col-lg-6">
                 <div class="login-card">
-                    <!-- 步骤指示器 -->
                     <div class="step-indicator">
                         <div class="step active" id="step1">
                             <div class="step-circle">1</div>
-                            <div class="step-label">Sélectionnez votre profil</div>
+                            <div class="step-label">Profil</div>
                         </div>
                         <div class="step" id="step2">
                             <div class="step-circle">2</div>
-                            <div class="step-label">Connectez-vous</div>
+                            <div class="step-label">Connexion</div>
                         </div>
                     </div>
 
-                    <!-- 错误提示 -->
                     <div th:if="${error}" class="alert alert-danger alert-error d-flex align-items-center mb-4">
                         <i class="fas fa-exclamation-triangle me-3"></i>
                         <div th:text="${error}">Identifiant ou mot de passe incorrect</div>
                     </div>
 
-                    <!-- 步骤1: 选择身份 -->
                     <div id="step1-content" class="login-step active">
                         <div class="text-center mb-4">
-                            <h3 class="fw-bold mb-2">Qui êtes-vous ?</h3>
-                            <p class="text-muted">Sélectionnez votre type de compte pour continuer</p>
+                            <h3 class="fw-bold mb-2">Bienvenue !</h3>
+                            <p class="text-muted">Cliquez sur votre profil pour vous connecter</p>
                         </div>
 
-                        <div class="role-options">
-                            <div class="role-option" data-role="LOUEUR">
-                                <div class="text-center">
-                                    <i class="fas fa-user role-icon"></i>
-                                    <h5 class="fw-bold mb-1">Loueur</h5>
-                                    <p class="text-muted small mb-0">Je souhaite louer un véhicule</p>
+                        <div class="row g-3 justify-content-center">
+                            <div class="col-md-6">
+                                <div class="role-option" onclick="selectRole('LOUEUR')">
+                                    <div class="text-center">
+                                        <i class="fas fa-user role-icon"></i>
+                                        <h5 class="fw-bold mb-2">Loueur</h5>
+                                        <p class="text-muted small mb-0">Je souhaite louer un véhicule</p>
+                                    </div>
                                 </div>
                             </div>
 
-                            <div class="role-option" data-role="AGENT_PAR">
-                                <div class="text-center">
-                                    <i class="fas fa-user-tie role-icon"></i>
-                                    <h5 class="fw-bold mb-1">Agent Particulier</h5>
-                                    <p class="text-muted small mb-0">Je gère des véhicules en mon nom</p>
+                            <div class="col-md-6">
+                                <div class="role-option" onclick="selectRole('AGENT')">
+                                    <div class="text-center">
+                                        <i class="fas fa-user-tie role-icon"></i>
+                                        <h5 class="fw-bold mb-2">Agent</h5>
+                                        <p class="text-muted small mb-0">Je gère mes véhicules (Pro/Par)</p>
+                                    </div>
                                 </div>
                             </div>
-
-                            <div class="role-option" data-role="AGENT_PRO">
-                                <div class="text-center">
-                                    <i class="fas fa-building role-icon"></i>
-                                    <h5 class="fw-bold mb-1">Agent Professionnel</h5>
-                                    <p class="text-muted small mb-0">Je représente une entreprise</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <input type="hidden" id="selectedRole" value="">
-
-                        <div class="text-center mt-4">
-                            <button id="btn-next" class="btn btn-primary btn-lg px-5" disabled>
-                                <i class="fas fa-arrow-right me-2"></i>Continuer
-                            </button>
                         </div>
                     </div>
 
-                    <!-- 步骤2: 登录表单 -->
                     <div id="step2-content" class="login-step">
                         <div class="text-center mb-4">
-                            <h3 class="fw-bold mb-2" id="login-title">Connexion Loueur</h3>
-                            <p class="text-muted">Entrez vos identifiants pour vous connecter</p>
+                            <h3 class="fw-bold mb-2" id="login-title">Connexion</h3>
+                            <p class="text-muted">Entrez vos identifiants</p>
                         </div>
 
                         <form th:action="@{/utilisateur/connexion}"
@@ -239,65 +209,39 @@
                               method="post"
                               id="loginForm">
 
-
-                            <!-- 用户名 -->
                             <div class="mb-3">
-                                <label class="form-label fw-semibold">
-                                    <i class="fas fa-user me-1"></i>Identifiant
-                                </label>
+                                <label class="form-label fw-semibold">Identifiant</label>
                                 <div class="input-group">
-                                    <span class="input-group-text bg-light">
-                                        <i class="fas fa-envelope"></i>
-                                    </span>
-                                    <input type="text"
-                                           th:field="*{username}"
-                                           class="form-control form-control-lg"
-                                           placeholder="votre@email.com"
-                                           required
-                                           id="username">
+                                    <span class="input-group-text bg-light"><i class="fas fa-envelope"></i></span>
+                                    <input type="text" th:field="*{username}" class="form-control form-control-lg" placeholder="Email ou nom d'utilisateur" required id="username">
                                 </div>
                             </div>
 
-                            <!-- 密码 -->
                             <div class="mb-4">
-                                <label class="form-label fw-semibold">
-                                    <i class="fas fa-lock me-1"></i>Mot de passe
-                                </label>
+                                <label class="form-label fw-semibold">Mot de passe</label>
                                 <div class="input-group">
-                                    <span class="input-group-text bg-light">
-                                        <i class="fas fa-key"></i>
-                                    </span>
-                                    <input type="password"
-                                           th:field="*{password}"
-                                           class="form-control form-control-lg"
-                                           placeholder="Votre mot de passe"
-                                           required
-                                           id="password">
+                                    <span class="input-group-text bg-light"><i class="fas fa-key"></i></span>
+                                    <input type="password" th:field="*{password}" class="form-control form-control-lg" placeholder="Votre mot de passe" required id="password">
                                 </div>
                             </div>
 
                             <div class="d-flex justify-content-between align-items-center mb-4">
-                                <a href="#" class="text-decoration-none text-muted small">
-                                    <i class="fas fa-question-circle me-1"></i>Mot de passe oublié ?
-                                </a>
-
-                                <button type="button" id="btn-back" class="btn btn-outline-secondary">
-                                    <i class="fas fa-arrow-left me-1"></i>Retour
+                                <a href="#" class="text-decoration-none text-muted small">Mot de passe oublié ?</a>
+                                <button type="button" onclick="goBack()" class="btn btn-outline-secondary btn-sm">
+                                    <i class="fas fa-arrow-left me-1"></i>Changer
                                 </button>
                             </div>
 
-                            <!-- 提交按钮 -->
-                            <button type="submit" class="btn btn-primary btn-lg w-100">
+                            <button type="submit" class="btn btn-primary btn-lg w-100 shadow-sm">
                                 <i class="fas fa-sign-in-alt me-2"></i>Se connecter
                             </button>
                         </form>
                     </div>
 
-                    <!-- 注册提示 -->
                     <div class="text-center border-top pt-4 mt-4">
-                        <p class="text-muted mb-2">Vous n'avez pas de compte ?</p>
-                        <a th:href="@{/loueur/inscription}" class="btn btn-outline-primary">
-                            <i class="fas fa-user-plus me-1"></i>S'inscrire gratuitement
+                        <p class="text-muted mb-2">Nouveau sur AutoPartage ?</p>
+                        <a th:href="@{/loueur/inscription}" class="btn btn-outline-primary btn-sm">
+                            Créer un compte
                         </a>
                     </div>
                 </div>
@@ -306,172 +250,50 @@
     </div>
 </div>
 
-<!-- Footer -->
 <footer class="bg-dark text-white py-4 mt-auto">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-4">
-                <h5><i class="fas fa-car me-2"></i>AutoPartage</h5>
-                <p class="text-muted">Plateforme de location de véhicules entre particuliers et professionnels.</p>
-            </div>
-            <div class="col-md-4">
-                <h5>Liens utiles</h5>
-                <ul class="list-unstyled">
-                    <li><a th:href="@{/vehicule/liste}" class="text-white-50 text-decoration-none">Tous les véhicules</a></li>
-                    <li><a th:href="@{/loueur/inscription}" class="text-white-50 text-decoration-none">Inscription</a></li>
-                    <li><a href="#" class="text-white-50 text-decoration-none">Comment ça marche ?</a></li>
-                </ul>
-            </div>
-            <div class="col-md-4">
-                <h5>Contact</h5>
-                <p class="text-muted mb-0">
-                    <i class="fas fa-envelope me-2"></i> contact@autopartage.fr<br>
-                    <i class="fas fa-phone me-2"></i> +33 1 23 45 67 89
-                </p>
-            </div>
-        </div>
-        <hr class="bg-secondary">
-        <p class="text-center text-muted mb-0">© 2024 AutoPartage. Projet POO Groupe 6.</p>
+    <div class="container text-center">
+        <p class="text-muted mb-0">© 2024 AutoPartage.</p>
     </div>
 </footer>
 
-<!-- Bootstrap JS -->
+<script>
+    // Variables globales pour les éléments du DOM
+    const step1 = document.getElementById('step1');
+    const step2 = document.getElementById('step2');
+    const step1Content = document.getElementById('step1-content');
+    const step2Content = document.getElementById('step2-content');
+    const loginTitle = document.getElementById('login-title');
+
+    // Fonction déclenchée au clic sur une carte
+    function selectRole(role) {
+        // Mise à jour visuelle des étapes
+        step1.classList.remove('active');
+        step1.classList.add('completed');
+        step2.classList.add('active');
+
+        // Changement de contenu
+        step1Content.classList.remove('active');
+        step2Content.classList.add('active');
+
+        // Mise à jour du titre
+        if (role === 'LOUEUR') {
+            loginTitle.textContent = "Espace Loueur";
+        } else {
+            loginTitle.textContent = "Espace Agent";
+        }
+    }
+
+    // Fonction retour
+    function goBack() {
+        step1.classList.add('active');
+        step1.classList.remove('completed');
+        step2.classList.remove('active');
+        step2Content.classList.remove('active');
+        step1Content.classList.add('active');
+    }
+</script>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const step1 = document.getElementById('step1');
-        const step2 = document.getElementById('step2');
-        const step1Content = document.getElementById('step1-content');
-        const step2Content = document.getElementById('step2-content');
-        const roleOptions = document.querySelectorAll('.role-option');
-        const selectedRoleInput = document.getElementById('selectedRole');
-        const roleField = document.getElementById('roleField');
-        const btnNext = document.getElementById('btn-next');
-        const btnBack = document.getElementById('btn-back');
-        const loginTitle = document.getElementById('login-title');
-
-        let selectedRole = '';
-
-        // 角色选择逻辑
-        roleOptions.forEach(option => {
-            option.addEventListener('click', function() {
-                // 移除所有激活状态
-                roleOptions.forEach(opt => opt.classList.remove('active'));
-
-                // 添加当前激活状态
-                this.classList.add('active');
-
-                // 更新选择的角色
-                selectedRole = this.getAttribute('data-role');
-                selectedRoleInput.value = selectedRole;
-
-                // 启用继续按钮
-                btnNext.disabled = false;
-            });
-        });
-
-        // 下一步按钮
-        btnNext.addEventListener('click', function() {
-            if (!selectedRole) return;
-
-            // 更新步骤指示器
-            step1.classList.remove('active');
-            step1.classList.add('completed');
-            step2.classList.add('active');
-
-            // 切换内容
-            step1Content.classList.remove('active');
-            step2Content.classList.add('active');
-
-            // 更新登录标题
-            let roleText = '';
-            switch(selectedRole) {
-                case 'LOUEUR':
-                    roleText = 'Loueur';
-                    break;
-                case 'AGENT_PAR':
-                    roleText = 'Agent Particulier';
-                    break;
-                case 'AGENT_PRO':
-                    roleText = 'Agent Professionnel';
-                    break;
-            }
-
-            loginTitle.textContent = `Connexion ${roleText}`;
-
-            // 添加视觉提示
-            const form = document.getElementById('loginForm');
-
-            // 移除现有的提示（如果有）
-            const existingIndicator = document.querySelector('.role-indicator');
-            if (existingIndicator) {
-                existingIndicator.remove();
-            }
-
-            // 添加新的提示
-            const roleIndicator = document.createElement('div');
-            roleIndicator.className = 'alert alert-info role-indicator mb-4';
-            roleIndicator.innerHTML = `<i class="fas fa-user-tag me-2"></i>Mode ${roleText} sélectionné`;
-
-            // 添加到表单上方
-            if (form.firstChild) {
-                form.insertBefore(roleIndicator, form.firstChild);
-            } else {
-                form.prepend(roleIndicator);
-            }
-        });
-
-        // 返回按钮
-        btnBack.addEventListener('click', function() {
-            // 更新步骤指示器
-            step1.classList.add('active');
-            step1.classList.remove('completed');
-            step2.classList.remove('active');
-
-            // 切换内容
-            step2Content.classList.remove('active');
-            step1Content.classList.add('active');
-        });
-
-        // 表单提交验证
-        const loginForm = document.getElementById('loginForm');
-        loginForm.addEventListener('submit', function(e) {
-            const username = document.getElementById('username').value.trim();
-            const password = document.getElementById('password').value.trim();
-
-            if (!username || !password) {
-                e.preventDefault();
-                alert('Veuillez remplir tous les champs obligatoires.');
-                return false;
-            }
-
-            return true;
-        });
-
-        // 如果是从错误页面返回，尝试预填信息
-        const urlParams = new URLSearchParams(window.location.search);
-        const error = urlParams.get('error');
-        if (error === 'role_mismatch') {
-            // 如果之前有角色不匹配的错误，直接显示第二步
-            const roleParam = urlParams.get('selectedRole');
-            if (roleParam) {
-                selectedRole = roleParam;
-                selectedRoleInput.value = selectedRole;
-                roleField.value = selectedRole;
-
-                // 自动跳转到第二步
-                btnNext.click();
-
-                // 标记选中的角色
-                roleOptions.forEach(opt => {
-                    if (opt.getAttribute('data-role') === selectedRole) {
-                        opt.classList.add('active');
-                    }
-                });
-            }
-        }
-    });
-</script>
 </body>
 </html>
