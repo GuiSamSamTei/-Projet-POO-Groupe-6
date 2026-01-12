@@ -1,10 +1,15 @@
 package com.example.gestion_location_vehicule.controller;
 
 import com.example.gestion_location_vehicule.model.Moto;
+import com.example.gestion_location_vehicule.request.MotoRequest;
 import com.example.gestion_location_vehicule.service.MotoService.MotoService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -31,8 +36,44 @@ public class MotoController {
 
     // 🔹 POST : créer une moto
     @PostMapping
-    public Moto create(@RequestBody Moto moto) {
-        return motoService.saveMoto(moto);
+    public ResponseEntity<?> create(@RequestBody MotoRequest request) {
+        try {
+            // Validation simple
+            if (request.getMarque() == null || request.getMarque().trim().isEmpty()) {
+                return ResponseEntity.badRequest().body(Map.of("error", "Le champ 'marque' est obligatoire"));
+            }
+
+            // Appel Service
+            Moto moto = motoService.ajouterMoto(request);
+
+            // Réponse JSON standardisée
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("message", "Moto ajoutée avec succès");
+            response.put("data", moto);
+
+            return ResponseEntity.status(HttpStatus.CREATED).body(response);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("error", "Erreur lors de l'ajout de la moto");
+            errorResponse.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+        }
+    }
+
+    // 🔹 DELETE : supprimer une moto
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> delete(@PathVariable Long id) {
+        try {
+            motoService.deleteMoto(id);
+            return ResponseEntity.ok(Map.of("message", "Moto supprimée avec succès"));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("message", "Erreur lors de la suppression"));
+        }
     }
 
     // 🔹 PUT : mettre à jour une moto
@@ -42,11 +83,6 @@ public class MotoController {
         return motoService.saveMoto(moto);
     }
 
-    // 🔹 DELETE : supprimer une moto
-    @DeleteMapping("/{id}")
-    public void delete(@PathVariable Long id) {
-        motoService.deleteMoto(id);
-    }
 
     // 🔹 GET : motos disponibles
     @GetMapping("/disponibles")

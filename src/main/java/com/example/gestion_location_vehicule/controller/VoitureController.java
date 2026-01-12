@@ -60,7 +60,7 @@ public class VoitureController {
 
             return ResponseEntity.ok(response);
         } catch (Exception e) {
-            e.printStackTrace(); // 打印堆栈跟踪以便调试
+            e.printStackTrace();
 
             Map<String, Object> errorResponse = new HashMap<>();
             errorResponse.put("success", false);
