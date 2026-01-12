@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Profil Véhicule</title>
+</head>
+<body>
+
+<h1>Profil du Véhicule</h1>
+
+<!-- Infos communes -->
+<p><strong>Type :</strong> <span th:text="${vehicule.typeVehicule}"></span></p>
+<p><strong>Marque :</strong> <span th:text="${vehicule.marque}"></span></p>
+<p><strong>Modèle :</strong> <span th:text="${vehicule.modele}"></span></p>
+<p><strong>Couleur :</strong> <span th:text="${vehicule.couleur}"></span></p>
+<p><strong>Kilométrage :</strong> <span th:text="${vehicule.kilometrage}"></span> km</p>
+<p><strong>Prix / jour :</strong> <span th:text="${vehicule.prixjour}"></span> €</p>
+<p><strong>Disponible :</strong>
+    <span th:text="${vehicule.vehiculedispo ? 'Oui' : 'Non'}"></span>
+</p>
+
+<hr>
+
+<!-- ================= VOITURE ================= -->
+<div th:if="${vehicule.typeVehicule=='Voiture'}">
+    <h3>Détails Voiture</h3>
+    <p>Portes : <span th:text="${vehicule.nombreportes}"></span></p>
+    <p>Places : <span th:text="${vehicule.nombreplaces}"></span></p>
+    <p>Automatique : <span th:text="${vehicule.automatique}"></span></p>
+    <p>Carburant : <span th:text="${vehicule.carburant}"></span></p>
+    <p>Volume coffre : <span th:text="${vehicule.coffrevolume}"></span> L</p>
+    <p>Chevaux : <span th:text="${vehicule.nbchevaux}"></span></p>
+    <p>GPS : <span th:text="${vehicule.gps}"></span></p>
+</div>
+
+<!-- ================= VELO ================= -->
+<div th:if="${vehicule.typeVehicule=='Velo'}">
+    <h3>Détails Vélo</h3>
+    <p>Électrique : <span th:text="${vehicule.electrique}"></span></p>
+    <p>Vitesses : <span th:text="${vehicule.nombreVitesses}"></span></p>
+    <p>Type : <span th:text="${vehicule.typeVelo}"></span></p>
+</div>
+
+<!-- ================= VAN ================= -->
+<div th:if="${vehicule.typeVehicule=='Van'}">
+    <h3>Détails Van</h3>
+    <p>Places : <span th:text="${vehicule.nombreplaces}"></span></p>
+</div>
+
+<!-- ================= SCOOTER ================= -->
+<div th:if="${vehicule.typeVehicule=='Scooter'}">
+    <h3>Détails Scooter</h3>
+    <p>Cylindrée : <span th:text="${vehicule.cylindree}"></span> cc</p>
+    <p>Électrique : <span th:text="${vehicule.electrique}"></span></p>
+</div>
+
+</body>
+</html>

@@ -21,6 +21,11 @@ public class VehiculeService implements IVehiculeService{
     private final VehiculeRepository vehiculeRepository;
 
     @Override
+    public Vehicule getVehciuleByid(Long id) {
+        return vehiculeRepository.findById(id).get();
+    }
+
+    @Override
     public List<Vehicule> getAllVehicules() {
 
         return vehiculeRepository.findAll();

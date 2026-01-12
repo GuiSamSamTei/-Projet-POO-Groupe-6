@@ -104,16 +104,16 @@ public class UtilisateurMVCController {
 
         if (user instanceof AgentPar) {
 
-            model.addAttribute("utilisateur",(AgentPar) user);
+            model.addAttribute("utilisateur", user);
             return "agentPar/profilVisitAgentPar";
         }
         if (user instanceof AgentPro) {
-            model.addAttribute("utilisateur",(AgentPro) user);
+            model.addAttribute("utilisateur", user);
 
             return "agentPro/profilVisitAgentPro";
         }
         if (user instanceof Loueur) {
-            model.addAttribute("utilisateur",(Loueur) user);
+            model.addAttribute("utilisateur", user);
 
             return "loueur/profilVisitLoueur";
 

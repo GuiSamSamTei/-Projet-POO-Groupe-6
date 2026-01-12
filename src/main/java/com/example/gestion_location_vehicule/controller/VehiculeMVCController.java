@@ -5,6 +5,7 @@ import com.example.gestion_location_vehicule.service.VehiculeService.VehiculeSer
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -42,6 +43,17 @@ public class VehiculeMVCController {
         model.addAttribute("vehicules", vehicules);
 
         return "vehicule/vehicules"; // on réutilise la même page
+    }
+
+    @GetMapping("/afficher/{id}")
+    public String afficherVehicule(@PathVariable Long id, Model model)
+    {
+        Vehicule vehicule = vehiculeService.getVehciuleByid(id);
+
+        model.addAttribute("vehicule", vehicule);
+
+        return "vehicule/afficherVehicule";
+
     }
 
 }

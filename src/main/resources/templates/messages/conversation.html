@@ -1,0 +1,16 @@
+<h2 th:text="'Conversation avec ' + ${other.username}"></h2>
+
+<div>
+    <div th:each="msg : ${messages}">
+        <p th:classappend="${msg.utilisateursend.id == other.id} ? 'recu' : 'envoye'">
+            <b th:text="${msg.utilisateursend.username}"></b> :
+            <span th:text="${msg.contenu}"></span>
+        </p>
+    </div>
+</div>
+
+<form th:action="@{/messages/envoyer}" method="post">
+    <input type="hidden" name="destinataireId" th:value="${other.id}">
+    <textarea name="contenu" required></textarea>
+    <button type="submit">Envoyer</button>
+</form>

@@ -1,0 +1,13 @@
+<h2>Nouveau message</h2>
+
+<form method="get">
+    <input type="text" name="q" placeholder="Rechercher par username">
+    <button type="submit">Rechercher</button>
+</form>
+
+<ul>
+    <li th:each="u : ${resultats}">
+        <span th:text="${u.username}">user</span>
+        <a th:href="@{/messages/{id}(id=${u.id})}">Écrire</a>
+    </li>
+</ul>

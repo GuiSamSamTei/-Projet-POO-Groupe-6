@@ -1,11 +1,12 @@
 package com.example.gestion_location_vehicule.service.MessageService;
 
-import com.example.gestion_location_vehicule.model.Message;
-import com.example.gestion_location_vehicule.model.Utilisateur;
-
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+
+import com.example.gestion_location_vehicule.model.Message;
+import com.example.gestion_location_vehicule.model.Utilisateur;
 
 public interface IMessageService {
 
@@ -34,4 +35,8 @@ public interface IMessageService {
     List<Message> getMessagesBetween(Utilisateur send, Utilisateur receive, Date debut, Date fin);
 
     List<Message> getMessagesNonLusBetween(Utilisateur send, Utilisateur receive);
+
+    Map<Utilisateur, List<Message>> getConversations(Utilisateur utilisateur);
+
+    List<Message> getConversation(Utilisateur a, Utilisateur b);
 }
