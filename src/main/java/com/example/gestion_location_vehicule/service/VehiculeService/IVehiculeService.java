@@ -1,14 +1,10 @@
 package com.example.gestion_location_vehicule.service.VehiculeService;
 
-import com.example.gestion_location_vehicule.model.Vehicule;
-
-import com.example.gestion_location_vehicule.request.VehiculeRequest;
-
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
+
+import com.example.gestion_location_vehicule.model.Vehicule;
 
 public interface IVehiculeService {
 

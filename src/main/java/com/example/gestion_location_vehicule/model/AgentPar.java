@@ -1,6 +1,5 @@
 package com.example.gestion_location_vehicule.model;
 
-import jakarta.persistence.DiscriminatorColumn;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import lombok.*;

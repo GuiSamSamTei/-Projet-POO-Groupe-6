@@ -1,11 +1,9 @@
 package com.example.gestion_location_vehicule.service.ContratlocationService;
 
 
-import com.example.gestion_location_vehicule.model.Contratlocation;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-
 import java.util.List;
+
+import com.example.gestion_location_vehicule.model.Contratlocation;
 
 
 public interface IContratlocationService {

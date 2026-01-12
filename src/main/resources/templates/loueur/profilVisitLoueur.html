@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Visiter les Profils des Agents Professionnels</title>
+</head>
+<body>
+
+<h2>Consulter les loueurs</h2>
+
+<p><strong>Nom :</strong> <span th:text="${utilisateur.nom}"></span></p>
+<p><strong>Prenom :</strong> <span th:text="${utilisateur.prenom}"></span></p>
+<p><strong> Username :</strong> <span th:text="${utilisateur.username}"> </span></p>
+
+
+<p><strong>Note moyenne :</strong> <span th:text="${utilisateur.notemoyenne}"></span></p>
+<p><strong>Nombre d'évaluations :</strong> <span th:text="${utilisateur.nombreevaluations}"></span></p>
+
+
+<a >Envoyer message</a>
+
+</body>
+</html>

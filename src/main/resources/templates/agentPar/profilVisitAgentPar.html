@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Consulter les Profils des Agents Particuliers</title>
+</head>
+<body>
+
+<h2>Profils des Agents Particuliers</h2>
+
+
+<p><strong>Username :</strong> <span th:text="${utilisateur.username}"></span></p>
+
+
+<hr/>
+
+<p><strong>Adresse :</strong> <span th:text="${utilisateur.adresse}"></span></p>
+<hr/>
+
+<p><strong>Note moyenne :</strong> <span th:text="${utilisateur.notemoyenne}"></span></p>
+<p><strong>Nombre d'évaluations :</strong> <span th:text="${utilisateur.nombreevaluations}"></span></p>
+<p><strong>Nombre de véhicules :</strong> <span th:text="${utilisateur.nombrevehicules}"></span></p>
+
+<a >Envoyer message</a>
+
+</body>
+</html>

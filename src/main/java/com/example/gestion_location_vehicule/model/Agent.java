@@ -1,6 +1,7 @@
 package com.example.gestion_location_vehicule.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.OneToMany;
 import lombok.*;
 
 import java.util.List;
@@ -21,8 +22,8 @@ public class Agent extends Utilisateur {
     private String bic;
     //private List<OptionPayante> optionsActives;
     //statistic
-    private int nombrevehicules;
-    private double revenustotaux;
+    private Integer nombrevehicules;
+    private Double revenustotaux;
 
     @OneToMany(mappedBy = "agent")
     private List<Vehicule> vehicules;
@@ -32,7 +33,4 @@ public class Agent extends Utilisateur {
 
     @OneToMany(mappedBy = "agent")
     private List<EvalL> evaldonnees;
-
-    @OneToMany(mappedBy = "agent")
-    private List<ConventionneParking> conventionneParkingList;
 }

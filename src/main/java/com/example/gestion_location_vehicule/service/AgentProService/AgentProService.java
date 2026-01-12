@@ -1,12 +1,12 @@
 package com.example.gestion_location_vehicule.service.AgentProService;
 
-import com.example.gestion_location_vehicule.model.AgentPar;
-import com.example.gestion_location_vehicule.model.AgentPro;
-import com.example.gestion_location_vehicule.repository.AgentProRepository;
-import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Optional;
+
+import org.springframework.stereotype.Service;
+
+import com.example.gestion_location_vehicule.model.AgentPro;
+import com.example.gestion_location_vehicule.repository.AgentProRepository;
 
 @Service
 public class AgentProService implements IAgentProService {
