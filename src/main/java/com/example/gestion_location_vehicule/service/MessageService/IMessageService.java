@@ -39,4 +39,11 @@ public interface IMessageService {
     Map<Utilisateur, List<Message>> getConversations(Utilisateur utilisateur);
 
     List<Message> getConversation(Utilisateur a, Utilisateur b);
+
+    long countUnreadMessages(Utilisateur utilisateur);
+
+    long countUnreadMessagesWith(Utilisateur me, Utilisateur other);
+
+    void markConversationAsRead(Utilisateur me, Utilisateur other);
+
 }

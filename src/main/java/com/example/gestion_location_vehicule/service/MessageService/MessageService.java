@@ -14,6 +14,8 @@ import com.example.gestion_location_vehicule.model.Message;
 import com.example.gestion_location_vehicule.model.Utilisateur;
 import com.example.gestion_location_vehicule.repository.MessageRepository;
 
+import jakarta.transaction.Transactional;
+
 @Service
 public class MessageService implements IMessageService {
 
@@ -121,5 +123,31 @@ public class MessageService implements IMessageService {
                         a, b, b, a
                 );
     }
+
+    @Override
+    public long countUnreadMessages(Utilisateur utilisateur) {
+        return messageRepository.countByUtilisateurreceiveAndLuFalse(utilisateur);
+    }
+
+    @Override
+    public long countUnreadMessagesWith(Utilisateur me, Utilisateur other) {
+        return messageRepository
+                .countByUtilisateurreceiveAndUtilisateursendAndLuFalse(me, other);
+    }
+
+    @Override
+    @Transactional
+    public void markConversationAsRead(Utilisateur me, Utilisateur other) {
+
+        List<Message> messages =
+                messageRepository
+                        .findByUtilisateurreceiveAndUtilisateursendAndLuFalse(me, other);
+
+        for (Message message : messages) {
+            message.setLu(true);
+        }
+    }
+
+
 
 }
