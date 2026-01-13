@@ -92,4 +92,9 @@ public class VeloService implements IVeloService{
 
         veloRepository.deleteById(velo_id);
     }
+
+    @Override
+    public Optional<Velo> getVeloById(Long id) {
+        return veloRepository.findById(id);
+    }
 }

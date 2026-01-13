@@ -114,7 +114,7 @@
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">Disponibilité</label>
                                     <div class="form-check mt-2 d-flex align-items-center">
-                                        <input class="form-check-input me-2" type="checkbox" id="vehiculedispo">
+                                        <input class="form-check-input me-2" type="checkbox" id="vehiculedispo_voiture">
                                         <label class="form-check-label me-3">Véhicule disponible</label>
 
                                         <a th:href="@{'/vehicules/' + ${id} + '/disponibilites'}"
@@ -222,7 +222,7 @@
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">Disponibilité</label>
                                     <div class="form-check mt-2 d-flex align-items-center">
-                                        <input class="form-check-input me-2" type="checkbox" id="vehiculedispo">
+                                        <input class="form-check-input me-2" type="checkbox" id="vehiculedispo_velo">
                                         <label class="form-check-label me-3">Véhicule disponible</label>
 
                                         <a th:href="@{'/vehicules/' + ${id} + '/disponibilites'}"
@@ -303,7 +303,7 @@
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">Disponibilité</label>
                                     <div class="form-check mt-2 d-flex align-items-center">
-                                        <input class="form-check-input me-2" type="checkbox" id="vehiculedispo">
+                                        <input class="form-check-input me-2" type="checkbox" id="vehiculedispo_van">
                                         <label class="form-check-label me-3">Véhicule disponible</label>
 
                                         <a th:href="@{'/vehicules/' + ${id} + '/disponibilites'}"
@@ -361,7 +361,7 @@
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">Disponibilité</label>
                                     <div class="form-check mt-2 d-flex align-items-center">
-                                        <input class="form-check-input me-2" type="checkbox" id="vehiculedispo">
+                                        <input class="form-check-input me-2" type="checkbox" id="vehiculedispo_camion">
                                         <label class="form-check-label me-3">Véhicule disponible</label>
 
                                         <a th:href="@{'/vehicules/' + ${id} + '/disponibilites'}"
@@ -423,7 +423,7 @@
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">Disponibilité</label>
                                     <div class="form-check mt-2 d-flex align-items-center">
-                                        <input class="form-check-input me-2" type="checkbox" id="vehiculedispo">
+                                        <input class="form-check-input me-2" type="checkbox" id="vehiculedispo_moto">
                                         <label class="form-check-label me-3">Véhicule disponible</label>
 
                                         <a th:href="@{'/vehicules/' + ${id} + '/disponibilites'}"
@@ -485,7 +485,7 @@
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">Disponibilité</label>
                                     <div class="form-check mt-2 d-flex align-items-center">
-                                        <input class="form-check-input me-2" type="checkbox" id="vehiculedispo">
+                                        <input class="form-check-input me-2" type="checkbox" id="vehiculedispo_scooter">
                                         <label class="form-check-label me-3">Véhicule disponible</label>
 
                                         <a th:href="@{'/vehicules/' + ${id} + '/disponibilites'}"
@@ -592,7 +592,7 @@
             document.getElementById('prixjour').value = data.prixjour;
             document.getElementById('couleur').value = data.couleur;
             document.getElementById('villedispo').value = data.villedispo;
-            document.getElementById('vehiculedispo').checked = data.vehiculedispo;
+            document.getElementById('vehiculedispo_voiture').checked = data.vehiculedispo;
 
             document.getElementById('nombreportes').value = data.nombreportes;
             document.getElementById('nombreplaces').value = data.nombreplaces;
@@ -698,7 +698,7 @@
             prixjour: parseFloat(document.getElementById('prixjour').value),
             couleur: document.getElementById('couleur').value,
             villedispo: document.getElementById('villedispo').value,
-            vehiculedispo: document.getElementById('vehiculedispo').checked,
+            vehiculedispo: document.getElementById('vehiculedispo_voiture').checked,
             // Spécifique
             nombreportes: parseInt(document.getElementById('nombreportes').value),
             nombreplaces: parseInt(document.getElementById('nombreplaces').value),

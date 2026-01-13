@@ -104,14 +104,13 @@ public class VeloController {
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getById(@PathVariable Long id) {
-        // Attention : VeloService doit avoir une méthode getVeloById qui retourne Optional<Velo>
-        // Si elle n'existe pas, ajoutez-la dans VeloService : return veloRepository.findById(id);
-        Optional<Velo> velo = veloService.getAllVelo().stream().filter(v -> v.getId().equals(id)).findFirst(); // Ou mieux : veloRepository.findById(id)
+        Optional<Velo> velo = veloService.getVeloById(id);
 
         if (velo.isPresent()) {
             return ResponseEntity.ok(velo.get());
         } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", "Vélo non trouvé"));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("error", "Vélo non trouvé"));
         }
     }
 
