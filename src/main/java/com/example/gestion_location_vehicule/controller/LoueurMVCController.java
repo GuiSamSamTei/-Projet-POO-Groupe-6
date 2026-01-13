@@ -6,8 +6,6 @@ import com.example.gestion_location_vehicule.model.Vehicule;
 import com.example.gestion_location_vehicule.repository.VehiculeRepository;
 import com.example.gestion_location_vehicule.service.ContratlocationService.ContratlocationService;
 import com.example.gestion_location_vehicule.service.LoueurService.ILoueurService;
-import com.example.gestion_location_vehicule.service.LoueurService.LoueurService;
-import com.example.gestion_location_vehicule.service.VehiculeService.VehiculeService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -17,111 +15,140 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
 import java.util.Map;
-import java.util.Optional;
 
 @Controller
 @RequestMapping("/loueur")
 public class LoueurMVCController {
 
-    private final LoueurService loueurService;
+    private final ILoueurService loueurService;
     private final VehiculeRepository vehiculeRepository;
     private final ContratlocationService contratlocationService;
 
-    public LoueurMVCController(ILoueurService loueurService, VehiculeService vehiculeService, VehiculeRepository vehiculeRepository, ContratlocationService contratlocationService) {
-        this.loueurService = (LoueurService) loueurService;
+    public LoueurMVCController(ILoueurService loueurService,
+                               VehiculeRepository vehiculeRepository,
+                               ContratlocationService contratlocationService) {
+        this.loueurService = loueurService;
         this.vehiculeRepository = vehiculeRepository;
         this.contratlocationService = contratlocationService;
     }
 
-    // Afficher le formulaire d'inscription
+    /* ===================== INSCRIPTION ===================== */
+
     @GetMapping("/inscription")
-    public String showForm(Model model) {
+    public String afficherFormulaireInscription(Model model) {
         model.addAttribute("loueur", new Loueur());
         return "loueur/inscription";
     }
 
-    // Traiter le formulaire d'inscription
     @PostMapping("/inscription")
-    public String submitForm(@ModelAttribute Loueur loueur, HttpSession session) {
-
-        // Initialisation des valeurs par défaut
+    public String traiterInscription(@ModelAttribute Loueur loueur, HttpSession session) {
         loueur.setNotemoyenne(0.0);
         loueur.setNombreevaluations(0);
 
-        // Création en base
-        loueurService.create(loueur);
+        loueurService.create(loueur);  // création via save()
 
-        // Stocker le loueur en session
         session.setAttribute("user", loueur.getId());
-
-        // Redirection vers le dashboard
         return "redirect:/loueur/profil";
     }
 
+    /* ===================== PROFIL ===================== */
+
     @GetMapping("/profil")
-    public String profil(HttpSession session, Model model) {
-        // Récupère le loueur depuis la session
-
-        if(session.getAttribute("user")==null)
+    public String afficherProfil(HttpSession session, Model model) {
+        Long userId = (Long) session.getAttribute("user");
+        if (userId == null) {
             return "redirect:/utilisateur/connexion";
+        }
 
-        Loueur loueur = loueurService.getById((Long) session.getAttribute("user"));
-        if (loueur != null) {
-            model.addAttribute("loueur", loueur);
+        Loueur loueur = loueurService.getById(userId);
+        model.addAttribute("loueur", loueur);
 
-        };
-        return "/loueur/profil";
+        return "loueur/profil";
     }
 
-     @GetMapping("/louer-vehicule/{id}")
-    public String louerVehicule(@PathVariable Long id, HttpSession session, Model model)
+    /* ===================== MODIFICATION PROFIL ===================== */
 
-     {
-         Vehicule vehicule = vehiculeRepository.findById(id)
-                 .orElseThrow(() -> new ResponseStatusException(
-                         HttpStatus.NOT_FOUND, "Véhicule introuvable"
-                 ));
+    @GetMapping("/profil/modifier")
+    public String afficherFormulaireModification(HttpSession session, Model model) {
+        Long userId = (Long) session.getAttribute("user");
+        if (userId == null) {
+            return "redirect:/utilisateur/connexion";
+        }
 
-         if (!vehicule.getVehiculedispo()) {
-             return "redirect:/vehicule/liste?indisponible=true";
-         }
+        Loueur loueur = loueurService.getById(userId);
+        model.addAttribute("loueur", loueur);
 
-         session.setAttribute("vehiculeEnCours", vehicule);
+        return "loueur/modifierProfil";
+    }
 
-         // Passer le véhicule à la vue
-         model.addAttribute("vehicule", vehicule);
+    @PostMapping("/profil/modifier")
+    public String enregistrerModification(@ModelAttribute("loueur") Loueur formLoueur,
+                                          HttpSession session) {
 
+        Long userId = (Long) session.getAttribute("user");
+        if (userId == null) {
+            return "redirect:/utilisateur/connexion";
+        }
 
-         return "/loueur/location";
-     }
+        Loueur existingLoueur = loueurService.getById(userId);
+        if (existingLoueur == null) {
+            session.invalidate();
+            return "redirect:/utilisateur/connexion";
+        }
 
+        // Mettre à jour les champs modifiables
+        existingLoueur.setNom(formLoueur.getNom());
+        existingLoueur.setPrenom(formLoueur.getPrenom());
+        existingLoueur.setUsername(formLoueur.getUsername());
+        existingLoueur.setEmail(formLoueur.getEmail());
+        existingLoueur.setTelephone(formLoueur.getTelephone());
+        existingLoueur.setVille(formLoueur.getVille());
+        existingLoueur.setTypepermis(formLoueur.getTypepermis());
+
+        // Sauvegarde avec save() via create()
+        loueurService.create(existingLoueur);
+
+        return "redirect:/loueur/profil";
+    }
+
+    /* ===================== LOCATION VEHICULE ===================== */
+
+    @GetMapping("/louer-vehicule/{id}")
+    public String louerVehicule(@PathVariable Long id,
+                                HttpSession session,
+                                Model model) {
+
+        Vehicule vehicule = vehiculeRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Véhicule introuvable"
+                ));
+
+        if (!vehicule.getVehiculedispo()) {
+            return "redirect:/vehicule/liste?indisponible=true";
+        }
+
+        session.setAttribute("vehiculeEnCours", vehicule);
+        model.addAttribute("vehicule", vehicule);
+
+        return "loueur/location";
+    }
 
     @PostMapping("/location/valider")
-    public String validerLocation(
-            @RequestParam Map<String, String> formData,
-            HttpSession session
-    ) {
-        Vehicule vehicule = (Vehicule) session.getAttribute("vehiculeEnCours");
+    public String validerLocation(@RequestParam Map<String, String> formData,
+                                  HttpSession session) {
 
+        Vehicule vehicule = (Vehicule) session.getAttribute("vehiculeEnCours");
         if (vehicule == null) {
             return "redirect:/vehicule/liste?sessionExpired=true";
         }
 
-        // 🔹 Récupération des champs
         LocalDate dateDebut = LocalDate.parse(formData.get("dateDebut"));
         LocalDate dateFin = LocalDate.parse(formData.get("dateFin"));
-       // String assuranceLibelle = formData.get("assurance");
         String lieuDepot = formData.get("lieuDepot");
 
-        // 🔹 Récupération entités liées
-//        Assurance assurance = assuranceRepository
-//                .findByLibelle(assuranceLibelle)
-//                .orElseThrow(() -> new RuntimeException("Assurance introuvable"));
+        Long loueurId = (Long) session.getAttribute("user");
+        Loueur loueur = loueurService.getById(loueurId);
 
-        Long loueur_id = (Long) session.getAttribute("user");
-        Loueur loueur = loueurService.getById(loueur_id);
-
-        // 🔹 Création du contrat
         Contratlocation contrat = new Contratlocation();
         contrat.setDatedebut(dateDebut);
         contrat.setDatefin(dateFin);
@@ -131,7 +158,6 @@ public class LoueurMVCController {
 
         contratlocationService.ajouterContralocation(contrat);
 
-        // 🔹 Mise à jour véhicule
         vehicule.setVehiculedispo(false);
         vehiculeRepository.save(vehicule);
 
@@ -139,5 +165,4 @@ public class LoueurMVCController {
 
         return "redirect:/vehicule/liste?locationSuccess=true";
     }
-
 }

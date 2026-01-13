@@ -70,4 +70,57 @@ public class AgentProMVCController {
         session.invalidate();
         return "redirect:/utilisateur/connexion";
     }
+
+
+    @GetMapping("/profil/modifier")
+    public String afficherFormulaireModification(HttpSession session, Model model) {
+
+        Long userId = (Long) session.getAttribute("user");
+        if (userId == null) {
+            return "redirect:/agent-pro/inscription";
+        }
+
+        Optional<AgentPro> agentProOpt = agentProService.getAgentProById(userId);
+
+        if (agentProOpt.isPresent()) {
+            model.addAttribute("user", agentProOpt.get());
+            return "agentPro/modifierProfil";
+        }
+
+        session.invalidate();
+        return "redirect:/agent-pro/inscription";
+    }
+
+    @PostMapping("/profil/modifier")
+    public String enregistrerModification(@ModelAttribute("user") AgentPro formUser, HttpSession session) {
+
+        Long userId = (Long) session.getAttribute("user");
+        if (userId == null) {
+            return "redirect:/agent-pro/inscription";
+        }
+
+        Optional<AgentPro> agentProOpt = agentProService.getAgentProById(userId);
+        if (agentProOpt.isPresent()) {
+            AgentPro existingUser = agentProOpt.get();
+
+            // Mettre à jour uniquement les champs modifiables
+            existingUser.setRaisonsociale(formUser.getRaisonsociale());
+            existingUser.setSiret(formUser.getSiret());
+            existingUser.setUsername(formUser.getUsername());
+            existingUser.setEmail(formUser.getEmail());
+            existingUser.setTelephone(formUser.getTelephone());
+            existingUser.setAdresse(formUser.getAdresse());
+            existingUser.setTelephonepro(formUser.getTelephonepro());
+            existingUser.setIban(formUser.getIban());
+            existingUser.setBic(formUser.getBic());
+
+            agentProService.saveAgentPro(existingUser);
+
+            return "redirect:/agent-pro/profil";
+        }
+
+        session.invalidate();
+        return "redirect:/agent-pro/inscription";
+    }
+
 }
