@@ -18,19 +18,17 @@ public interface UtilisateurRepository extends JpaRepository<Utilisateur, Long> 
     Optional<Utilisateur> findByEmail(String email);
 
     // Récupérer tous les utilisateurs dont le username contient une chaîne (insensible à la casse)
-    List<Utilisateur> findByUsernameContainingIgnoreCaseAndIsAdminFalse(String usernamePart);
+    List<Utilisateur> findByUsernameContainingIgnoreCase(String usernamePart);
 
     // Récupérer tous les utilisateurs dont l'email contient une chaîne
-    List<Utilisateur> findByEmailContainingIgnoreCaseAndIsAdminFalse(String emailPart);
+    List<Utilisateur> findByEmailContainingIgnoreCase(String emailPart);
 
     // Récupérer tous les utilisateurs ayant une note moyenne supérieure ou égale à une valeur
-    List<Utilisateur> findByNotemoyenneGreaterThanEqualAndIsAdminFalse(double noteMin);
+    List<Utilisateur> findByNotemoyenneGreaterThanEqual(double noteMin);
 
     // Récupérer tous les utilisateurs ayant une note moyenne inférieure ou égale à une valeur
-    List<Utilisateur> findByNotemoyenneLessThanEqualAndIsAdminFalse(double noteMax);
+    List<Utilisateur> findByNotemoyenneLessThanEqual(double noteMax);
 
     // Récupérer tous les utilisateurs ayant reçu un certain nombre minimum d'évaluations
-    List<Utilisateur> findByNombreevaluationsGreaterThanEqualAndIsAdminFalse(int minEvaluations);
-
-    Optional<Utilisateur> findByIsAdminTrue();
+    List<Utilisateur> findByNombreevaluationsGreaterThanEqual(int minEvaluations);
 }

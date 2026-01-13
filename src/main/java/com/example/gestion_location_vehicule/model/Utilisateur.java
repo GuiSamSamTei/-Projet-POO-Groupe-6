@@ -66,7 +66,5 @@ public class Utilisateur {
     @OneToMany(mappedBy = "utilisateursend")
     private List<Message> messagesenvoyes;
 
-    private boolean isAdmin = false;
-
 
 }
