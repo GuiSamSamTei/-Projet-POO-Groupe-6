@@ -26,11 +26,14 @@ public class Agent extends Utilisateur {
     private Double revenustotaux;
 
     @OneToMany(mappedBy = "agent")
+    @ToString.Exclude
     private List<Vehicule> vehicules;
 
     @OneToMany(mappedBy = "agent")
+    @ToString.Exclude
     private List<EvalA> evalrecues;
 
     @OneToMany(mappedBy = "agent")
+    @ToString.Exclude
     private List<EvalL> evaldonnees;
 }
