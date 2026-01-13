@@ -28,11 +28,6 @@ public class ScooterController {
         return scooterService.getAllScooters();
     }
 
-    // 🔹 GET : par ID
-    @GetMapping("/{id}")
-    public Optional<Scooter> getById(@PathVariable Long id) {
-        return scooterService.getScooterById(id);
-    }
 
     // 🔹 POST : créer un scooter
     @PostMapping
@@ -64,6 +59,28 @@ public class ScooterController {
         }
     }
 
+    // 🔹 GET par ID
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getById(@PathVariable Long id) {
+        Optional<Scooter> scooter = scooterService.getScooterById(id);
+        if (scooter.isPresent()) {
+            return ResponseEntity.ok(scooter.get());
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", "Scooter non trouvé"));
+        }
+    }
+
+    // 🔹 PUT avec ScooterRequest
+    @PutMapping("/{id}")
+    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody ScooterRequest request) {
+        try {
+            Scooter scooter = scooterService.modifierScooter(id, request); // Assurez-vous d'avoir ajouté modifierScooter dans le Service
+            return ResponseEntity.ok(Map.of("success", true, "message", "Scooter modifié avec succès", "data", scooter));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", e.getMessage()));
+        }
+    }
+
     // 🔹 DELETE : supprimer un scooter
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id) {
@@ -76,12 +93,6 @@ public class ScooterController {
         }
     }
 
-    // 🔹 PUT : mettre à jour un scooter
-    @PutMapping("/{id}")
-    public Scooter update(@PathVariable Long id, @RequestBody Scooter scooter) {
-        scooter.setId(id);
-        return scooterService.saveScooter(scooter);
-    }
 
 
     // 🔹 GET : scooters disponibles

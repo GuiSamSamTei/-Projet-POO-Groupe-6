@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @RestController
@@ -98,6 +99,19 @@ public class VeloController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(Map.of("message", "Erreur lors de la suppression"));
+        }
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getById(@PathVariable Long id) {
+        // Attention : VeloService doit avoir une méthode getVeloById qui retourne Optional<Velo>
+        // Si elle n'existe pas, ajoutez-la dans VeloService : return veloRepository.findById(id);
+        Optional<Velo> velo = veloService.getAllVelo().stream().filter(v -> v.getId().equals(id)).findFirst(); // Ou mieux : veloRepository.findById(id)
+
+        if (velo.isPresent()) {
+            return ResponseEntity.ok(velo.get());
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", "Vélo non trouvé"));
         }
     }
 }

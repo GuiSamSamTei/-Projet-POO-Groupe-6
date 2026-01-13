@@ -28,11 +28,6 @@ public class MotoController {
         return motoService.getAllMotos();
     }
 
-    // 🔹 GET : moto par ID
-    @GetMapping("/{id}")
-    public Optional<Moto> getById(@PathVariable Long id) {
-        return motoService.getMotoById(id);
-    }
 
     // 🔹 POST : créer une moto
     @PostMapping
@@ -76,11 +71,26 @@ public class MotoController {
         }
     }
 
-    // 🔹 PUT : mettre à jour une moto
+    // 🔹 REMPLACER : GET par ID avec ResponseEntity
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getById(@PathVariable Long id) {
+        Optional<Moto> moto = motoService.getMotoById(id);
+        if (moto.isPresent()) {
+            return ResponseEntity.ok(moto.get());
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", "Moto non trouvée"));
+        }
+    }
+
+    // 🔹 REMPLACER : PUT avec MotoRequest
     @PutMapping("/{id}")
-    public Moto update(@PathVariable Long id, @RequestBody Moto moto) {
-        moto.setId(id);
-        return motoService.saveMoto(moto);
+    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody MotoRequest request) {
+        try {
+            Moto moto = motoService.modifierMoto(id, request);
+            return ResponseEntity.ok(Map.of("success", true, "message", "Moto modifiée avec succès", "data", moto));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", e.getMessage()));
+        }
     }
 
 

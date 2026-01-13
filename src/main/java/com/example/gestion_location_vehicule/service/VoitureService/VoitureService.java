@@ -61,6 +61,18 @@ public class VoitureService implements IVoitureService{
         }
 
         Voiture voitureExistante = voitureOptional.get();
+        if (voitureRequest.getPrixjour() != 0) {
+            voitureExistante.setPrixjour(voitureRequest.getPrixjour());
+        }
+
+        if (voitureRequest.getVilledispo() != null) {
+            voitureExistante.setVilledispo(voitureRequest.getVilledispo());
+        }
+
+        if (voitureRequest.getVehiculedispo() != null) {
+            voitureExistante.setVehiculedispo(voitureRequest.getVehiculedispo());
+        }
+
 
         if (voitureRequest.getMarque() != null) {
             voitureExistante.setMarque(voitureRequest.getMarque());
@@ -110,5 +122,9 @@ public class VoitureService implements IVoitureService{
 
         voitureRepository.deleteById(voiture_id);
 
+    }
+
+    public Optional<Voiture> getVoitureById(Long id) {
+        return voitureRepository.findById(id);
     }
 }
