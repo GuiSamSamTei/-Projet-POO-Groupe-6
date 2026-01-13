@@ -88,6 +88,11 @@ public class VehiculeService implements IVehiculeService{
     }
 
     @Override
+    public void deleteVehicule(Long id) {
+        vehiculeRepository.deleteById(id);
+    }
+
+    @Override
     public List<Vehicule> filtrer(Map<String, String> filters) {
         return vehiculeRepository.findAll(
                 VehiculeSpecification.withFilters(filters)

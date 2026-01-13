@@ -33,16 +33,21 @@ public class VoitureService implements IVoitureService{
         voiture.setGps(voitureRequest.getGps());
         voiture.setNombreplaces(voitureRequest.getNombreplaces());
         voiture.setNombreportes(voitureRequest.getNombreportes());
-        if(voitureRequest.getAgent_id()!=null) {
-            Optional<Agent> agentOptional = agentRepository.findById(voitureRequest.getAgent_id());
-            voiture.setAgent(agentOptional.get());
-        }
         voiture.setMarque(voitureRequest.getMarque());
         voiture.setModele(voitureRequest.getModele());
         voiture.setPrixjour(voitureRequest.getPrixjour());
         voiture.setCouleur(voitureRequest.getCouleur());
         voiture.setVehiculedispo(voitureRequest.getVehiculedispo());
         voiture.setVilledispo(voitureRequest.getVilledispo());
+
+        if (voitureRequest.getAgent_id() != null) {
+            Optional<Agent> agentOptional = agentRepository.findById(voitureRequest.getAgent_id());
+            if (agentOptional.isPresent()) {
+                voiture.setAgent(agentOptional.get());
+            } else {
+                System.out.println("Attention : il n'y a pas un agent avec id :  " + voitureRequest.getAgent_id());
+            }
+        }
 
         return  voitureRepository.save(voiture);
     }
@@ -56,6 +61,18 @@ public class VoitureService implements IVoitureService{
         }
 
         Voiture voitureExistante = voitureOptional.get();
+        if (voitureRequest.getPrixjour() != 0) {
+            voitureExistante.setPrixjour(voitureRequest.getPrixjour());
+        }
+
+        if (voitureRequest.getVilledispo() != null) {
+            voitureExistante.setVilledispo(voitureRequest.getVilledispo());
+        }
+
+        if (voitureRequest.getVehiculedispo() != null) {
+            voitureExistante.setVehiculedispo(voitureRequest.getVehiculedispo());
+        }
+
 
         if (voitureRequest.getMarque() != null) {
             voitureExistante.setMarque(voitureRequest.getMarque());
@@ -105,5 +122,9 @@ public class VoitureService implements IVoitureService{
 
         voitureRepository.deleteById(voiture_id);
 
+    }
+
+    public Optional<Voiture> getVoitureById(Long id) {
+        return voitureRepository.findById(id);
     }
 }

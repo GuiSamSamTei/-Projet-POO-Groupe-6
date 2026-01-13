@@ -59,6 +59,24 @@ public class MotoService implements IMotoService {
         return motoRepository.save(moto);
     }
 
+    public Moto modifierMoto(Long id, MotoRequest request) {
+        return motoRepository.findById(id).map(moto -> {
+            // Champs communs
+            if (request.getMarque() != null) moto.setMarque(request.getMarque());
+            if (request.getModele() != null) moto.setModele(request.getModele());
+            if (request.getPrixjour() != 0) moto.setPrixjour(request.getPrixjour());
+            if (request.getCouleur() != null) moto.setCouleur(request.getCouleur());
+            if (request.getVilledispo() != null) moto.setVilledispo(request.getVilledispo());
+            if (request.getVehiculedispo() != null) moto.setVehiculedispo(request.getVehiculedispo());
+
+            // Champs spécifiques Moto
+            if (request.getCylindree() != null) moto.setCylindree(request.getCylindree());
+            if (request.getNbchevaux() != null) moto.setNbchevaux(request.getNbchevaux());
+
+            return motoRepository.save(moto);
+        }).orElseThrow(() -> new IllegalArgumentException("Moto non trouvée avec l'ID " + id));
+    }
+
     @Override
     public Moto saveMoto(Moto moto) {
         if (moto.getVehiculedispo() == null) {
