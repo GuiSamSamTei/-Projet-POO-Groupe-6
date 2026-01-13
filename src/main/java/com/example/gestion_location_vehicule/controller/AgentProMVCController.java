@@ -2,12 +2,15 @@ package com.example.gestion_location_vehicule.controller;
 
 import com.example.gestion_location_vehicule.model.AgentPar;
 import com.example.gestion_location_vehicule.model.AgentPro;
+import com.example.gestion_location_vehicule.model.Vehicule;
 import com.example.gestion_location_vehicule.service.AgentProService.IAgentProService;
+import com.example.gestion_location_vehicule.service.VehiculeService.IVehiculeService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -15,9 +18,11 @@ import java.util.Optional;
 public class AgentProMVCController {
 
     private final IAgentProService agentProService;
+    private final IVehiculeService vehiculeService;
 
-    public AgentProMVCController(IAgentProService agentProService) {
+    public AgentProMVCController(IAgentProService agentProService, IVehiculeService vehiculeService) {
         this.agentProService = agentProService;
+        this.vehiculeService = vehiculeService;
     }
 
     // Formulaire d'inscription
@@ -48,7 +53,7 @@ public class AgentProMVCController {
 
         Long userId = (Long) session.getAttribute("user");
         if (userId == null) {
-            return "redirect:/agent-pro/inscription";
+            return "redirect:/utilisateur/connexion";
         }
 
         Optional<AgentPro> agentProOpt = agentProService.getAgentProById(userId);
@@ -58,8 +63,11 @@ public class AgentProMVCController {
             return "agentPro/profil";
         }
 
+        List<Vehicule> vehicules = vehiculeService.getVehiculesParAgent(userId);
+        model.addAttribute("vehicules", vehicules);
+
         // Cas incohérent : utilisateur en session mais inexistant en base
         session.invalidate();
-        return "redirect:/agent-pro/inscription";
+        return "redirect:/utilisateur/connexion";
     }
 }
