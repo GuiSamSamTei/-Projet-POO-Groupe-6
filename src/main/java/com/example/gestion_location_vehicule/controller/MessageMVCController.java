@@ -56,7 +56,7 @@ public class MessageMVCController {
         // Recherche utilisateurs (hors soi-même)
         if (q != null && !q.isBlank()) {
             List<Utilisateur> resultats =
-                    utilisateurRepository.findByUsernameContainingIgnoreCaseAndIsAdminFalse(q);
+                    utilisateurRepository.findByUsernameContainingIgnoreCase(q);
 
             resultats.removeIf(u -> u.getId().equals(me.getId()));
             model.addAttribute("resultatsRecherche", resultats);
