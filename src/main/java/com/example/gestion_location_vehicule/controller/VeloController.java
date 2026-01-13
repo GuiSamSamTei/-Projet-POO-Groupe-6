@@ -114,4 +114,5 @@ public class VeloController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", "Vélo non trouvé"));
         }
     }
+
 }

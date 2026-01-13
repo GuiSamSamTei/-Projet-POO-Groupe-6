@@ -3,6 +3,7 @@ package com.example.gestion_location_vehicule.model;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorColumn;
 import jakarta.persistence.DiscriminatorType;
@@ -60,10 +61,12 @@ public class Utilisateur {
 
     //messages
     @OneToMany(mappedBy = "utilisateurreceive")
+    @JsonIgnore
     private List<Message> messagerecus;
 
     // Messages envoyés → l'utilisateur est l'expéditeur
     @OneToMany(mappedBy = "utilisateursend")
+    @JsonIgnore
     private List<Message> messagesenvoyes;
 
 

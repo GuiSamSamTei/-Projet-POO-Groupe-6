@@ -29,7 +29,7 @@ public class VeloService implements IVeloService{
         Velo velo = new Velo();
 
         velo.setCouleur(veloRequest.getCouleur());
-        velo.setElectrique(veloRequest.getElectrique());
+        velo.setElectrique(veloRequest.getElectrique() != null ? veloRequest.getElectrique() : false);
         velo.setTypeVelo(veloRequest.getTypeVelo());
         velo.setNombreVitesses(veloRequest.getNombrevitesses());
 
