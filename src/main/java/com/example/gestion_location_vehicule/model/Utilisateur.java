@@ -3,6 +3,7 @@ package com.example.gestion_location_vehicule.model;
 
 import java.util.List;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorColumn;
 import jakarta.persistence.DiscriminatorType;
 import jakarta.persistence.Entity;
@@ -39,9 +40,17 @@ public class Utilisateur {
             allocationSize = 1
     )
     private Long id;
+
+    @Column(unique = true, nullable = false)
     private String username; //nom pour se connecter
+
+    @Column(nullable = false)
     private String mdp;
+
+    @Column(unique = true, nullable = false)
     private String email;
+
+    @Column(nullable = false)
     private String telephone;
     private String ville;
 

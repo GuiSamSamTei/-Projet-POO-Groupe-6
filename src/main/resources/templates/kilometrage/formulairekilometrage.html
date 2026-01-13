@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Kilométrage Véhicule</title>
+</head>
+<body>
+<h1>Kilométrage pour le véhicule : <span th:text="${vehicule.marque} + ' ' + ${vehicule.modele}"></span></h1>
+
+<form th:action="@{/kilometrage/enregistrer}" th:object="${kmVehicule}" method="post" enctype="multipart/form-data">
+    <input type="hidden" th:field="*{vehicule.id}" />
+
+    <div>
+        <label>Kilométrage départ :</label>
+        <input type="number" th:field="*{kmDepart}" required />
+    </div>
+
+    <div>
+        <label>Photo départ :</label>
+        <input type="file" name="photoDepartFile" />
+    </div>
+
+    <div>
+        <label>Kilométrage retour :</label>
+        <input type="number" th:field="*{kmRetour}" />
+    </div>
+
+    <div>
+        <label>Photo retour :</label>
+        <input type="file" name="photoRetourFile" />
+    </div>
+
+    <div>
+        <label>Date de location :</label>
+        <input type="date" th:field="*{dateLocation}" required />
+    </div>
+
+    <button type="submit">Enregistrer</button>
+</form>
+
+<hr/>
+
+<h2>Historique des kilométrages</h2>
+<table border="1">
+    <thead>
+    <tr>
+        <th>Date</th>
+        <th>Km départ</th>
+        <th>Km retour</th>
+        <th>Photo départ</th>
+        <th>Photo retour</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="km : ${historique}">
+        <td th:text="${km.dateLocation}"></td>
+        <td th:text="${km.kmDepart}"></td>
+        <td th:text="${km.kmRetour}"></td>
+        <td>
+            <img th:if="${km.photoDepart}" th:src="@{/${km.photoDepart}}" alt="Photo départ" width="100"/>
+        </td>
+        <td>
+            <img th:if="${km.photoRetour}" th:src="@{/${km.photoRetour}}" alt="Photo retour" width="100"/>
+        </td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>

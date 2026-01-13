@@ -1,13 +1,18 @@
 package com.example.gestion_location_vehicule.service.MessageService;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
+import org.springframework.stereotype.Service;
+
 import com.example.gestion_location_vehicule.model.Message;
 import com.example.gestion_location_vehicule.model.Utilisateur;
 import com.example.gestion_location_vehicule.repository.MessageRepository;
-import org.springframework.stereotype.Service;
-
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
 
 @Service
 public class MessageService implements IMessageService {
@@ -79,4 +84,42 @@ public class MessageService implements IMessageService {
     public List<Message> getMessagesNonLusBetween(Utilisateur send, Utilisateur receive) {
         return messageRepository.findByUtilisateursendAndUtilisateurreceiveAndLuFalse(send, receive);
     }
+
+    @Override
+    public Map<Utilisateur, List<Message>> getConversations(Utilisateur utilisateur) {
+
+        List<Message> messages = getMessagesByUtilisateur(utilisateur);
+        Map<Utilisateur, List<Message>> conversations = new HashMap<>();
+
+        for (Message message : messages) {
+
+            if (message.getUtilisateursend() == null || message.getUtilisateurreceive() == null) {
+                continue;
+            }
+
+            Utilisateur interlocuteur
+                    = message.getUtilisateursend().equals(utilisateur)
+                    ? message.getUtilisateurreceive()
+                    : message.getUtilisateursend();
+
+            conversations
+                    .computeIfAbsent(interlocuteur, k -> new ArrayList<>())
+                    .add(message);
+        }
+
+        conversations.values().forEach(list
+                -> list.sort(Comparator.comparing(Message::getDateenvoi))
+        );
+
+        return conversations;
+    }
+
+    @Override
+    public List<Message> getConversation(Utilisateur a, Utilisateur b) {
+        return messageRepository
+                .findByUtilisateursendAndUtilisateurreceiveOrUtilisateursendAndUtilisateurreceiveOrderByDateenvoi(
+                        a, b, b, a
+                );
+    }
+
 }

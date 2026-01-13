@@ -34,4 +34,10 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
 
     // Messages non lus envoyés par un utilisateur spécifique à un destinataire
     List<Message> findByUtilisateursendAndUtilisateurreceiveAndLuFalse(Utilisateur send, Utilisateur receive);
+
+    // Conversation entre deux utilisateurs, ordonnée par date d'envoi
+    List<Message> findByUtilisateursendAndUtilisateurreceiveOrUtilisateursendAndUtilisateurreceiveOrderByDateenvoi(
+            Utilisateur send1, Utilisateur receive1,
+            Utilisateur send2, Utilisateur receive2
+    );
 }

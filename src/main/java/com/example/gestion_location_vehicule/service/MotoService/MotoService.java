@@ -1,20 +1,23 @@
 package com.example.gestion_location_vehicule.service.MotoService;
 
+import com.example.gestion_location_vehicule.model.Agent;
 import com.example.gestion_location_vehicule.model.Moto;
+import com.example.gestion_location_vehicule.repository.AgentRepository;
 import com.example.gestion_location_vehicule.repository.MotoRepository;
+import com.example.gestion_location_vehicule.request.MotoRequest;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class MotoService implements IMotoService {
 
     private final MotoRepository motoRepository;
+    private final AgentRepository agentRepository;
 
-    public MotoService(MotoRepository motoRepository) {
-        this.motoRepository = motoRepository;
-    }
 
     // 🔹 CRUD
     @Override
@@ -25,6 +28,35 @@ public class MotoService implements IMotoService {
     @Override
     public Optional<Moto> getMotoById(Long id) {
         return motoRepository.findById(id);
+    }
+
+    public Moto ajouterMoto(MotoRequest request) {
+        Moto moto = new Moto();
+
+        // 1. Champs communs
+        moto.setMarque(request.getMarque());
+        moto.setModele(request.getModele());
+        moto.setPrixjour(request.getPrixjour());
+        moto.setCouleur(request.getCouleur());
+        moto.setVilledispo(request.getVilledispo());
+        moto.setVehiculedispo(request.getVehiculedispo());
+        // Pas de note, par défaut 0.0
+
+        // 2. Champs spécifiques Moto
+        moto.setCylindree(request.getCylindree());
+        moto.setNbchevaux(request.getNbchevaux());
+
+        // 3. Liaison Agent
+        if (request.getAgent_id() != null) {
+            Optional<Agent> agentOptional = agentRepository.findById(request.getAgent_id());
+            if (agentOptional.isPresent()) {
+                moto.setAgent(agentOptional.get());
+            } else {
+                throw new IllegalArgumentException("Agent non trouvé avec l'ID : " + request.getAgent_id());
+            }
+        }
+
+        return motoRepository.save(moto);
     }
 
     @Override

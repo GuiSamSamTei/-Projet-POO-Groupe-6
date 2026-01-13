@@ -1,12 +1,15 @@
 package com.example.gestion_location_vehicule.controller;
 
 import com.example.gestion_location_vehicule.model.AgentPar;
+import com.example.gestion_location_vehicule.model.Vehicule;
 import com.example.gestion_location_vehicule.service.AgentParService.IAgentParService;
+import com.example.gestion_location_vehicule.service.VehiculeService.IVehiculeService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -14,9 +17,11 @@ import java.util.Optional;
 public class AgentParMVCController {
 
     private final IAgentParService agentParService;
+    private final IVehiculeService vehiculeService;
 
-    public AgentParMVCController(IAgentParService agentParService) {
+    public AgentParMVCController(IAgentParService agentParService, IVehiculeService vehiculeService) {
         this.agentParService = agentParService;
+        this.vehiculeService = vehiculeService;
     }
 
     // ------------------ INSCRIPTION ------------------
@@ -51,7 +56,7 @@ public class AgentParMVCController {
 
         Long userId = (Long) session.getAttribute("user");
         if (userId == null) {
-            return "redirect:/agent-par/inscription";
+            return "redirect:/utilisateur/connexion";
         }
 
         Optional<AgentPar> agentParOpt = agentParService.getAgentParById(userId);
@@ -61,9 +66,12 @@ public class AgentParMVCController {
             return "agentPar/profil";
         }
 
+        List<Vehicule> vehicules = vehiculeService.getVehiculesParAgent(userId);
+        model.addAttribute("vehicules", vehicules);
+
         // Cas incohérent : utilisateur en session mais inexistant en base
         session.invalidate();
-        return "redirect:/agent-par/inscription";
+        return "redirect:/utilisateur/connexion";
     }
 
     // ------------------ MODIFICATION PROFIL ------------------
