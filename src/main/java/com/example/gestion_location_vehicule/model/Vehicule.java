@@ -51,15 +51,19 @@ public class Vehicule {
 
     @ManyToOne
     @JoinColumn(name = "agent_id")
+    @ToString.Exclude
     private Agent agent;
 
     @OneToMany(mappedBy = "vehicule")
+    @ToString.Exclude
     private List<EvalV> evalrecues;
 
     @OneToMany(mappedBy = "vehicule")
+    @ToString.Exclude
     private List<PrixAssurance> prixassurance;
 
     @OneToMany(mappedBy = "vehicule")
+    @ToString.Exclude
     private List<Contratlocation> contratlocations;
 
     // ⚡ Nouvelle ligne pour lier les kilométrages

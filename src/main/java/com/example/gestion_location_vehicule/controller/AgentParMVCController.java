@@ -63,11 +63,14 @@ public class AgentParMVCController {
 
         if (agentParOpt.isPresent()) {
             model.addAttribute("user", agentParOpt.get());
+            List<Vehicule> mesVehicules = vehiculeService.getVehiculesParAgent(userId);
+//            System.out.println("当前用户ID: " + userId + ", 查到的车辆数量: " + mesVehicules.size());
+            model.addAttribute("vehicules", mesVehicules);
             return "agentPar/profil";
         }
 
 
-        model.addAttribute("vehicules", agentParOpt.get().getVehicules());
+//        model.addAttribute("vehicules", agentParOpt.get().getVehicules());
 
         // Cas incohérent : utilisateur en session mais inexistant en base
         session.invalidate();
