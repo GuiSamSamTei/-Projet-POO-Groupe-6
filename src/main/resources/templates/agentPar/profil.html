@@ -245,7 +245,7 @@
                                            class="btn btn-outline-primary btn-sm flex-fill">
                                             <i class="fas fa-eye me-1"></i> Voir
                                         </a>
-                                        <a th:href="@{/vehicule/modifier/{id}(id=${vehicule.id})}"
+                                        <a th:href="@{'/vehicule/formulaire/modifier/' + ${#strings.toLowerCase(vehicule.typeVehicule)} + '/' + ${vehicule.id}}"
                                            class="btn btn-outline-warning btn-sm flex-fill">
                                             <i class="fas fa-edit me-1"></i> Modifier
                                         </a>

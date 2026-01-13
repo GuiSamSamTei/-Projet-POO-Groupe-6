@@ -127,7 +127,6 @@ public class VehiculePageController {
                                HttpSession session,
                                RedirectAttributes redirectAttributes,
                                Model model) {
-        // 1. Vérification de sécurité
         if (!isAgentLoggedIn(session)) {
             redirectAttributes.addFlashAttribute("error", "Accès refusé. Connectez-vous pour modifier.");
             return "redirect:/utilisateur/connexion";
@@ -135,6 +134,15 @@ public class VehiculePageController {
 
         model.addAttribute("type", type);
         model.addAttribute("id", id);
+
+        String role = (String) session.getAttribute("role");
+        String redirectUrl = "/agent-par/profil"; // Par défaut
+
+        if ("AGENT_PRO".equals(role)) {
+            redirectUrl = "/agent-pro/profil";
+        }
+
+        model.addAttribute("redirectUrl", redirectUrl);
 
         return "vehicule/modifier-vehicule";
     }

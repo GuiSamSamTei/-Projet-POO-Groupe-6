@@ -9,6 +9,7 @@ import java.util.List;
 @Service
 public interface IParkingService {
 
+    List<Parking> getAllParking();
     Parking touverParkingparNom (String nom);
     Parking trouverParkingparId(Long id);
     List<Parking> trouverParkingparVille (String ville);

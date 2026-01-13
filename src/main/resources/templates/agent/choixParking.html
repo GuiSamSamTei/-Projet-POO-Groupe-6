@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Profil Véhicule</title>
+</head>
+<body>
+<form  method="post">
+
+    <label>Parkings conventionnés :</label><br/><br/>
+    <h2 > Veuillez Selectionné les parking : </h2>
+
+    <div th:href="@{/parking}" th:each="cp : ${parkings}">
+        <input type="checkbox"
+               name="parkingIds"
+               th:value="${cp.id}"
+
+               th:checked="${#lists.contains(parkingdeja, cp.id)}"                    />
+        <span th:text="'[' + ${cp.ville} + '] '"></span>
+        <span th:text="${cp.nomparking}"></span>
+        —
+        <span th:text="${cp.adresse}"></span>
+
+        <span th:text="${cp.codepostal}"></span>
+    </div>
+
+    <br/>
+    <button type="submit">Enregistrer</button>
+</form>
+
+</body>
+</html>

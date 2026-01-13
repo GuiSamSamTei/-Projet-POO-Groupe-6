@@ -31,6 +31,8 @@ public class Parking {
     private Integer capacitemax;
     private Integer capacitenow;
 
+    @OneToMany(mappedBy = "parking")
+    private List<Contratlocation> contratlocations;
 
     @OneToMany(mappedBy = "parking")
     private List<ConventionneParking> conventionneParkingList;

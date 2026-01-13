@@ -1,11 +1,12 @@
 package com.example.gestion_location_vehicule.repository;
 
-import com.example.gestion_location_vehicule.model.Utilisateur;
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-import java.util.Optional;
+import com.example.gestion_location_vehicule.model.Utilisateur;
 
 @Repository
 public interface UtilisateurRepository extends JpaRepository<Utilisateur, Long> {
