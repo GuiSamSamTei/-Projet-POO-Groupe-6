@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Messagerie</title>
+</head>
+
+<body>
+
+<h2>
+    Messagerie
+    <span th:if="${totalUnread != null and totalUnread > 0}" style="color: red">
+        (<span th:text="${totalUnread}"></span> non lus)
+    </span>
+</h2>
+
+<div style="display: flex; border: 1px solid #ccc; height: 500px">
+
+    <!-- ===================== -->
+    <!-- Colonne gauche        -->
+    <!-- Recherche + convos    -->
+    <!-- ===================== -->
+    <div style="width: 30%; border-right: 1px solid #ccc; padding: 10px; overflow-y: auto">
+
+        <!-- Recherche utilisateurs -->
+        <form method="get" th:action="@{/messages}" style="margin-bottom: 10px">
+            <input
+                type="text"
+                name="q"
+                placeholder="Rechercher un utilisateur"
+                th:value="${q}"
+                style="width: 100%"
+            />
+        </form>
+
+        <!-- Résultats de recherche -->
+        <div th:if="${resultatsRecherche != null}">
+            <div
+                th:each="u : ${resultatsRecherche}"
+                style="border: 1px dashed #aaa; padding: 6px; margin-bottom: 4px"
+            >
+                <a th:href="@{/messages/{id}(id=${u.id})}">
+                    <b th:text="${u.username}"></b>
+                </a>
+            </div>
+
+            <hr />
+        </div>
+
+        <!-- Liste des conversations -->
+        <div
+            th:each="conv : ${conversations}"
+            style="border: 1px solid #ddd; padding: 8px; margin-bottom: 8px"
+        >
+            <a
+                th:href="@{/messages/{id}(id=${conv.key.id})}"
+                style="text-decoration: none; color: black"
+            >
+                <b th:text="${conv.key.username}">Utilisateur</b>
+            </a>
+
+            <!-- Aperçu dernier message -->
+            <div style="margin-top: 4px">
+                <small th:if="${#lists.isEmpty(conv.value)}">
+                    <i>Aucun message</i>
+                </small>
+
+                <small th:if="${!#lists.isEmpty(conv.value)}"
+                       th:text="${conv.value[#lists.size(conv.value)-1].contenu}">
+                    Dernier message
+                </small>
+            </div>
+
+            <!-- Indicateur non-lus -->
+            <span
+                th:if="${unreadByUser != null and unreadByUser[conv.key.id] > 0}"
+                style="color: red; font-weight: bold"
+            >
+                • <span th:text="${unreadByUser[conv.key.id]}"></span>
+            </span>
+        </div>
+    </div>
+
+    <!-- ===================== -->
+    <!-- Colonne droite        -->
+    <!-- Conversation active   -->
+    <!-- ===================== -->
+    <div style="width: 70%; padding: 10px; display: flex; flex-direction: column">
+
+        <div th:if="${other == null}">
+            <p>Sélectionnez une conversation ou recherchez un utilisateur.</p>
+        </div>
+
+        <div th:if="${other != null}"
+             style="display: flex; flex-direction: column; height: 100%">
+
+            <h3 th:text="'Conversation avec ' + ${other.username}"></h3>
+
+            <!-- Messages -->
+            <div
+                style="
+                    flex: 1;
+                    border: 1px solid #ddd;
+                    padding: 10px;
+                    overflow-y: auto;
+                "
+            >
+                <div th:if="${messages == null or #lists.isEmpty(messages)}">
+                    <p><i>Aucun message pour l’instant.</i></p>
+                </div>
+
+                <div th:each="msg : ${messages}">
+                    <p
+                        th:style="${msg.utilisateursend.id == other.id}
+                                ? 'text-align:left'
+                                : 'text-align:right'"
+                    >
+                        <b th:text="${msg.utilisateursend.username}">User</b> :
+                        <span th:text="${msg.contenu}">Message</span>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Formulaire envoi -->
+            <form
+                th:action="@{/messages/envoyer}"
+                method="post"
+                style="margin-top: 10px"
+            >
+                <input type="hidden" name="destinataireId" th:value="${other.id}" />
+
+                <textarea
+                    name="contenu"
+                    required
+                    placeholder="Écrire un message…"
+                    style="width: 100%; height: 60px"
+                ></textarea>
+
+                <button type="submit">Envoyer</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
