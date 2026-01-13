@@ -25,6 +25,11 @@
 <p><strong>Nombre de véhicules :</strong> <span th:text="${user.nombrevehicules}"></span></p>
 <p><strong>Revenus totaux :</strong> <span th:text="${user.revenustotaux}"></span> €</p>
 
+<a th:href="@{/agent-pro/profil/modifier}">
+    <button>Modifier mon profil</button>
+</a>
+
+
 <a th:href="@{/utilisateur/logout}">Déconnexion</a>
 
 </body>

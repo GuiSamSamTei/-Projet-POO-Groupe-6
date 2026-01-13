@@ -43,6 +43,7 @@ public class Utilisateur {
     private String mdp;
     private String email;
     private String telephone;
+    private String ville;
 
     // information général pour noter
     private double notemoyenne = 0.0; // recevoir

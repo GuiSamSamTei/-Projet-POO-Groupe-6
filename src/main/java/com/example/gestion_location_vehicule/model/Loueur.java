@@ -1,6 +1,5 @@
 package com.example.gestion_location_vehicule.model;
 
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
@@ -14,10 +13,12 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @DiscriminatorValue("Loueur")
-public class Loueur extends Utilisateur{
-    private String typepermis;
+public class Loueur extends Utilisateur {
+
     private String nom;
     private String prenom;
+    private String typepermis;
+    private String ville;
 
     @OneToMany(mappedBy = "loueur")
     private List<EvalA> evaldonnees;
@@ -31,5 +32,4 @@ public class Loueur extends Utilisateur{
     @JsonIgnore
     @OneToMany(mappedBy = "loueur")
     private List<Contratlocation> contratlocations;
-
 }
