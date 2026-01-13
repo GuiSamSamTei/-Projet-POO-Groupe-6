@@ -22,6 +22,8 @@ public interface IVehiculeService {
 
     Vehicule addVehicule(Vehicule vehicule);
 
+    void deleteVehicule(Long id);
+
 
     List<Vehicule> filtrer(Map<String, String> filters);
 
