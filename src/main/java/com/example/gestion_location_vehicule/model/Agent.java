@@ -4,6 +4,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -33,4 +34,35 @@ public class Agent extends Utilisateur {
 
     @OneToMany(mappedBy = "agent")
     private List<EvalL> evaldonnees;
+
+    @OneToMany(mappedBy = "agent")
+    private List<ConventionneParking> conventionneParkingList;
+
+
+
+    public List<Long> getParkingConvIDs()
+    {
+        List<Long> parkings = new ArrayList<>();
+
+        for(ConventionneParking con : this.conventionneParkingList)
+        {
+            parkings.add(con.getParking().getId());
+        }
+
+
+        return parkings;
+    }
+
+    public List<Parking> getParkingConv()
+    {
+        List<Parking> parkings = new ArrayList<>();
+
+        for(ConventionneParking con : this.conventionneParkingList)
+        {
+            parkings.add(con.getParking());
+        }
+
+
+        return parkings;
+    }
 }

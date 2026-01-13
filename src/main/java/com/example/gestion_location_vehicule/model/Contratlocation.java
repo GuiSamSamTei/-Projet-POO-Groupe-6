@@ -51,8 +51,8 @@ public class Contratlocation {
     @JoinColumn(name = "loueur_id")
     private Loueur loueur;
 
-
-
-
+    @ManyToOne
+    @JoinColumn(name = "parking_id")
+    private Parking parking;
 
 }

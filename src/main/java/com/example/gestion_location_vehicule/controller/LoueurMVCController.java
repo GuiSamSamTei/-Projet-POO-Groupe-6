@@ -118,6 +118,8 @@ public class LoueurMVCController {
                                 HttpSession session,
                                 Model model) {
 
+
+
         Vehicule vehicule = vehiculeRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "Véhicule introuvable"

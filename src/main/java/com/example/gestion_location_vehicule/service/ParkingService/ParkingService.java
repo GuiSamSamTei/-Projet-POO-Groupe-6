@@ -15,6 +15,11 @@ public class ParkingService implements IParkingService{
     private final ParkingRepository parkingRepository;
 
     @Override
+    public List<Parking> getAllParking() {
+        return parkingRepository.findAll();
+    }
+
+    @Override
     public Parking touverParkingparNom(String nom) {
         return parkingRepository.findByNomparking(nom);
     }
