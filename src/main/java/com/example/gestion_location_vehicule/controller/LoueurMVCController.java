@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -62,10 +61,6 @@ public class LoueurMVCController {
         Loueur loueur = loueurService.getById(userId);
         model.addAttribute("loueur", loueur);
 
-        // Ajouter l'historique des locations via le service
-        List<Contratlocation> locations = contratlocationService.trouverContratByLoueurId(userId);
-        model.addAttribute("locations", locations);
-
         return "loueur/profil";
     }
 
@@ -98,7 +93,6 @@ public class LoueurMVCController {
             return "redirect:/utilisateur/connexion";
         }
 
-        // Mettre à jour les champs modifiables
         existingLoueur.setNom(formLoueur.getNom());
         existingLoueur.setPrenom(formLoueur.getPrenom());
         existingLoueur.setUsername(formLoueur.getUsername());
@@ -164,5 +158,20 @@ public class LoueurMVCController {
         session.removeAttribute("vehiculeEnCours");
 
         return "redirect:/vehicule/liste?locationSuccess=true";
+    }
+
+    /* ===================== CONSULTER UN PROFIL DE LOUEUR ===================== */
+    @GetMapping("/consulter/{id}")
+    public String consulterProfil(@PathVariable Long id, Model model) {
+
+        Loueur loueur = loueurService.getById(id);
+        if (loueur == null) {
+            return "redirect:/";
+        }
+
+        model.addAttribute("utilisateur", loueur);
+
+
+        return "loueur/consulterProfil";
     }
 }

@@ -2,21 +2,6 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Profil Loueur</title>
-    <style>
-        table {
-            border-collapse: collapse;
-            width: 100%;
-            margin-top: 15px;
-        }
-        th, td {
-            border: 1px solid #aaa;
-            padding: 8px;
-            text-align: left;
-        }
-        th {
-            background-color: #eee;
-        }
-    </style>
 </head>
 <body>
 
@@ -35,31 +20,6 @@
 
     <p><strong>Nombre d'évaluations :</strong> <span th:text="${loueur.nombreevaluations}">0</span></p>
     <p><strong>Note moyenne :</strong> <span th:text="${loueur.notemoyenne}">0</span></p>
-
-    <hr/>
-
-    <h3>Historique des locations</h3>
-    <div th:if="${locations != null and !locations.isEmpty()}">
-        <table>
-            <thead>
-            <tr>
-                <th>Véhicule</th>
-                <th>Date début</th>
-                <th>Date fin</th>
-                <th>Lieu dépôt</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="loc : ${locations}">
-                <td th:text="${loc.vehicule.marque + ' ' + loc.vehicule.modele}"></td>
-                <td th:text="${loc.datedebut}"></td>
-                <td th:text="${loc.datefin}"></td>
-                <td th:text="${loc.lieudepot}"></td>
-            </tr>
-            </tbody>
-        </table>
-    </div>
-    <p th:if="${locations == null or locations.isEmpty()}">Aucune location effectuée pour le moment.</p>
 </div>
 
 <p th:if="${loueur == null}">

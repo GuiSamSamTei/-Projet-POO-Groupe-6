@@ -20,15 +20,33 @@
 
 <hr/>
 
-<p><strong>Note moyenne :</strong> <span th:text="${user.notemoyenne}"></span></p>
+<p><strong>Note moyenne :</strong>
+    <span th:text="${#numbers.formatDecimal(user.notemoyenne, 1, 'POINT', 2, 'NONE')}"></span>
+</p>
 <p><strong>Nombre d'évaluations :</strong> <span th:text="${user.nombreevaluations}"></span></p>
 <p><strong>Nombre de véhicules :</strong> <span th:text="${user.nombrevehicules}"></span></p>
-<p><strong>Revenus totaux :</strong> <span th:text="${user.revenustotaux}"></span> €</p>
+<p><strong>Revenus totaux :</strong>
+    <span th:text="${#numbers.formatDecimal(user.revenustotaux, 1, 'POINT', 2, 'NONE')}"></span> €
+</p>
+
+<hr/>
+
+<h3>Mes véhicules</h3>
+<ul>
+    <li th:each="vehicule : ${vehicules}">
+        <!-- Lien vers la page détail du véhicule -->
+        <a th:href="@{/vehicule/afficher/{id}(id=${vehicule.id})}">
+            <span th:text="${vehicule.marque} + ' ' + ${vehicule.modele}"></span>
+        </a>
+        - Prix/jour : <span th:text="${vehicule.prixjour}"></span> €
+        - Kilométrage : <span th:text="${vehicule.kilometrage}"></span> km
+        - Note : <span th:text="${vehicule.notevehicule}"></span>/5
+    </li>
+</ul>
 
 <a th:href="@{/agent-pro/profil/modifier}">
     <button>Modifier mon profil</button>
 </a>
-
 
 <a th:href="@{/utilisateur/logout}">Déconnexion</a>
 
