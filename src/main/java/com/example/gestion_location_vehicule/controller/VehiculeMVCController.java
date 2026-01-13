@@ -48,7 +48,7 @@ public class VehiculeMVCController {
     @GetMapping("/afficher/{id}")
     public String afficherVehicule(@PathVariable Long id, Model model)
     {
-        Vehicule vehicule = vehiculeService.getVehciuleByid(id);
+        Vehicule vehicule = vehiculeService.getVehiculeByid(id);
 
         model.addAttribute("vehicule", vehicule);
 

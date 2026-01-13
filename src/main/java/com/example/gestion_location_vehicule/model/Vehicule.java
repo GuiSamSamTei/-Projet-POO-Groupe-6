@@ -37,21 +37,13 @@ import lombok.Setter;
 public class Vehicule {
 
     @Id
-    @GeneratedValue(
-            strategy = GenerationType.SEQUENCE,
-            generator = "vehicule_seq"
-    )
-    @SequenceGenerator(
-            name = "vehicule_seq",
-            sequenceName = "VEHICULE_SEQ",
-            allocationSize = 1
-    )
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "vehicule_seq")
+    @SequenceGenerator(name = "vehicule_seq", sequenceName = "VEHICULE_SEQ", allocationSize = 1)
     private Long id;
 
     private String marque;
     private String modele;
     private String couleur;
-
     private double notevehicule;
 
     @Column(nullable = false)
@@ -61,9 +53,7 @@ public class Vehicule {
     private Date datedispo;
 
     private String villedispo;
-
-    private double kilometrage; // kilometrage total du véhicule
-
+    private double kilometrage;
     private double prixjour;
 
     @ManyToOne
@@ -79,9 +69,8 @@ public class Vehicule {
     @OneToMany(mappedBy = "vehicule")
     private List<Contratlocation> contratlocations;
 
-    // ⚡ Nouvelle ligne pour lier les kilométrages
-    @OneToMany(mappedBy = "vehicule", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<KilometrageVehicule> kilometrages;
+    @OneToMany(mappedBy = "vehicule")
+    private List<DisponibiliteVehicule> disponibilites; // <-- relation vers disponibilités
 
     public String getTypeVehicule() {
         return this.getClass().getSimpleName();

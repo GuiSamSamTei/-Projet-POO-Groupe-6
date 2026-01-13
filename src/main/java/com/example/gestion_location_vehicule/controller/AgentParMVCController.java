@@ -66,8 +66,8 @@ public class AgentParMVCController {
             return "agentPar/profil";
         }
 
-        List<Vehicule> vehicules = vehiculeService.getVehiculesParAgent(userId);
-        model.addAttribute("vehicules", vehicules);
+
+        model.addAttribute("vehicules", agentParOpt.get().getVehicules());
 
         // Cas incohérent : utilisateur en session mais inexistant en base
         session.invalidate();

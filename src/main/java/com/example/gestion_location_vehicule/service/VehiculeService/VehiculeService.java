@@ -21,7 +21,7 @@ public class VehiculeService implements IVehiculeService{
     private final VehiculeRepository vehiculeRepository;
 
     @Override
-    public Vehicule getVehciuleByid(Long id) {
+    public Vehicule getVehiculeByid(Long id) {
         return vehiculeRepository.findById(id).get();
     }
 
@@ -53,10 +53,6 @@ public class VehiculeService implements IVehiculeService{
         return vehiculeRepository.findByAgentId(agentId);
     }
 
-//    @Override
-//    public List<Vehicule> filtreVehicules(FiltreVehiculeRequest filtre) {
-//        return List.of();
-//    }
 
     @Override
     public Double calculePrixLocation(Long vehiculeId, LocalDate dateDebut, LocalDate dateFin, boolean avecAssurance, List<String> options) {
