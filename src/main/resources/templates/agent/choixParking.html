@@ -5,22 +5,31 @@
     <title>Profil Véhicule</title>
 </head>
 <body>
-<form  method="post">
 
+<form method="get" th:action="@{/parking}">
+    <!-- Filtrage par ville -->
+    <label for="ville">Filtrer par ville :</label>
+    <select name="ville" id="ville">
+        <option value="">-- Toutes les villes --</option>
+        <option th:each="v : ${villes}"
+                th:value="${v}"
+                th:text="${v}"></option>
+    </select>
+    <button type="submit">Filtrer</button>
+</form>
+
+<form method="post">
     <label>Parkings conventionnés :</label><br/><br/>
-    <h2 > Veuillez Selectionné les parking : </h2>
+    <h2>Veuillez sélectionner les parkings :</h2>
 
-    <div th:href="@{/parking}" th:each="cp : ${parkings}">
+    <div th:each="cp : ${parkings}">
         <input type="checkbox"
                name="parkingIds"
                th:value="${cp.id}"
-
-               th:checked="${#lists.contains(parkingdeja, cp.id)}"                    />
+               th:checked="${#lists.contains(parkingdeja, cp.id)}" />
         <span th:text="'[' + ${cp.ville} + '] '"></span>
-        <span th:text="${cp.nomparking}"></span>
-        —
+        <span th:text="${cp.nomparking}"></span> —
         <span th:text="${cp.adresse}"></span>
-
         <span th:text="${cp.codepostal}"></span>
     </div>
 

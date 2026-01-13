@@ -2,10 +2,12 @@ package com.example.gestion_location_vehicule.controller;
 
 import com.example.gestion_location_vehicule.model.Contratlocation;
 import com.example.gestion_location_vehicule.model.Loueur;
+import com.example.gestion_location_vehicule.model.Parking;
 import com.example.gestion_location_vehicule.model.Vehicule;
 import com.example.gestion_location_vehicule.repository.VehiculeRepository;
 import com.example.gestion_location_vehicule.service.ContratlocationService.ContratlocationService;
 import com.example.gestion_location_vehicule.service.LoueurService.ILoueurService;
+import com.example.gestion_location_vehicule.service.ParkingService.ParkingService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -23,13 +26,15 @@ public class LoueurMVCController {
     private final ILoueurService loueurService;
     private final VehiculeRepository vehiculeRepository;
     private final ContratlocationService contratlocationService;
+    private final ParkingService parkingService;
 
     public LoueurMVCController(ILoueurService loueurService,
                                VehiculeRepository vehiculeRepository,
-                               ContratlocationService contratlocationService) {
+                               ContratlocationService contratlocationService, ParkingService parkingService) {
         this.loueurService = loueurService;
         this.vehiculeRepository = vehiculeRepository;
         this.contratlocationService = contratlocationService;
+        this.parkingService = parkingService;
     }
 
     /* ===================== INSCRIPTION ===================== */
@@ -118,6 +123,14 @@ public class LoueurMVCController {
                                 HttpSession session,
                                 Model model) {
 
+        if(session.getAttribute("user")==null)
+            return "redirect:/utilisateur/connexion?required=true";
+
+
+        Long loueur_id = (Long) session.getAttribute("user");
+
+        Loueur loueur = loueurService.getById(loueur_id);
+
 
 
         Vehicule vehicule = vehiculeRepository.findById(id)
@@ -125,12 +138,15 @@ public class LoueurMVCController {
                         HttpStatus.NOT_FOUND, "Véhicule introuvable"
                 ));
 
+        List<Parking> parkings = vehicule.getAgent().getParkingConv();
+
         if (!vehicule.getVehiculedispo()) {
             return "redirect:/vehicule/liste?indisponible=true";
         }
 
         session.setAttribute("vehiculeEnCours", vehicule);
         model.addAttribute("vehicule", vehicule);
+        model.addAttribute("parkings" , parkings);
 
         return "loueur/location";
     }
