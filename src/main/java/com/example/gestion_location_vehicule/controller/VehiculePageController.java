@@ -4,6 +4,7 @@ import com.example.gestion_location_vehicule.model.AgentPar;
 import com.example.gestion_location_vehicule.model.AgentPro;
 import com.example.gestion_location_vehicule.model.Utilisateur;
 import com.example.gestion_location_vehicule.service.UtilisateurService.UtilisateurService;
+import com.example.gestion_location_vehicule.service.VehiculeService.VehiculeService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -17,6 +18,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class VehiculePageController {
 
     private final UtilisateurService utilisateurService;
+    private final VehiculeService vehiculeService;
 
     /**
      * Méthode privée pour vérifier si l'utilisateur est un agent connecté.
@@ -86,6 +88,33 @@ public class VehiculePageController {
         model.addAttribute("agentName", agentName);
 
         return "vehicule/ajouter-vehicule";
+    }
+
+    @GetMapping("/supprimer/{id}")
+    public String deleteVehicule(@PathVariable Long id, HttpSession session, RedirectAttributes redirectAttributes) {
+        // 1. Vérification de sécurité
+        if (!isAgentLoggedIn(session)) {
+            redirectAttributes.addFlashAttribute("error", "Accès refusé.");
+            return "redirect:/utilisateur/connexion";
+        }
+
+        try {
+            // 2. Suppression
+            // Optionnel : Vous pouvez vérifier ici si le véhicule appartient bien à l'agent connecté
+            vehiculeService.deleteVehicule(id);
+            redirectAttributes.addFlashAttribute("success", "Véhicule supprimé avec succès.");
+        } catch (Exception e) {
+            e.printStackTrace();
+            redirectAttributes.addFlashAttribute("error", "Erreur lors de la suppression.");
+        }
+
+        // 3. Redirection selon le rôle
+        String role = (String) session.getAttribute("role");
+        if ("AGENT_PRO".equals(role)) {
+            return "redirect:/agent-pro/profil";
+        } else {
+            return "redirect:/agent-par/profil";
+        }
     }
 
     /**

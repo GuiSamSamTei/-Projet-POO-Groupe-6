@@ -3,6 +3,8 @@ package com.example.gestion_location_vehicule.model;
 import java.util.Date;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorColumn;
@@ -17,11 +19,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
 @Data
@@ -58,18 +56,27 @@ public class Vehicule {
 
     @ManyToOne
     @JoinColumn(name = "agent_id")
+    @ToString.Exclude
+    @JsonIgnoreProperties({"vehicules", "evalrecues", "contratlocations"})
     private Agent agent;
 
     @OneToMany(mappedBy = "vehicule")
+    @ToString.Exclude
+    @JsonIgnore
     private List<EvalV> evalrecues;
 
     @OneToMany(mappedBy = "vehicule")
+    @ToString.Exclude
+    @JsonIgnore
     private List<PrixAssurance> prixassurance;
 
     @OneToMany(mappedBy = "vehicule")
+    @ToString.Exclude
+    @JsonIgnore
     private List<Contratlocation> contratlocations;
 
     @OneToMany(mappedBy = "vehicule")
+    @JsonIgnore
     private List<DisponibiliteVehicule> disponibilites; // <-- relation vers disponibilités
 
     public String getTypeVehicule() {

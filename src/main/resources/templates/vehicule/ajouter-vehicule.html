@@ -806,28 +806,21 @@
             sendData('/api/scooters', formData);
         }
 
-    function sendData(url, data) {
+        function sendData(url, data) {
         fetch(url, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Accept': 'application/json'
             },
             body: JSON.stringify(data)
         })
         .then(response => {
-            const contentType = response.headers.get('content-type');
-            if (contentType && contentType.includes('application/json')) {
-                return response.json().then(json => {
-                    if (!response.ok) throw new Error(json.message || `Erreur ${response.status}`);
-                    return json;
-                });
-            } else {
-                return response.text().then(text => {
-                    if (!response.ok) throw new Error(text);
-                    return { message: "Opération réussie" };
-                });
-            }
+            return response.json().then(json => {
+                if (!response.ok) {
+                    throw new Error(json.message || `Erreur ${response.status}`);
+                }
+                return json;
+            });
         })
         .then(data => {
             showLoading(false);
@@ -837,17 +830,27 @@
                 text: data.message || 'Véhicule ajouté avec succès!',
                 confirmButtonText: 'OK'
             }).then(() => {
-                window.location.href = '/vehicule/liste';
+                window.location.href = '/profil';
             });
         })
         .catch(error => {
             showLoading(false);
-            console.error('Erreur:', error);
+            console.error('Erreur détaillée:', error);
+
+            let errorMsg = error.message;
+            if (error.message.includes('Unexpected token')) {
+                errorMsg = 'Erreur de format de réponse du serveur. Le véhicule a peut-être été ajouté.';
+            }
+
             Swal.fire({
                 icon: 'error',
                 title: 'Erreur',
-                text: 'Erreur lors de l\'ajout: ' + error.message,
+                html: `Erreur lors de l'ajout:<br><small>${errorMsg}</small>`,
                 confirmButtonText: 'OK'
+            }).then(() => {
+                setTimeout(() => {
+                    window.location.href = '/profil';
+                }, 1000);
             });
         });
     }
