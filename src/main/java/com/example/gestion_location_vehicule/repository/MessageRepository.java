@@ -1,12 +1,13 @@
 package com.example.gestion_location_vehicule.repository;
 
-import com.example.gestion_location_vehicule.model.Message;
-import com.example.gestion_location_vehicule.model.Utilisateur;
+import java.util.Date;
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.Date;
-import java.util.List;
+import com.example.gestion_location_vehicule.model.Message;
+import com.example.gestion_location_vehicule.model.Utilisateur;
 
 @Repository
 public interface MessageRepository extends JpaRepository<Message, Long> {
@@ -40,4 +41,11 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
             Utilisateur send1, Utilisateur receive1,
             Utilisateur send2, Utilisateur receive2
     );
+
+    // Compter les messages non lus pour un utilisateur
+    long countByUtilisateurreceiveAndLuFalse(Utilisateur utilisateur);
+
+    long countByUtilisateurreceiveAndUtilisateursendAndLuFalse(Utilisateur me, Utilisateur other);
+
+    List<Message> findByUtilisateurreceiveAndUtilisateursendAndLuFalse(Utilisateur me, Utilisateur other);
 }
