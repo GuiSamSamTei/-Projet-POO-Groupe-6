@@ -58,6 +58,24 @@ public class ScooterService implements IScooterService {
         return scooterRepository.save(scooter);
     }
 
+    public Scooter modifierScooter(Long id, ScooterRequest request) {
+        return scooterRepository.findById(id).map(scooter -> {
+            // Champs communs
+            if (request.getMarque() != null) scooter.setMarque(request.getMarque());
+            if (request.getModele() != null) scooter.setModele(request.getModele());
+            if (request.getPrixjour() != 0) scooter.setPrixjour(request.getPrixjour());
+            if (request.getCouleur() != null) scooter.setCouleur(request.getCouleur());
+            if (request.getVilledispo() != null) scooter.setVilledispo(request.getVilledispo());
+            if (request.getVehiculedispo() != null) scooter.setVehiculedispo(request.getVehiculedispo());
+
+            // Champs spécifiques Scooter
+            if (request.getCylindree() != null) scooter.setCylindree(request.getCylindree());
+            if (request.getElectrique() != null) scooter.setElectrique(request.getElectrique());
+
+            return scooterRepository.save(scooter);
+        }).orElseThrow(() -> new IllegalArgumentException("Scooter non trouvé avec l'ID " + id));
+    }
+
     @Override
     public Scooter saveScooter(Scooter scooter) {
         return scooterRepository.save(scooter);

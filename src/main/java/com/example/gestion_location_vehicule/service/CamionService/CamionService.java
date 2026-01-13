@@ -38,7 +38,6 @@ public class CamionService implements ICamionService {
     public Camion ajouterCamion(CamionRequest request) {
         Camion camion = new Camion();
 
-        // 1. 通用字段
         camion.setMarque(request.getMarque());
         camion.setModele(request.getModele());
         camion.setPrixjour(request.getPrixjour());
@@ -46,13 +45,9 @@ public class CamionService implements ICamionService {
         camion.setVilledispo(request.getVilledispo());
         camion.setVehiculedispo(request.getVehiculedispo());
 
-        // 注意：我们不再设置 notevehicule，默认为 0.0
-
-        // 2. 卡车特有字段
         camion.setChargemax(request.getChargemax());
         camion.setVolume(request.getVolume());
 
-        // 3. 关联 Agent
         if (request.getAgent_id() != null) {
             Optional<Agent> agentOptional = agentRepository.findById(request.getAgent_id());
             if (agentOptional.isPresent()) {
@@ -64,6 +59,25 @@ public class CamionService implements ICamionService {
 
         return camionRepository.save(camion);
     }
+
+    public Camion modifierCamion(Long id, CamionRequest request) {
+        return camionRepository.findById(id).map(camion -> {
+            // Champs communs
+            if (request.getMarque() != null) camion.setMarque(request.getMarque());
+            if (request.getModele() != null) camion.setModele(request.getModele());
+            if (request.getPrixjour() != 0) camion.setPrixjour(request.getPrixjour());
+            if (request.getCouleur() != null) camion.setCouleur(request.getCouleur());
+            if (request.getVilledispo() != null) camion.setVilledispo(request.getVilledispo());
+            if (request.getVehiculedispo() != null) camion.setVehiculedispo(request.getVehiculedispo());
+
+            // Champs spécifiques Camion
+            if (request.getChargemax() != 0) camion.setChargemax(request.getChargemax());
+            if (request.getVolume() != 0) camion.setVolume(request.getVolume());
+
+            return camionRepository.save(camion);
+        }).orElseThrow(() -> new IllegalArgumentException("Camion non trouvé avec l'ID " + id));
+    }
+
     @Override
     public void deleteCamion(Long id) {
         camionRepository.deleteById(id);

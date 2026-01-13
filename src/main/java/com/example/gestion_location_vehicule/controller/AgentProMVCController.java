@@ -60,11 +60,13 @@ public class AgentProMVCController {
 
         if (agentProOpt.isPresent()) {
             model.addAttribute("user", agentProOpt.get());
+
+            List<Vehicule> mesVehicules = vehiculeService.getVehiculesParAgent(userId);
+            model.addAttribute("vehicules", mesVehicules);
+
             return "agentPro/profil";
         }
 
-        List<Vehicule> vehicules = vehiculeService.getVehiculesParAgent(userId);
-        model.addAttribute("vehicules", vehicules);
 
         // Cas incohérent : utilisateur en session mais inexistant en base
         session.invalidate();

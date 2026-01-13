@@ -28,12 +28,6 @@ public class CamionController {
         return camionService.getAllCamions();
     }
 
-    // GET : camion par ID
-    @GetMapping("/{id}")
-    public Optional<Camion> getById(@PathVariable Long id) {
-        return camionService.getCamionById(id);
-    }
-
     // GET : camions disponibles
     @GetMapping("/dispo")
     public List<Camion> getDispo() {
@@ -64,19 +58,38 @@ public class CamionController {
         return camionService.getCamionsByVilleDispoAndCharge(ville, minCharge);
     }
 
+    // 🔹 GET par ID
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getById(@PathVariable Long id) {
+        Optional<Camion> camion = camionService.getCamionById(id);
+        if (camion.isPresent()) {
+            return ResponseEntity.ok(camion.get());
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", "Camion non trouvé"));
+        }
+    }
+
+    // 🔹 PUT pour modification
+    @PutMapping("/{id}")
+    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody CamionRequest request) {
+        try {
+            Camion camion = camionService.modifierCamion(id, request);
+            return ResponseEntity.ok(Map.of("success", true, "message", "Camion modifié avec succès", "data", camion));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", e.getMessage()));
+        }
+    }
+
     // POST : créer un camion
     @PostMapping
     public ResponseEntity<?> create(@RequestBody CamionRequest request) {
         try {
-            // 1. 验证
             if (request.getMarque() == null || request.getMarque().trim().isEmpty()) {
                 return ResponseEntity.badRequest().body(Map.of("error", "Le champ 'marque' est obligatoire"));
             }
 
-            // 2. 调用 Service
             Camion camion = camionService.ajouterCamion(request);
 
-            // 3. 统一返回
             Map<String, Object> response = new HashMap<>();
             response.put("success", true);
             response.put("message", "Camion ajouté avec succès");

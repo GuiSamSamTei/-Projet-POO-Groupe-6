@@ -28,10 +28,15 @@ public class VanController {
         return vanService.getAllVans();
     }
 
-    // 🔹 GET : par ID
+    // 🔹 GET par ID
     @GetMapping("/{id}")
-    public Optional<Van> getById(@PathVariable Long id) {
-        return vanService.getVanById(id);
+    public ResponseEntity<?> getById(@PathVariable Long id) {
+        Optional<Van> van = vanService.getVanById(id);
+        if (van.isPresent()) {
+            return ResponseEntity.ok(van.get());
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", "Van non trouvé"));
+        }
     }
 
     // 🔹 POST : créer un van

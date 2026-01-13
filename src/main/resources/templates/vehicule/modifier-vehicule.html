@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="'Modifier ' + ${type}">Modifier un véhicule - AutoPartage</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <style>
+        body {
+            background-color: #f8f9fa;
+            padding-top: 20px;
+        }
+        .form-container {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 40px;
+        }
+        .form-section {
+            border-left: 4px solid #f39c12; /* Orange pour modification */
+            padding-left: 15px;
+            margin-bottom: 30px;
+            padding-top: 10px;
+            padding-bottom: 10px;
+        }
+        .form-section h5 {
+            color: #f39c12;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+        .required::after {
+            content: " *";
+            color: #dc3545;
+        }
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+    <div class="container">
+        <a class="navbar-brand" th:href="@{/}">
+            <i class="fas fa-car me-2 text-primary"></i>
+            <span class="fw-bold">AutoPartage</span>
+        </a>
+        <div class="d-flex align-items-center">
+            <span class="me-3 fw-bold text-warning" th:text="'Modification: ' + ${type}"></span>
+            <a th:href="@{/agent-par/profil}" class="btn btn-outline-secondary me-2">
+                <i class="fas fa-arrow-left me-1"></i> Retour au profil
+            </a>
+        </div>
+    </div>
+</nav>
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="form-container">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h3>
+                        <i class="fas fa-edit me-2 text-warning"></i>
+                        <span th:text="'Modifier ' + ${type}">Modifier</span>
+                    </h3>
+                    <span class="badge bg-warning text-dark text-uppercase" th:text="${type}">Type</span>
+                </div>
+
+                <div id="loading" class="loading">
+                    <div class="spinner-border text-warning" role="status">
+                        <span class="visually-hidden">Chargement...</span>
+                    </div>
+                </div>
+
+                <div id="form-voiture" th:if="${type == 'voiture'}">
+                    <form id="voitureForm">
+                        <div class="form-section">
+                            <h5><i class="fas fa-info-circle me-2"></i>Informations générales</h5>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label required">Marque</label>
+                                    <input type="text" class="form-control" id="marque" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label required">Modèle</label>
+                                    <input type="text" class="form-control" id="modele" required>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label required">Prix par jour (€)</label>
+                                    <input type="number" step="0.01" class="form-control" id="prixjour" required>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label">Couleur</label>
+                                    <input type="text" class="form-control" id="couleur">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-section">
+                            <h5><i class="fas fa-map-marker-alt me-2"></i>Localisation</h5>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label required">Ville de disponibilité</label>
+                                    <input type="text" class="form-control" id="villedispo" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Disponibilité</label>
+                                    <div class="form-check mt-2">
+                                        <input class="form-check-input" type="checkbox" id="vehiculedispo">
+                                        <label class="form-check-label">Véhicule disponible immédiatement</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-section">
+                            <h5><i class="fas fa-car me-2"></i>Spécificités Voiture</h5>
+                            <div class="row">
+                                <div class="col-md-3 mb-3">
+                                    <label class="form-label">Nombre de portes</label>
+                                    <input type="number" class="form-control" id="nombreportes">
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label class="form-label">Nombre de places</label>
+                                    <input type="number" class="form-control" id="nombreplaces">
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label class="form-label">Volume coffre (L)</label>
+                                    <input type="number" step="0.1" class="form-control" id="coffrevolume">
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label class="form-label">Chevaux</label>
+                                    <input type="number" class="form-control" id="nbchevaux">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label">Carburant</label>
+                                    <select class="form-select" id="carburant">
+                                        <option value="">Sélectionner</option>
+                                        <option value="Essence">Essence</option>
+                                        <option value="Diesel">Diesel</option>
+                                        <option value="Electrique">Électrique</option>
+                                        <option value="Hybride">Hybride</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label">Boîte automatique</label>
+                                    <select class="form-select" id="automatique">
+                                        <option value="">Sélectionner</option>
+                                        <option value="true">Oui</option>
+                                        <option value="false">Non</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label">GPS</label>
+                                    <select class="form-select" id="gps">
+                                        <option value="">Sélectionner</option>
+                                        <option value="true">Oui</option>
+                                        <option value="false">Non</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="text-end">
+                            <button type="submit" class="btn btn-warning text-dark fw-bold">
+                                <i class="fas fa-save me-2"></i>Enregistrer les modifications
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <div id="form-velo" th:if="${type == 'velo'}">
+                    <form id="veloForm">
+                        <div class="form-section">
+                            <h5><i class="fas fa-info-circle me-2"></i>Informations générales</h5>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label required">Marque</label>
+                                    <input type="text" class="form-control" id="marque_velo" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label required">Modèle</label>
+                                    <input type="text" class="form-control" id="modele_velo" required>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label required">Prix par jour (€)</label>
+                                    <input type="number" step="0.01" class="form-control" id="prixjour_velo" required>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label">Couleur</label>
+                                    <input type="text" class="form-control" id="couleur_velo">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-section">
+                            <h5><i class="fas fa-map-marker-alt me-2"></i>Localisation</h5>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label required">Ville de disponibilité</label>
+                                    <input type="text" class="form-control" id="villedispo_velo" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Disponibilité</label>
+                                    <div class="form-check mt-2">
+                                        <input class="form-check-input" type="checkbox" id="vehiculedispo_velo">
+                                        <label class="form-check-label">Véhicule disponible</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-section">
+                            <h5><i class="fas fa-bicycle me-2"></i>Spécificités Vélo</h5>
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label">Type de vélo</label>
+                                    <select class="form-select" id="typeVelo">
+                                        <option value="">Sélectionner</option>
+                                        <option value="Ville">Ville</option>
+                                        <option value="VTT">VTT</option>
+                                        <option value="Route">Route</option>
+                                        <option value="Electrique">Électrique</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label">Nombre de vitesses</label>
+                                    <input type="number" class="form-control" id="nombrevitesses">
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label">Électrique</label>
+                                    <select class="form-select" id="electrique">
+                                        <option value="">Sélectionner</option>
+                                        <option value="true">Oui</option>
+                                        <option value="false">Non</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-end">
+                            <button type="submit" class="btn btn-warning text-dark fw-bold">
+                                <i class="fas fa-save me-2"></i>Modifier le vélo
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <div id="form-van" th:if="${type == 'van'}">
+                    <form id="vanForm">
+                        <div class="form-section">
+                            <h5><i class="fas fa-info-circle me-2"></i>Infos Van</h5>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label required">Marque</label>
+                                    <input type="text" class="form-control" id="marque_van" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label required">Modèle</label>
+                                    <input type="text" class="form-control" id="modele_van" required>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label required">Prix/Jour</label>
+                                    <input type="number" step="0.01" class="form-control" id="prixjour_van" required>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label">Couleur</label>
+                                    <input type="text" class="form-control" id="couleur_van">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label required">Ville</label>
+                                    <input type="text" class="form-control" id="villedispo_van" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Disponibilité</label>
+                                    <div class="form-check mt-2">
+                                        <input class="form-check-input" type="checkbox" id="vehiculedispo_van">
+                                        <label class="form-check-label">Disponible</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Nombre de places</label>
+                                    <input type="number" class="form-control" id="nombreplaces_van">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-end">
+                            <button type="submit" class="btn btn-warning text-dark fw-bold">Modifier le van</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div id="form-camion" th:if="${type == 'camion'}">
+                    <form id="camionForm">
+                        <div class="form-section">
+                            <h5><i class="fas fa-truck me-2"></i>Infos Camion</h5>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label required">Marque</label>
+                                    <input type="text" class="form-control" id="marque_camion" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label required">Modèle</label>
+                                    <input type="text" class="form-control" id="modele_camion" required>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label required">Prix/Jour</label>
+                                    <input type="number" step="0.01" class="form-control" id="prixjour_camion" required>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label">Couleur</label>
+                                    <input type="text" class="form-control" id="couleur_camion">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label required">Ville</label>
+                                    <input type="text" class="form-control" id="villedispo_camion" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Disponibilité</label>
+                                    <div class="form-check mt-2">
+                                        <input class="form-check-input" type="checkbox" id="vehiculedispo_camion">
+                                        <label class="form-check-label">Disponible</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Charge Max (T)</label>
+                                    <input type="number" step="0.1" class="form-control" id="chargemax">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Volume (m³)</label>
+                                    <input type="number" step="0.1" class="form-control" id="volume">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-end">
+                            <button type="submit" class="btn btn-warning text-dark fw-bold">Modifier le camion</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div id="form-moto" th:if="${type == 'moto'}">
+                    <form id="motoForm">
+                        <div class="form-section">
+                            <h5><i class="fas fa-motorcycle me-2"></i>Infos Moto</h5>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label required">Marque</label>
+                                    <input type="text" class="form-control" id="marque_moto" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label required">Modèle</label>
+                                    <input type="text" class="form-control" id="modele_moto" required>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label required">Prix/Jour</label>
+                                    <input type="number" step="0.01" class="form-control" id="prixjour_moto" required>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label">Couleur</label>
+                                    <input type="text" class="form-control" id="couleur_moto">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label required">Ville</label>
+                                    <input type="text" class="form-control" id="villedispo_moto" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Disponibilité</label>
+                                    <div class="form-check mt-2">
+                                        <input class="form-check-input" type="checkbox" id="vehiculedispo_moto">
+                                        <label class="form-check-label">Disponible</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Cylindrée</label>
+                                    <input type="number" class="form-control" id="cylindree">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Chevaux</label>
+                                    <input type="number" class="form-control" id="nbchevaux_moto">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-end">
+                            <button type="submit" class="btn btn-warning text-dark fw-bold">Modifier la moto</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div id="form-scooter" th:if="${type == 'scooter'}">
+                    <form id="scooterForm">
+                        <div class="form-section">
+                            <h5><i class="fas fa-motorcycle me-2"></i>Infos Scooter</h5>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label required">Marque</label>
+                                    <input type="text" class="form-control" id="marque_scooter" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label required">Modèle</label>
+                                    <input type="text" class="form-control" id="modele_scooter" required>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label required">Prix/Jour</label>
+                                    <input type="number" step="0.01" class="form-control" id="prixjour_scooter" required>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label">Couleur</label>
+                                    <input type="text" class="form-control" id="couleur_scooter">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label required">Ville</label>
+                                    <input type="text" class="form-control" id="villedispo_scooter" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Disponibilité</label>
+                                    <div class="form-check mt-2">
+                                        <input class="form-check-input" type="checkbox" id="vehiculedispo_scooter">
+                                        <label class="form-check-label">Disponible</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Cylindrée</label>
+                                    <input type="number" class="form-control" id="cylindree_scooter">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Électrique</label>
+                                    <select class="form-select" id="electrique_scooter">
+                                        <option value="">Sélectionner</option>
+                                        <option value="true">Oui</option>
+                                        <option value="false">Non</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-end">
+                            <button type="submit" class="btn btn-warning text-dark fw-bold">Modifier le scooter</button>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script th:inline="javascript">
+    /* Initialisation au chargement */
+    document.addEventListener('DOMContentLoaded', function() {
+        const type = [[${type}]];
+        const id = [[${id}]];
+
+        // Charger les données existantes
+        loadVehicleData(type, id);
+
+        // Attacher les écouteurs d'événements aux formulaires
+        const forms = {
+            'voiture': { id: 'voitureForm', handler: updateVoiture },
+            'velo': { id: 'veloForm', handler: updateVelo },
+            'van': { id: 'vanForm', handler: updateVan },
+            'camion': { id: 'camionForm', handler: updateCamion },
+            'moto': { id: 'motoForm', handler: updateMoto },
+            'scooter': { id: 'scooterForm', handler: updateScooter }
+        };
+
+        if (forms[type]) {
+            const form = document.getElementById(forms[type].id);
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    forms[type].handler(id);
+                });
+            }
+        }
+    });
+
+    // --- Fonction pour charger les données (AJAX GET) ---
+    function loadVehicleData(type, id) {
+        const loading = document.getElementById('loading');
+        if(loading) loading.style.display = 'block';
+
+        // Construit l'URL API (ex: /api/voitures/5)
+        // Attention: assurez-vous que les controlleurs ont la méthode GET /{id}
+        const endpoint = `/api/${type}s/${id}`;
+
+        fetch(endpoint)
+            .then(response => {
+                if (!response.ok) throw new Error("Erreur chargement données");
+                return response.json();
+            })
+            .then(data => {
+                fillForm(type, data);
+                if(loading) loading.style.display = 'none';
+            })
+            .catch(err => {
+                console.error(err);
+                if(loading) loading.style.display = 'none';
+                Swal.fire('Erreur', 'Impossible de charger les informations du véhicule', 'error');
+            });
+    }
+
+    // --- Fonction pour remplir le formulaire avec les données reçues ---
+    function fillForm(type, data) {
+        // Remplissage dynamique selon le type
+        // Note: Les IDs des inputs doivent correspondre à ceux définis dans le HTML ci-dessus
+
+        if (type === 'voiture') {
+            document.getElementById('marque').value = data.marque;
+            document.getElementById('modele').value = data.modele;
+            document.getElementById('prixjour').value = data.prixjour;
+            document.getElementById('couleur').value = data.couleur;
+            document.getElementById('villedispo').value = data.villedispo;
+            document.getElementById('vehiculedispo').checked = data.vehiculedispo;
+
+            document.getElementById('nombreportes').value = data.nombreportes;
+            document.getElementById('nombreplaces').value = data.nombreplaces;
+            document.getElementById('coffrevolume').value = data.coffrevolume;
+            document.getElementById('nbchevaux').value = data.nbchevaux;
+            document.getElementById('carburant').value = data.carburant;
+            document.getElementById('automatique').value = data.automatique === null ? '' : data.automatique.toString();
+            document.getElementById('gps').value = data.gps === null ? '' : data.gps.toString();
+        }
+        else if (type === 'velo') {
+            document.getElementById('marque_velo').value = data.marque;
+            document.getElementById('modele_velo').value = data.modele;
+            document.getElementById('prixjour_velo').value = data.prixjour;
+            document.getElementById('couleur_velo').value = data.couleur;
+            document.getElementById('villedispo_velo').value = data.villedispo;
+            document.getElementById('vehiculedispo_velo').checked = data.vehiculedispo;
+
+            document.getElementById('typeVelo').value = data.typeVelo;
+            document.getElementById('nombrevitesses').value = data.nombreVitesses; // Attention majuscule V
+            document.getElementById('electrique').value = data.electrique === null ? '' : data.electrique.toString();
+        }
+        else if (type === 'van') {
+            document.getElementById('marque_van').value = data.marque;
+            document.getElementById('modele_van').value = data.modele;
+            document.getElementById('prixjour_van').value = data.prixjour;
+            document.getElementById('couleur_van').value = data.couleur;
+            document.getElementById('villedispo_van').value = data.villedispo;
+            document.getElementById('vehiculedispo_van').checked = data.vehiculedispo;
+
+            document.getElementById('nombreplaces_van').value = data.nombreplaces;
+        }
+        else if (type === 'camion') {
+            document.getElementById('marque_camion').value = data.marque;
+            document.getElementById('modele_camion').value = data.modele;
+            document.getElementById('prixjour_camion').value = data.prixjour;
+            document.getElementById('couleur_camion').value = data.couleur;
+            document.getElementById('villedispo_camion').value = data.villedispo;
+            document.getElementById('vehiculedispo_camion').checked = data.vehiculedispo;
+
+            document.getElementById('chargemax').value = data.chargemax;
+            document.getElementById('volume').value = data.volume;
+        }
+        else if (type === 'moto') {
+            document.getElementById('marque_moto').value = data.marque;
+            document.getElementById('modele_moto').value = data.modele;
+            document.getElementById('prixjour_moto').value = data.prixjour;
+            document.getElementById('couleur_moto').value = data.couleur;
+            document.getElementById('villedispo_moto').value = data.villedispo;
+            document.getElementById('vehiculedispo_moto').checked = data.vehiculedispo;
+
+            document.getElementById('cylindree').value = data.cylindree;
+            document.getElementById('nbchevaux_moto').value = data.nbchevaux;
+        }
+        else if (type === 'scooter') {
+            document.getElementById('marque_scooter').value = data.marque;
+            document.getElementById('modele_scooter').value = data.modele;
+            document.getElementById('prixjour_scooter').value = data.prixjour;
+            document.getElementById('couleur_scooter').value = data.couleur;
+            document.getElementById('villedispo_scooter').value = data.villedispo;
+            document.getElementById('vehiculedispo_scooter').checked = data.vehiculedispo;
+
+            document.getElementById('cylindree_scooter').value = data.cylindree;
+            document.getElementById('electrique_scooter').value = data.electrique === null ? '' : data.electrique.toString();
+        }
+    }
+
+    // --- Fonctions de mise à jour (AJAX PUT) ---
+
+    const redirectUrl = [[${redirectUrl}]] || '/agent-par/profil';
+
+    function sendUpdate(url, data) {
+        fetch(url, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        })
+        .then(response => {
+            if (response.ok) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Modifié !',
+                    text: 'Véhicule mis à jour avec succès',
+                    confirmButtonText: 'OK'
+                }).then(() => {
+                    // 🔹 MODIFICATION : Utiliser la variable dynamique
+                    window.location.href = redirectUrl;
+                });
+            } else {
+                return response.json().then(err => { throw new Error(err.message || 'Erreur serveur'); });
+            }
+        })
+        .catch(error => {
+            console.error(error);
+            Swal.fire('Erreur', error.message, 'error');
+        });
+    }
+
+
+    function updateVoiture(id) {
+        const data = {
+            marque: document.getElementById('marque').value,
+            modele: document.getElementById('modele').value,
+            prixjour: parseFloat(document.getElementById('prixjour').value),
+            couleur: document.getElementById('couleur').value,
+            villedispo: document.getElementById('villedispo').value,
+            vehiculedispo: document.getElementById('vehiculedispo').checked,
+            // Spécifique
+            nombreportes: parseInt(document.getElementById('nombreportes').value),
+            nombreplaces: parseInt(document.getElementById('nombreplaces').value),
+            coffrevolume: parseFloat(document.getElementById('coffrevolume').value),
+            nbchevaux: parseInt(document.getElementById('nbchevaux').value),
+            carburant: document.getElementById('carburant').value,
+            automatique: document.getElementById('automatique').value === 'true',
+            gps: document.getElementById('gps').value === 'true'
+        };
+        sendUpdate(`/api/voitures/${id}`, data);
+    }
+
+    function updateVelo(id) {
+        const data = {
+            marque: document.getElementById('marque_velo').value,
+            modele: document.getElementById('modele_velo').value,
+            prixjour: parseFloat(document.getElementById('prixjour_velo').value),
+            couleur: document.getElementById('couleur_velo').value,
+            villedispo: document.getElementById('villedispo_velo').value,
+            vehiculedispo: document.getElementById('vehiculedispo_velo').checked,
+            // Spécifique
+            typeVelo: document.getElementById('typeVelo').value,
+            nombrevitesses: parseInt(document.getElementById('nombrevitesses').value),
+            electrique: document.getElementById('electrique').value === 'true'
+        };
+        sendUpdate(`/api/velos/${id}`, data);
+    }
+
+    function updateVan(id) {
+        const data = {
+            marque: document.getElementById('marque_van').value,
+            modele: document.getElementById('modele_van').value,
+            prixjour: parseFloat(document.getElementById('prixjour_van').value),
+            couleur: document.getElementById('couleur_van').value,
+            villedispo: document.getElementById('villedispo_van').value,
+            vehiculedispo: document.getElementById('vehiculedispo_van').checked,
+            // Spécifique
+            nombreplaces: parseInt(document.getElementById('nombreplaces_van').value)
+        };
+        sendUpdate(`/api/vans/${id}`, data);
+    }
+
+    function updateCamion(id) {
+        const data = {
+            marque: document.getElementById('marque_camion').value,
+            modele: document.getElementById('modele_camion').value,
+            prixjour: parseFloat(document.getElementById('prixjour_camion').value),
+            couleur: document.getElementById('couleur_camion').value,
+            villedispo: document.getElementById('villedispo_camion').value,
+            vehiculedispo: document.getElementById('vehiculedispo_camion').checked,
+            // Spécifique
+            chargemax: parseFloat(document.getElementById('chargemax').value),
+            volume: parseFloat(document.getElementById('volume').value)
+        };
+        sendUpdate(`/api/camions/${id}`, data);
+    }
+
+    function updateMoto(id) {
+        const data = {
+            marque: document.getElementById('marque_moto').value,
+            modele: document.getElementById('modele_moto').value,
+            prixjour: parseFloat(document.getElementById('prixjour_moto').value),
+            couleur: document.getElementById('couleur_moto').value,
+            villedispo: document.getElementById('villedispo_moto').value,
+            vehiculedispo: document.getElementById('vehiculedispo_moto').checked,
+            // Spécifique
+            cylindree: parseInt(document.getElementById('cylindree').value),
+            nbchevaux: parseInt(document.getElementById('nbchevaux_moto').value)
+        };
+        sendUpdate(`/api/motos/${id}`, data);
+    }
+
+    function updateScooter(id) {
+        const data = {
+            marque: document.getElementById('marque_scooter').value,
+            modele: document.getElementById('modele_scooter').value,
+            prixjour: parseFloat(document.getElementById('prixjour_scooter').value),
+            couleur: document.getElementById('couleur_scooter').value,
+            villedispo: document.getElementById('villedispo_scooter').value,
+            vehiculedispo: document.getElementById('vehiculedispo_scooter').checked,
+            // Spécifique
+            cylindree: parseInt(document.getElementById('cylindree_scooter').value),
+            electrique: document.getElementById('electrique_scooter').value === 'true'
+        };
+        sendUpdate(`/api/scooters/${id}`, data);
+    }
+</script>
+</body>
+</html>
