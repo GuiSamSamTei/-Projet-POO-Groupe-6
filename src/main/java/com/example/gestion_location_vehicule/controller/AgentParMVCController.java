@@ -1,12 +1,15 @@
 package com.example.gestion_location_vehicule.controller;
 
 import com.example.gestion_location_vehicule.model.AgentPar;
+import com.example.gestion_location_vehicule.model.Vehicule;
 import com.example.gestion_location_vehicule.service.AgentParService.IAgentParService;
+import com.example.gestion_location_vehicule.service.VehiculeService.IVehiculeService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -14,11 +17,14 @@ import java.util.Optional;
 public class AgentParMVCController {
 
     private final IAgentParService agentParService;
+    private final IVehiculeService vehiculeService;
 
-    public AgentParMVCController(IAgentParService agentParService) {
+    public AgentParMVCController(IAgentParService agentParService, IVehiculeService vehiculeService) {
         this.agentParService = agentParService;
+        this.vehiculeService = vehiculeService;
     }
 
+    // ------------------ INSCRIPTION ------------------
     // Afficher le formulaire d'inscription
     @GetMapping("/inscription")
     public String showForm(Model model) {
@@ -44,8 +50,34 @@ public class AgentParMVCController {
         return "redirect:/agent-par/profil";
     }
 
+    // ------------------ PROFIL ------------------
     @GetMapping("/profil")
     public String profil(HttpSession session, Model model) {
+
+        Long userId = (Long) session.getAttribute("user");
+        if (userId == null) {
+            return "redirect:/utilisateur/connexion";
+        }
+
+        Optional<AgentPar> agentParOpt = agentParService.getAgentParById(userId);
+
+        if (agentParOpt.isPresent()) {
+            model.addAttribute("user", agentParOpt.get());
+            return "agentPar/profil";
+        }
+
+
+        model.addAttribute("vehicules", agentParOpt.get().getVehicules());
+
+        // Cas incohérent : utilisateur en session mais inexistant en base
+        session.invalidate();
+        return "redirect:/utilisateur/connexion";
+    }
+
+    // ------------------ MODIFICATION PROFIL ------------------
+    // Afficher le formulaire de modification
+    @GetMapping("/profil/modifier")
+    public String afficherFormulaireModification(HttpSession session, Model model) {
 
         Long userId = (Long) session.getAttribute("user");
         if (userId == null) {
@@ -56,10 +88,42 @@ public class AgentParMVCController {
 
         if (agentParOpt.isPresent()) {
             model.addAttribute("user", agentParOpt.get());
-            return "agentPar/profil";
+            return "agentPar/modifierProfil";
         }
 
-        // Cas incohérent : utilisateur en session mais inexistant en base
+        session.invalidate();
+        return "redirect:/agent-par/inscription";
+    }
+
+    // Traiter le formulaire de modification
+    @PostMapping("/profil/modifier")
+    public String enregistrerModification(@ModelAttribute("user") AgentPar formUser, HttpSession session) {
+
+        Long userId = (Long) session.getAttribute("user");
+        if (userId == null) {
+            return "redirect:/agent-par/inscription";
+        }
+
+        Optional<AgentPar> agentParOpt = agentParService.getAgentParById(userId);
+        if (agentParOpt.isPresent()) {
+            AgentPar existingUser = agentParOpt.get();
+
+            // Mettre à jour uniquement les champs modifiables
+            existingUser.setNom(formUser.getNom());
+            existingUser.setPrenom(formUser.getPrenom());
+            existingUser.setUsername(formUser.getUsername());
+            existingUser.setEmail(formUser.getEmail());
+            existingUser.setTelephone(formUser.getTelephone());
+            existingUser.setAdresse(formUser.getAdresse());
+            existingUser.setTelephonepro(formUser.getTelephonepro());
+            existingUser.setIban(formUser.getIban());
+            existingUser.setBic(formUser.getBic());
+
+            agentParService.saveAgentPar(existingUser);
+
+            return "redirect:/agent-par/profil";
+        }
+
         session.invalidate();
         return "redirect:/agent-par/inscription";
     }

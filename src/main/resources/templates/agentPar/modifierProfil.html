@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Modifier mon profil</title>
+</head>
+<body>
+
+<h2>Modifier mon profil </h2>
+
+<form th:action="@{/agent-par/profil/modifier}"
+      th:object="${user}"
+      method="post">
+
+    <label>Nom :</label>
+    <input type="text" th:field="*{nom}" /><br/>
+
+    <label>Prénom :</label>
+    <input type="text" th:field="*{prenom}" /><br/>
+
+    <label>Username :</label>
+    <input type="text" th:field="*{username}" /><br/>
+
+    <label>Email :</label>
+    <input type="email" th:field="*{email}" /><br/>
+
+    <label>Téléphone :</label>
+    <input type="text" th:field="*{telephone}" /><br/>
+
+    <label>Adresse :</label>
+    <input type="text" th:field="*{adresse}" /><br/>
+
+    <label>Téléphone pro :</label>
+    <input type="text" th:field="*{telephonepro}" /><br/>
+
+    <label>IBAN :</label>
+    <input type="text" th:field="*{iban}" /><br/>
+
+    <label>BIC :</label>
+    <input type="text" th:field="*{bic}" /><br/>
+
+    <br/>
+
+    <button type="submit">Enregistrer les modifications</button>
+</form>
+
+<br/>
+<a th:href="@{/agent-par/profil}">Annuler</a>
+
+</body>
+</html>

@@ -1,26 +1,25 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Profil utilisateur</title>
+    <title>Profil Loueur</title>
 </head>
 <body>
 
-<h1>Profil</h1>
+<h2>Profil Loueur</h2>
 
 <div th:if="${loueur != null}">
-    <p>Bienvenue <b th:text="${loueur.username}">Username</b></p>
-    <p>Email : <span th:text="${loueur.email}">Email</span></p>
+    <p><strong>Nom :</strong> <span th:text="${loueur.nom}"></span></p>
+    <p><strong>Prénom :</strong> <span th:text="${loueur.prenom}"></span></p>
+    <p><strong>Username :</strong> <span th:text="${loueur.username}"></span></p>
+    <p><strong>Email :</strong> <span th:text="${loueur.email}"></span></p>
+    <p><strong>Téléphone :</strong> <span th:text="${loueur.telephone}"></span></p>
+    <p><strong>Ville :</strong> <span th:text="${loueur.ville}"></span></p>
+    <p><strong>Type de permis :</strong> <span th:text="${loueur.typepermis}"></span></p>
 
-    <p th:if="${loueur.nombreevaluations != null}">
-        Nombre d'évaluations :
-        <span th:text="${loueur.nombreevaluations}">0</span>
-    </p>
+    <hr/>
 
-    <p th:if="${loueur.notemoyenne != null}">
-        Note moyenne :
-        <span th:text="${loueur.notemoyenne}">0</span>
-    </p>
-
+    <p><strong>Nombre d'évaluations :</strong> <span th:text="${loueur.nombreevaluations}">0</span></p>
+    <p><strong>Note moyenne :</strong> <span th:text="${loueur.notemoyenne}">0</span></p>
 </div>
 
 <p th:if="${loueur == null}">
@@ -28,9 +27,15 @@
 </p>
 
 <div>
-<a th:href="@{/vehicule/liste}" > Afficher liste de vehiculs</a> <br>
+    <a th:href="@{/vehicule/liste}">Afficher la liste de véhicules</a> <br>
 </div>
+
+<a th:href="@{/loueur/profil/modifier}">
+    <button>Modifier mon profil</button>
+</a>
+
 <a th:href="@{/utilisateur/logout}">Déconnexion</a>
 
 </body>
 </html>
+

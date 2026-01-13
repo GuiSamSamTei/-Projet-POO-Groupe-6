@@ -1,20 +1,22 @@
 package com.example.gestion_location_vehicule.service.ScooterService;
 
+import com.example.gestion_location_vehicule.model.Agent;
 import com.example.gestion_location_vehicule.model.Scooter;
+import com.example.gestion_location_vehicule.repository.AgentRepository;
 import com.example.gestion_location_vehicule.repository.ScooterRepository;
+import com.example.gestion_location_vehicule.request.ScooterRequest;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class ScooterService implements IScooterService {
 
     private final ScooterRepository scooterRepository;
-
-    public ScooterService(ScooterRepository scooterRepository) {
-        this.scooterRepository = scooterRepository;
-    }
+    private final AgentRepository agentRepository;
 
     // 🔹 CRUD
     @Override
@@ -25,6 +27,35 @@ public class ScooterService implements IScooterService {
     @Override
     public Optional<Scooter> getScooterById(Long id) {
         return scooterRepository.findById(id);
+    }
+
+    public Scooter ajouterScooter(ScooterRequest request) {
+        Scooter scooter = new Scooter();
+
+        // 1. Champs communs
+        scooter.setMarque(request.getMarque());
+        scooter.setModele(request.getModele());
+        scooter.setPrixjour(request.getPrixjour());
+        scooter.setCouleur(request.getCouleur());
+        scooter.setVilledispo(request.getVilledispo());
+        scooter.setVehiculedispo(request.getVehiculedispo());
+        // Note par défaut 0.0
+
+        // 2. Champs spécifiques Scooter
+        scooter.setCylindree(request.getCylindree() != null ? request.getCylindree() : 0);
+        scooter.setElectrique(request.getElectrique() != null ? request.getElectrique() : false);
+
+        // 3. Liaison Agent
+        if (request.getAgent_id() != null) {
+            Optional<Agent> agentOptional = agentRepository.findById(request.getAgent_id());
+            if (agentOptional.isPresent()) {
+                scooter.setAgent(agentOptional.get());
+            } else {
+                throw new IllegalArgumentException("Agent non trouvé avec l'ID : " + request.getAgent_id());
+            }
+        }
+
+        return scooterRepository.save(scooter);
     }
 
     @Override

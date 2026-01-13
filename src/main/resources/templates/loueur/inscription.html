@@ -234,7 +234,17 @@
                                placeholder="exemple@email.com"
                                required>
                     </div>
-
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">
+                            <i class="fas fa-city me-1"></i>Ville
+                            <span class="text-danger">*</span>
+                        </label>
+                        <input type="text"
+                               th:field="*{ville}"
+                               class="form-control"
+                               placeholder="Votre ville"
+                               required>
+                    </div>
                     <div class="mb-3">
                         <label class="form-label fw-semibold">
                             <i class="fas fa-phone me-1"></i>Téléphone
@@ -355,7 +365,7 @@
             });
         });
 
-        // 上一步按钮
+
         prevButtons.forEach(button => {
             button.addEventListener('click', function() {
                 const prevStepId = this.getAttribute('data-prev');
@@ -369,10 +379,10 @@
                 step.classList.remove('active');
             });
 
-            // 显示目标步骤
+
             document.getElementById(stepId).classList.add('active');
 
-            // 更新步骤指示器
+
             const stepIndex = parseInt(stepId.replace('step', '')) - 1;
             steps.forEach((step, index) => {
                 if (index <= stepIndex) {
@@ -383,13 +393,13 @@
             });
         }
 
-        // 表单验证
+
         const form = document.getElementById('registrationForm');
         const password = document.querySelector('input[th\\:field="*{mdp}"]');
         const confirmPassword = document.getElementById('confirmPassword');
 
         form.addEventListener('submit', function(e) {
-            // 验证密码匹配
+
             if (password.value !== confirmPassword.value) {
                 e.preventDefault();
                 alert('Les mots de passe ne correspondent pas.');

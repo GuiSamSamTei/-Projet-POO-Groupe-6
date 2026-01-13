@@ -1,10 +1,15 @@
 package com.example.gestion_location_vehicule.controller;
 
 import com.example.gestion_location_vehicule.model.Scooter;
+import com.example.gestion_location_vehicule.request.ScooterRequest;
 import com.example.gestion_location_vehicule.service.ScooterService.ScooterService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -31,8 +36,44 @@ public class ScooterController {
 
     // 🔹 POST : créer un scooter
     @PostMapping
-    public Scooter create(@RequestBody Scooter scooter) {
-        return scooterService.saveScooter(scooter);
+    public ResponseEntity<?> create(@RequestBody ScooterRequest request) {
+        try {
+            // Validation simple
+            if (request.getMarque() == null || request.getMarque().trim().isEmpty()) {
+                return ResponseEntity.badRequest().body(Map.of("error", "Le champ 'marque' est obligatoire"));
+            }
+
+            // Appel Service
+            Scooter scooter = scooterService.ajouterScooter(request);
+
+            // Réponse JSON standardisée
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("message", "Scooter ajouté avec succès");
+            response.put("data", scooter);
+
+            return ResponseEntity.status(HttpStatus.CREATED).body(response);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("error", "Erreur lors de l'ajout du scooter");
+            errorResponse.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+        }
+    }
+
+    // 🔹 DELETE : supprimer un scooter
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> delete(@PathVariable Long id) {
+        try {
+            scooterService.deleteScooter(id);
+            return ResponseEntity.ok(Map.of("message", "Scooter supprimé avec succès"));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("message", "Erreur lors de la suppression"));
+        }
     }
 
     // 🔹 PUT : mettre à jour un scooter
@@ -42,11 +83,6 @@ public class ScooterController {
         return scooterService.saveScooter(scooter);
     }
 
-    // 🔹 DELETE : supprimer un scooter
-    @DeleteMapping("/{id}")
-    public void delete(@PathVariable Long id) {
-        scooterService.deleteScooter(id);
-    }
 
     // 🔹 GET : scooters disponibles
     @GetMapping("/disponibles")
