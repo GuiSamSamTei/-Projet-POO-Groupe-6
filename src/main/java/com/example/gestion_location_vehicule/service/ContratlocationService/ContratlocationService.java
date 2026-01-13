@@ -13,49 +13,49 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ContratlocationService implements IContratlocationService{
 
-    private final ContralocationRepository contralocationRepository;
+    private final ContralocationRepository contratlocationRepository;
 
     @Override
     public Contratlocation ajouterContralocation(Contratlocation contratlocation) {
-        return contralocationRepository.save(contratlocation);
+        return contratlocationRepository.save(contratlocation);
     }
 
     @Override
     public Contratlocation modifierContralocation(Long contra_id, Contratlocation contratlocation) {
-        Optional<Contratlocation> contratlocationOptional = contralocationRepository.findById(contra_id);
+        Optional<Contratlocation> contratlocationOptional = contratlocationRepository.findById(contra_id);
 
         Contratlocation contratlocationexiste = contratlocationOptional.get();
 
         contratlocationexiste.setDatedebut(contratlocation.getDatedebut());
         contratlocationexiste.setDatefin(contratlocation.getDatefin());
 
-        return contralocationRepository.save(contratlocationexiste);
+        return contratlocationRepository.save(contratlocationexiste);
 
 
     }
 
     @Override
     public void  supprimerContralocation(Long contra_id) {
-        contralocationRepository.deleteById(contra_id);
+        contratlocationRepository.deleteById(contra_id);
     }
 
     @Override
     public List<Contratlocation> getAllContralocations() {
-        return contralocationRepository.findAll();
+        return contratlocationRepository.findAll();
     }
 
     @Override
-    public Contratlocation trouverContraByLoueurId(Long loueur_id) {
-        return contralocationRepository.findByLoueurId(loueur_id);
+    public Contratlocation trouverContratByLoueurId(Long loueur_id) {
+        return contratlocationRepository.findByLoueurId(loueur_id);
     }
 
     @Override
     public Contratlocation trouverContraByAssurence(Long assurance_id) {
-        return contralocationRepository.findByAssuranceId(assurance_id);
+        return contratlocationRepository.findByAssuranceId(assurance_id);
     }
 
     @Override
     public Contratlocation trouverContraByVehiculeId(Long vehicule_id) {
-        return contralocationRepository.findByVehiculeId(vehicule_id);
+        return contratlocationRepository.findByVehiculeId(vehicule_id);
     }
 }

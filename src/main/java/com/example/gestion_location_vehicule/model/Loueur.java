@@ -32,4 +32,9 @@ public class Loueur extends Utilisateur {
     @JsonIgnore
     @OneToMany(mappedBy = "loueur")
     private List<Contratlocation> contratlocations;
+
+    // Getter pour afficher les locations dans le profil (Thymeleaf)
+    public List<Contratlocation> getContratLocationsForView() {
+        return contratlocations;
+    }
 }

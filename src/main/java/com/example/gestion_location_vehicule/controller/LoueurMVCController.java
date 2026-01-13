@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -33,7 +34,6 @@ public class LoueurMVCController {
     }
 
     /* ===================== INSCRIPTION ===================== */
-
     @GetMapping("/inscription")
     public String afficherFormulaireInscription(Model model) {
         model.addAttribute("loueur", new Loueur());
@@ -45,14 +45,13 @@ public class LoueurMVCController {
         loueur.setNotemoyenne(0.0);
         loueur.setNombreevaluations(0);
 
-        loueurService.create(loueur);  // création via save()
+        loueurService.create(loueur);
 
         session.setAttribute("user", loueur.getId());
         return "redirect:/loueur/profil";
     }
 
     /* ===================== PROFIL ===================== */
-
     @GetMapping("/profil")
     public String afficherProfil(HttpSession session, Model model) {
         Long userId = (Long) session.getAttribute("user");
@@ -63,11 +62,14 @@ public class LoueurMVCController {
         Loueur loueur = loueurService.getById(userId);
         model.addAttribute("loueur", loueur);
 
+        // Ajouter l'historique des locations via le service
+        List<Contratlocation> locations = contratlocationService.trouverContratByLoueurId(userId);
+        model.addAttribute("locations", locations);
+
         return "loueur/profil";
     }
 
     /* ===================== MODIFICATION PROFIL ===================== */
-
     @GetMapping("/profil/modifier")
     public String afficherFormulaireModification(HttpSession session, Model model) {
         Long userId = (Long) session.getAttribute("user");
@@ -105,14 +107,12 @@ public class LoueurMVCController {
         existingLoueur.setVille(formLoueur.getVille());
         existingLoueur.setTypepermis(formLoueur.getTypepermis());
 
-        // Sauvegarde avec save() via create()
         loueurService.create(existingLoueur);
 
         return "redirect:/loueur/profil";
     }
 
     /* ===================== LOCATION VEHICULE ===================== */
-
     @GetMapping("/louer-vehicule/{id}")
     public String louerVehicule(@PathVariable Long id,
                                 HttpSession session,
