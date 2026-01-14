@@ -1,5 +1,6 @@
 package com.example.gestion_location_vehicule.model;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -83,4 +84,33 @@ public class Vehicule {
     public String getTypeVehicule() {
         return this.getClass().getSimpleName();
     }
+
+    public Boolean getDispopardates(LocalDate dateDebut, LocalDate dateFin) {
+
+        if (!this.vehiculedispo)
+            return false;
+
+        if(this.disponibilites==null)
+        {
+            return false;
+        }
+
+
+        for (DisponibiliteVehicule dispo : this.disponibilites) {
+
+            boolean debutOK =
+                    !dateDebut.isBefore(dispo.getDateDebut());
+            // dateDebut >= dispo.dateDebut
+
+            boolean finOK =
+                    !dateFin.isAfter(dispo.getDateFin());
+            // dateFin <= dispo.dateFin
+
+            if (debutOK && finOK) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }

@@ -1,9 +1,12 @@
 package com.example.gestion_location_vehicule.specification;
 
 import com.example.gestion_location_vehicule.model.*;
+import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Predicate;
 import org.springframework.data.jpa.domain.Specification;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +16,31 @@ public class VehiculeSpecification {
     public static Specification<Vehicule> withFilters(Map<String, String> filters) {
         return (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
+
+            if (filters.containsKey("dateDebut") && filters.containsKey("dateFin")
+                    && !filters.get("dateDebut").isEmpty()
+                    && !filters.get("dateFin").isEmpty()) {
+
+                LocalDate dateDebut = LocalDate.parse(filters.get("dateDebut"));
+                LocalDate dateFin   = LocalDate.parse(filters.get("dateFin"));
+
+                // jointure avec disponibilites
+                Join<Vehicule, DisponibiliteVehicule> dispoJoin =
+                        root.join("disponibilites", JoinType.INNER);
+
+                predicates.add(
+                        cb.and(
+                                cb.isTrue(root.get("vehiculedispo")),
+                                cb.lessThanOrEqualTo(dispoJoin.get("dateDebut"), dateDebut),
+                                cb.greaterThanOrEqualTo(dispoJoin.get("dateFin"), dateFin)
+                        )
+                );
+
+                // évite les doublons de véhicules
+                query.distinct(true);
+            }
+
+
 
             // 🔹 Champs communs
             if (filters.containsKey("marque") && !filters.get("marque").isEmpty()) {

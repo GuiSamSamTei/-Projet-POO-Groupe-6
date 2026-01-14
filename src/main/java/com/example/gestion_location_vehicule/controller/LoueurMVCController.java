@@ -154,9 +154,16 @@ public class LoueurMVCController {
             return "redirect:/vehicule/liste?sessionExpired=true";
         }
 
+
+
         LocalDate dateDebut = LocalDate.parse(formData.get("dateDebut"));
         LocalDate dateFin = LocalDate.parse(formData.get("dateFin"));
         String lieuDepot = formData.get("lieuDepot");
+
+        if(vehicule.getDispopardates(dateDebut,dateFin))
+        {
+            return "redirect:/vehicule/liste?VehiculeDispo=False";
+        }
 
         Long loueurId = (Long) session.getAttribute("user");
         Loueur loueur = loueurService.getById(loueurId);
