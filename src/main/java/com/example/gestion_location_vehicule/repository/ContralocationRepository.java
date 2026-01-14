@@ -15,9 +15,9 @@ public interface ContralocationRepository extends JpaRepository<Contratlocation,
     List<Contratlocation> findByDatedebut(Date datedebut);
     List<Contratlocation> findByDatefin( Date datefin);
 
-    Contratlocation findByVehiculeId(Long vehicule_id);
+    List<Contratlocation> findByVehicule_Id(Long vehicule_id);
     Contratlocation findByAssuranceId(Long assurance_id);
-    Contratlocation findByLoueurId(Long loueur_id);
+    List<Contratlocation> findByLoueur_Id(Long loueur_id);
 
 
 
