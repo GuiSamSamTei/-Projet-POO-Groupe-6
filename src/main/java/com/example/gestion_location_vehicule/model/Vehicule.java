@@ -1,25 +1,13 @@
 package com.example.gestion_location_vehicule.model;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.DiscriminatorColumn;
-import jakarta.persistence.DiscriminatorType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.SequenceGenerator;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
+import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
@@ -79,7 +67,7 @@ public class Vehicule {
 
     @OneToMany(mappedBy = "vehicule")
     @JsonIgnore
-    private List<DisponibiliteVehicule> disponibilites; // <-- relation vers disponibilités
+    private List<DisponibiliteVehicule> disponibilites = new ArrayList<>(); // <-- relation vers disponibilités
 
     public String getTypeVehicule() {
         return this.getClass().getSimpleName();
@@ -94,6 +82,9 @@ public class Vehicule {
         {
             return false;
         }
+
+        if(this.disponibilites.size()==0)
+            return false;
 
 
         for (DisponibiliteVehicule dispo : this.disponibilites) {

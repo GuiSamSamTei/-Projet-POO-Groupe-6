@@ -162,7 +162,7 @@
     </span>
     </p>
 
-    <a th:href="@{/agent/profile/{id}(id=${vehicule.agent.id})}">
+    <a th:href="@{/utilisateur/profile/{id}(id=${vehicule.agent.id})}">
         Voir le profil
     </a>
     <br>
@@ -197,7 +197,6 @@
     <hr>
 
     <h3>Lieu de dépose</h3>
-    <h3>Choisir un parking</h3>
 
     <select name="parkingId" required>
         <option value="">-- Sélectionnez un parking --</option>
@@ -211,8 +210,8 @@
 
 
         <!-- Si la liste est vide ou null -->
-        <option th:if="${parkings == null or #lists.isEmpty(parkings)}" value="0">
-            Aucun parking disponible
+        <option  value="0">
+            Je le rends au meme endrois
         </option>
     </select>
 

@@ -8,6 +8,7 @@ import com.example.gestion_location_vehicule.repository.VehiculeRepository;
 import com.example.gestion_location_vehicule.service.ContratlocationService.ContratlocationService;
 import com.example.gestion_location_vehicule.service.LoueurService.ILoueurService;
 import com.example.gestion_location_vehicule.service.ParkingService.ParkingService;
+import com.example.gestion_location_vehicule.service.VehiculeService.VehiculeService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -27,14 +28,16 @@ public class LoueurMVCController {
     private final VehiculeRepository vehiculeRepository;
     private final ContratlocationService contratlocationService;
     private final ParkingService parkingService;
+    private final VehiculeService vehiculeService;
 
     public LoueurMVCController(ILoueurService loueurService,
                                VehiculeRepository vehiculeRepository,
-                               ContratlocationService contratlocationService, ParkingService parkingService) {
+                               ContratlocationService contratlocationService, ParkingService parkingService, VehiculeService vehiculeService) {
         this.loueurService = loueurService;
         this.vehiculeRepository = vehiculeRepository;
         this.contratlocationService = contratlocationService;
         this.parkingService = parkingService;
+        this.vehiculeService = vehiculeService;
     }
 
     /* ===================== INSCRIPTION ===================== */
@@ -160,7 +163,9 @@ public class LoueurMVCController {
         LocalDate dateFin = LocalDate.parse(formData.get("dateFin"));
         String lieuDepot = formData.get("lieuDepot");
 
-        if(vehicule.getDispopardates(dateDebut,dateFin))
+
+
+        if(!vehiculeService.estDisponible(vehicule.getId(),dateDebut,dateFin))
         {
             return "redirect:/vehicule/liste?VehiculeDispo=False";
         }
@@ -174,6 +179,12 @@ public class LoueurMVCController {
         contrat.setLieudepot(lieuDepot);
         contrat.setVehicule(vehicule);
         contrat.setLoueur(loueur);
+        if(Long.parseLong(formData.get("parkingId"))!=0)
+        {
+            Long parking_id = Long.parseLong(formData.get("parkingId"));
+            Parking parking = parkingService.trouverParkingparId(parking_id);
+            contrat.setParking(parking);
+        }
 
         contratlocationService.ajouterContralocation(contrat);
 
