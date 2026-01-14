@@ -22,6 +22,7 @@ import com.example.gestion_location_vehicule.repository.UtilisateurRepository;
 import com.example.gestion_location_vehicule.request.ConnexionRequest;
 import com.example.gestion_location_vehicule.service.AgentParService.AgentParService;
 import com.example.gestion_location_vehicule.service.AgentProService.AgentProService;
+import com.example.gestion_location_vehicule.service.ControleTechniqueService.ControleTechniqueService;
 import com.example.gestion_location_vehicule.service.LoueurService.LoueurService;
 import com.example.gestion_location_vehicule.service.MessageService.MessageService;
 import com.example.gestion_location_vehicule.service.UtilisateurService.UtilisateurService;
@@ -39,7 +40,8 @@ public class UtilisateurMVCController {
     private final AgentParService agentParService;
     private final AgentProService agentProService;
     private final LoueurService loueurService;
-    private final  MessageService messageService;
+    private final MessageService messageService;
+    private final ControleTechniqueService controleTechniqueService;
 
     // Afficher le formulaire
     @GetMapping("/connexion")
@@ -103,6 +105,9 @@ public class UtilisateurMVCController {
                             ct.getVehicule().getId(), ct.getDateExpiration());
                     Message alertMessage = new Message(null, alertContent, new Date(), false, admin, user);
                     messageService.saveMessage(alertMessage);
+                    //marquer le controle comme notifié
+                    ct.setNotifie(true);
+                    controleTechniqueService.enregistrerControleTechnique(ct);
                 }   
             }
             return "redirect:/agent-par/profil";

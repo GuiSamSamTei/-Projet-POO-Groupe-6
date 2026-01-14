@@ -47,6 +47,6 @@ public class ControleTechniqueController {
             @ModelAttribute ControleTechnique controleTechnique
     ) {
         controleTechniqueService.enregistrerControleTechnique(controleTechnique);
-        return "redirect:/vehicules/liste";
+        return "redirect:/vehicule/liste";
     }
 }
