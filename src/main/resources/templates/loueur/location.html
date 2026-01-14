@@ -1,245 +1,271 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Louer un véhicule</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Réserver un véhicule - AutoPartage</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
     <style>
-        .vehicule-card {
-            border: 1px solid #ccc;
-            padding: 15px;
-            margin-bottom: 20px;
-            background: #f9f9f9;
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2c3e50;
         }
-        .vehicule-card h2 {
-            margin-top: 0;
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
         }
-        .vehicule-info span {
-            display: block;
-            margin-bottom: 5px;
+
+        .booking-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 40px 0;
+            border-radius: 0 0 20px 20px;
+            margin-bottom: 30px;
         }
-        /* ===== Carte Agent ===== */
-.agent-card {
-    margin-top: 25px;
-    padding: 20px;
-    max-width: 420px;
-    background: #ffffff;
-    border-radius: 12px;
-    border: 1px solid #e0e0e0;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-}
 
-/* Titre */
-.agent-card h3 {
-    margin-bottom: 15px;
-    font-size: 20px;
-    color: #333;
-    border-bottom: 2px solid #007bff;
-    padding-bottom: 6px;
-}
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
 
-/* Infos agent */
-.agent-card p {
-    margin: 8px 0;
-    font-size: 15px;
-    color: #555;
-}
+        .spec-badge {
+            background: #f0f2f5;
+            padding: 8px 12px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            font-size: 0.9rem;
+            color: var(--secondary-color);
+        }
 
-.agent-card strong {
-    color: #222;
-}
+        .spec-badge i {
+            margin-right: 8px;
+            color: var(--primary-color);
+        }
 
-/* Actions */
-.agent-actions {
-    margin-top: 18px;
-    display: flex;
-    gap: 12px;
-}
+        .agent-mini-card {
+            border-left: 4px solid var(--primary-color);
+            background: #f8faff;
+        }
 
-/* Boutons */
-.agent-actions a {
-    flex: 1;
-    text-align: center;
-    padding: 10px 0;
-    border-radius: 8px;
-    font-size: 14px;
-    font-weight: 600;
-    text-decoration: none;
-    transition: all 0.3s ease;
-}
+        .sticky-summary {
+            position: sticky;
+            top: 20px;
+        }
 
-/* Bouton profil */
-.btn-profile {
-    background-color: #007bff;
-    color: #fff;
-}
+        .assurance-option {
+            cursor: pointer;
+            transition: 0.2s;
+            border: 2px solid #eee;
+        }
 
-.btn-profile:hover {
-    background-color: #0056b3;
-}
+        .assurance-option:hover {
+            border-color: var(--primary-color);
+        }
 
-/* Bouton message */
-.btn-message {
-    background-color: #28a745;
-    color: #fff;
-}
-
-.btn-message:hover {
-    background-color: #1e7e34;
-}
-
+        input[type="radio"]:checked + .assurance-label .assurance-option {
+            border-color: var(--primary-color);
+            background: #f0f7ff;
+        }
     </style>
 </head>
 <body>
 
-<h1>Louer un véhicule</h1>
-
-
-
-<!-- 🚗 INFOS VEHICULE -->
-<div class="vehicule-card">
-    <h2 th:text="${vehicule.marque + ' ' + vehicule.modele}"></h2>
-
-    <div class="vehicule-info">
-        <span><strong>Type :</strong> <span th:text="${vehicule.typeVehicule}"></span></span>
-        <span><strong>Couleur :</strong> <span th:text="${vehicule.couleur}"></span></span>
-        <span><strong>Ville :</strong> <span th:text="${vehicule.villedispo}"></span></span>
-        <span><strong>Prix / jour :</strong> <span th:text="${vehicule.prixjour}"></span> €</span>
+<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm mb-0">
+    <div class="container">
+        <a class="navbar-brand" href="/">
+            <i class="fas fa-car me-2 text-primary"></i>
+            <span class="fw-bold">AutoPartage</span>
+        </a>
+        <a th:href="@{/vehicule/liste}" class="btn btn-outline-secondary btn-sm">
+            <i class="fas fa-arrow-left me-1"></i> Retour aux véhicules
+        </a>
     </div>
+</nav>
 
-    <hr>
-
-    <!-- 🚘 VOITURE -->
-    <div th:if="${vehicule instanceof T(com.example.gestion_location_vehicule.model.Voiture)}">
-        <h4>Détails voiture</h4>
-        <span>Portes : <span th:text="${vehicule.nombreportes}"></span></span>
-        <span>Places : <span th:text="${vehicule.nombreplaces}"></span></span>
-        <span>Automatique : <span th:text="${vehicule.automatique ? 'Oui' : 'Non'}"></span></span>
-        <span>Carburant : <span th:text="${vehicule.carburant}"></span></span>
-        <span>GPS : <span th:text="${vehicule.gps ? 'Oui' : 'Non'}"></span></span>
+<header class="booking-header">
+    <div class="container text-center">
+        <h1 class="fw-bold">Finalisez votre réservation</h1>
+        <p class="lead opacity-75">Quelques étapes pour prendre la route.</p>
     </div>
+</header>
 
-    <!-- 🚲 VELO -->
-    <div th:if="${vehicule instanceof T(com.example.gestion_location_vehicule.model.Velo)}">
-        <h4>Détails vélo</h4>
-        <span>Électrique : <span th:text="${vehicule.electrique ? 'Oui' : 'Non'}"></span></span>
-        <span>Vitesses : <span th:text="${vehicule.nombreVitesses}"></span></span>
-        <span>Type : <span th:text="${vehicule.typeVelo}"></span></span>
-    </div>
+<div class="container mb-5">
+    <form th:action="@{/loueur/location/valider}" method="post">
+        <div class="row">
+            <div class="col-lg-8">
 
-    <!-- 🏍 MOTO -->
-    <div th:if="${vehicule instanceof T(com.example.gestion_location_vehicule.model.Moto)}">
-        <h4>Détails moto</h4>
-        <span>Cylindrée : <span th:text="${vehicule.cylindree}"></span> cc</span>
-        <span>Chevaux : <span th:text="${vehicule.nbchevaux}"></span></span>
-    </div>
+                <div class="card mb-4">
+                    <div class="card-body p-4">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <div>
+                                <h2 class="fw-bold mb-1" th:text="${vehicule.marque + ' ' + vehicule.modele}">Marque Modèle</h2>
+                                <span class="badge bg-primary rounded-pill mb-2" th:text="${vehicule.typeVehicule}">Type</span>
+                            </div>
+                            <div class="text-end">
+                                <h3 class="text-primary fw-bold mb-0" th:text="${vehicule.prixjour + ' €'}">0 €</h3>
+                                <small class="text-muted">par jour</small>
+                            </div>
+                        </div>
 
-    <!-- 🚚 CAMION -->
-    <div th:if="${vehicule instanceof T(com.example.gestion_location_vehicule.model.Camion)}">
-        <h4>Détails camion</h4>
-        <span>Charge max : <span th:text="${vehicule.chargemax}"></span> kg</span>
-        <span>Volume : <span th:text="${vehicule.volume}"></span> m³</span>
-    </div>
+                        <div class="row g-2 mb-4">
+                            <div class="col-md-3 col-6"><div class="spec-badge"><i class="fas fa-palette"></i> <span th:text="${vehicule.couleur}">Couleur</span></div></div>
+                            <div class="col-md-3 col-6"><div class="spec-badge"><i class="fas fa-map-marker-alt"></i> <span th:text="${vehicule.villedispo}">Ville</span></div></div>
 
-    <!-- 🚐 VAN -->
-    <div th:if="${vehicule instanceof T(com.example.gestion_location_vehicule.model.Van)}">
-        <h4>Détails van</h4>
-        <span>Places : <span th:text="${vehicule.nombreplaces}"></span></span>
-    </div>
+                            <th:block th:if="${vehicule instanceof T(com.example.gestion_location_vehicule.model.Voiture)}">
+                                <div class="col-md-3 col-6"><div class="spec-badge"><i class="fas fa-door-open"></i> <span th:text="${vehicule.nombreportes + ' portes'}"></span></div></div>
+                                <div class="col-md-3 col-6"><div class="spec-badge"><i class="fas fa-gas-pump"></i> <span th:text="${vehicule.carburant}"></span></div></div>
+                                <div class="col-md-3 col-6"><div class="spec-badge"><i class="fas fa-cog"></i> <span th:text="${vehicule.automatique ? 'Auto' : 'Manuel'}"></span></div></div>
+                            </th:block>
 
+                            <th:block th:if="${vehicule instanceof T(com.example.gestion_location_vehicule.model.Camion)}">
+                                <div class="col-md-3 col-6"><div class="spec-badge"><i class="fas fa-weight-hanging"></i> <span th:text="${vehicule.chargemax + ' kg'}"></span></div></div>
+                                <div class="col-md-3 col-6"><div class="spec-badge"><i class="fas fa-box"></i> <span th:text="${vehicule.volume + ' m³'}"></span></div></div>
+                            </th:block>
+                        </div>
+
+                        <div class="agent-mini-card p-3 rounded shadow-sm d-flex align-items-center justify-content-between" th:if="${vehicule.agent != null}">
+                            <div>
+                                <small class="text-muted d-block">Proposé par :</small>
+                                <strong th:if="${vehicule.agent instanceof T(com.example.gestion_location_vehicule.model.AgentPro)}" th:text="${vehicule.agent.raisonsociale}"></strong>
+                                <strong th:if="${vehicule.agent instanceof T(com.example.gestion_location_vehicule.model.AgentPar)}" th:text="${vehicule.agent.nom + ' ' + vehicule.agent.prenom}"></strong>
+                            </div>
+                            <div class="btn-group">
+                                <a th:href="@{/utilisateur/profile/{id}(id=${vehicule.agent.id})}" class="btn btn-sm btn-outline-primary">Profil</a>
+                                <a th:href="@{/messages/{id}(id=${vehicule.agent.id})}" class="btn btn-sm btn-primary"><i class="fas fa-envelope"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card mb-4">
+                    <div class="card-body p-4">
+                        <h5 class="fw-bold mb-4"><i class="fas fa-calendar-alt me-2 text-primary"></i>Planification</h5>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Date de début</label>
+                                <input type="date" id="dateDebut" name="dateDebut" class="form-control form-control-lg" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Date de fin</label>
+                                <input type="date" id="dateFin" name="dateFin" class="form-control form-control-lg" required>
+                            </div>
+                            <div class="col-12 mt-4">
+                                <label class="form-label fw-bold">Où allez-vous rendre le véhicule ?</label>
+                                <select name="parkingId" class="form-select form-select-lg" required>
+                                    <option value="0">Retour au point de départ (Lieu actuel)</option>
+                                    <option th:each="p : ${parkings}"
+                                            th:value="${p.id}"
+                                            th:text="${p.nomparking + ' (' + p.ville + ')'}">
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card mb-4">
+                    <div class="card-body p-4">
+                        <h5 class="fw-bold mb-4"><i class="fas fa-shield-alt me-2 text-primary"></i>Assurance</h5>
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <input type="radio" class="btn-check" name="assurance" id="ass1" value="Par Défaut" checked>
+                                <label class="btn btn-outline-light text-dark w-100 p-3 text-start shadow-sm" for="ass1">
+                                    <div class="fw-bold">Incluse</div>
+                                    <small class="text-muted">Standard</small>
+                                </label>
+                            </div>
+                            <div class="col-md-4">
+                                <input type="radio" class="btn-check" name="assurance" id="ass2" value="Basique">
+                                <label class="btn btn-outline-light text-dark w-100 p-3 text-start shadow-sm" for="ass2">
+                                    <div class="fw-bold text-primary">Basique</div>
+                                    <small class="text-muted">+ 5€ / jour</small>
+                                </label>
+                            </div>
+                            <div class="col-md-4">
+                                <input type="radio" class="btn-check" name="assurance" id="ass3" value="Premium">
+                                <label class="btn btn-outline-light text-dark w-100 p-3 text-start shadow-sm" for="ass3">
+                                    <div class="fw-bold text-success">Premium</div>
+                                    <small class="text-muted">+ 15€ / jour</small>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="card sticky-summary bg-primary text-white shadow-lg">
+                    <div class="card-body p-4">
+                        <h4 class="fw-bold mb-4">Récapitulatif</h4>
+
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Prix par jour</span>
+                            <span th:text="${vehicule.prixjour + ' €'}"></span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Frais de service</span>
+                            <span>2.50 €</span>
+                        </div>
+                        <hr class="bg-white">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <span class="h5 mb-0">Total estimé</span>
+                            <span class="h3 mb-0 fw-bold" id="totalPrice">-- €</span>
+                        </div>
+
+                        <button type="submit" class="btn btn-light btn-lg w-100 fw-bold text-primary py-3 shadow-sm">
+                            CONFIRMER LA LOCATION
+                        </button>
+
+                        <div class="text-center mt-3">
+                            <small class="opacity-75"><i class="fas fa-lock me-1"></i> Paiement sécurisé</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
 </div>
 
-<!-- après les infos du véhicule -->
-<div class="agent-card" th:if="${vehicule.agent != null}">
-    <h3>Agent responsable</h3>
-    <p>
-    <span th:if="${vehicule.agent instanceof T(com.example.gestion_location_vehicule.model.AgentPro)}"
-          th:text="${vehicule.agent.raisonsociale}">
-    </span>
-
-        <span th:if="${vehicule.agent instanceof T(com.example.gestion_location_vehicule.model.AgentPar)}"
-              th:text="${vehicule.agent.nom + ' ' + vehicule.agent.prenom}">
-    </span>
-    </p>
-
-    <a th:href="@{/utilisateur/profile/{id}(id=${vehicule.agent.id})}">
-        Voir le profil
-    </a>
-    <br>
-    <a th:href="@{/messages/{id}(id=${vehicule.agent.id})}">
-        Envoyer un message
-    </a>
-
-
-<!-- 📄 FORMULAIRE LOCATION -->
-<form th:action="@{/loueur/location/valider}" method="post">
-
-    <h3>Dates de location</h3>
-
-    <label>Date de début :</label>
-    <input type="date" id="dateDebut" name="dateDebut" required>
-    <br><br>
-
-    <label>Date de fin :</label>
-    <input type="date" id="dateFin" name="dateFin" required>
-    <br><br>
-
-
-
-    <hr>
-
-    <h3>Choisir une assurance</h3>
-
-    <input type="radio" name="assurance" value="Par Défaut" checked> Assurance par défaut<br>
-    <input type="radio" name="assurance" value="Basique"> Assurance basique<br>
-    <input type="radio" name="assurance" value="Premium"> Assurance premium<br>
-
-    <hr>
-
-    <h3>Lieu de dépose</h3>
-
-    <select name="parkingId" required>
-        <option value="">-- Sélectionnez un parking --</option>
-
-        <!-- Si la liste parkings n'est pas vide -->
-        <option th:each="p : ${parkings}"
-                th:value="${p.id}"
-                th:text="'[' + ${p.ville} + ' ' + ${p.codepostal} + '] ' + ${p.nomparking} + ' - (' + ${p.adresse} + ')' "
-                th:if="${parkings != null and !parkings.isEmpty()}">
-        </option>
-
-
-        <!-- Si la liste est vide ou null -->
-        <option  value="0">
-            Je le rends au meme endrois
-        </option>
-    </select>
-
-    <br><br>
-
-
-    <button type="submit">Confirmer la location</button>
-
-</form>
 <script>
     const dateDebutInput = document.getElementById("dateDebut");
     const dateFinInput   = document.getElementById("dateFin");
+    const prixJour = [[${vehicule.prixjour}]];
+    const totalDisplay = document.getElementById("totalPrice");
 
     // aujourd'hui
     const today = new Date().toISOString().split("T")[0];
-
-    // min dateDebut = aujourd'hui
     dateDebutInput.min = today;
 
-    // quand on choisit dateDebut
+    function calculateTotal() {
+        if (dateDebutInput.value && dateFinInput.value) {
+            const start = new Date(dateDebutInput.value);
+            const end = new Date(dateFinInput.value);
+            const diffTime = Math.abs(end - start);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+
+            if(diffDays > 0) {
+                const total = (diffDays * prixJour) + 2.5;
+                totalDisplay.innerText = total.toFixed(2) + " €";
+            }
+        }
+    }
+
     dateDebutInput.addEventListener("change", function () {
         dateFinInput.min = this.value;
-
-        // si dateFin < dateDebut → on corrige
         if (dateFinInput.value && dateFinInput.value < this.value) {
             dateFinInput.value = this.value;
         }
+        calculateTotal();
     });
+
+    dateFinInput.addEventListener("change", calculateTotal);
 </script>
+
 </body>
 </html>

@@ -2,145 +2,293 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8" />
-    <title>Messagerie</title>
-</head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Messagerie - AutoPartage</title>
 
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2c3e50;
+            --bg-light: #f8f9fa;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-light);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Conteneur principal qui prend tout l'espace restant sous la nav */
+        .messaging-container {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+            background: white;
+            margin: 20px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        /* Colonne de gauche (Liste) */
+        .sidebar {
+            width: 350px;
+            border-right: 1px solid #eee;
+            display: flex;
+            flex-direction: column;
+            background: #fff;
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .conversation-list {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .conv-item {
+            padding: 15px 20px;
+            border-bottom: 1px solid #f8f9fa;
+            transition: all 0.2s;
+            cursor: pointer;
+            text-decoration: none !important;
+            display: block;
+            color: inherit;
+        }
+
+        .conv-item:hover {
+            background-color: #f0f7ff;
+        }
+
+        .conv-item.active {
+            background-color: #e3f2fd;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        /* Colonne de droite (Chat) */
+        .chat-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: #fdfdfd;
+        }
+
+        .chat-header {
+            padding: 15px 25px;
+            background: white;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            align-items: center;
+        }
+
+        .messages-display {
+            flex: 1;
+            padding: 25px;
+            overflow-y: auto;
+            background-image: url('https://www.transparenttextures.com/patterns/cubes.png'); /* Texture légère */
+        }
+
+        /* Bulles de messages */
+        .message-row {
+            margin-bottom: 15px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .message-bubble {
+            max-width: 70%;
+            padding: 10px 15px;
+            border-radius: 15px;
+            position: relative;
+            font-size: 0.95rem;
+        }
+
+        .msg-received {
+            align-self: flex-start;
+            background: white;
+            color: var(--secondary-color);
+            border: 1px solid #eee;
+            border-bottom-left-radius: 2px;
+        }
+
+        .msg-sent {
+            align-self: flex-end;
+            background: var(--primary-color);
+            color: white;
+            border-bottom-right-radius: 2px;
+        }
+
+        .msg-info {
+            font-size: 0.75rem;
+            margin-bottom: 4px;
+            color: #888;
+        }
+
+        /* Formulaire d'envoi */
+        .chat-footer {
+            padding: 20px;
+            background: white;
+            border-top: 1px solid #eee;
+        }
+
+        .unread-badge {
+            background-color: #e74c3c;
+            color: white;
+            border-radius: 50%;
+            padding: 2px 7px;
+            font-size: 0.7rem;
+            margin-left: 5px;
+        }
+
+        .avatar-circle {
+            width: 40px;
+            height: 40px;
+            background: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 12px;
+        }
+    </style>
+</head>
 <body>
 
-<h2>
-    Messagerie
-    <span th:if="${totalUnread != null and totalUnread > 0}" style="color: red">
-        (<span th:text="${totalUnread}"></span> non lus)
-    </span>
-</h2>
-
-<div style="display: flex; border: 1px solid #ccc; height: 500px">
-
-    <!-- ===================== -->
-    <!-- Colonne gauche        -->
-    <!-- Recherche + convos    -->
-    <!-- ===================== -->
-    <div style="width: 30%; border-right: 1px solid #ccc; padding: 10px; overflow-y: auto">
-
-        <!-- Recherche utilisateurs -->
-        <form method="get" th:action="@{/messages}" style="margin-bottom: 10px">
-            <input
-                type="text"
-                name="q"
-                placeholder="Rechercher un utilisateur"
-                th:value="${q}"
-                style="width: 100%"
-            />
-        </form>
-
-        <!-- Résultats de recherche -->
-        <div th:if="${resultatsRecherche != null}">
-            <div
-                th:each="u : ${resultatsRecherche}"
-                style="border: 1px dashed #aaa; padding: 6px; margin-bottom: 4px"
-            >
-                <a th:href="@{/messages/{id}(id=${u.id})}">
-                    <b th:text="${u.username}"></b>
-                </a>
-            </div>
-
-            <hr />
-        </div>
-
-        <!-- Liste des conversations -->
-        <div
-            th:each="conv : ${conversations}"
-            style="border: 1px solid #ddd; padding: 8px; margin-bottom: 8px"
-        >
-            <a
-                th:href="@{/messages/{id}(id=${conv.key.id})}"
-                style="text-decoration: none; color: black"
-            >
-                <b th:text="${conv.key.username}">Utilisateur</b>
+<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+    <div class="container">
+        <a class="navbar-brand" href="/">
+            <i class="fas fa-car me-2 text-primary"></i>
+            <span class="fw-bold">AutoPartage</span>
+        </a>
+        <div class="d-flex align-items-center">
+            <a th:href="@{/messages}" class="btn btn-light position-relative me-3">
+                <i class="fas fa-envelope"></i>
+                <span th:if="${totalUnread > 0}" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" th:text="${totalUnread}">0</span>
             </a>
-
-            <!-- Aperçu dernier message -->
-            <div style="margin-top: 4px">
-                <small th:if="${#lists.isEmpty(conv.value)}">
-                    <i>Aucun message</i>
-                </small>
-
-                <small th:if="${!#lists.isEmpty(conv.value)}"
-                       th:text="${conv.value[#lists.size(conv.value)-1].contenu}">
-                    Dernier message
-                </small>
-            </div>
-
-            <!-- Indicateur non-lus -->
-            <span
-                th:if="${unreadByUser != null and unreadByUser[conv.key.id] > 0}"
-                style="color: red; font-weight: bold"
-            >
-                • <span th:text="${unreadByUser[conv.key.id]}"></span>
-            </span>
+            <th:block th:if="${currentUser != null}">
+                <span class="fw-bold me-2" th:text="${currentUser.username}"></span>
+                <a th:href="@{/utilisateur/logout}" class="btn btn-outline-secondary btn-sm"><i class="fas fa-sign-out-alt"></i></a>
+            </th:block>
         </div>
     </div>
+</nav>
 
-    <!-- ===================== -->
-    <!-- Colonne droite        -->
-    <!-- Conversation active   -->
-    <!-- ===================== -->
-    <div style="width: 70%; padding: 10px; display: flex; flex-direction: column">
+<div class="container-fluid flex-grow-1 d-flex flex-column" style="height: calc(100vh - 70px);">
+    <div class="messaging-container">
 
-        <div th:if="${other == null}">
-            <p>Sélectionnez une conversation ou recherchez un utilisateur.</p>
-        </div>
-
-        <div th:if="${other != null}"
-             style="display: flex; flex-direction: column; height: 100%">
-
-            <h3 th:text="'Conversation avec ' + ${other.username}"></h3>
-
-            <!-- Messages -->
-            <div
-                style="
-                    flex: 1;
-                    border: 1px solid #ddd;
-                    padding: 10px;
-                    overflow-y: auto;
-                "
-            >
-                <div th:if="${messages == null or #lists.isEmpty(messages)}">
-                    <p><i>Aucun message pour l’instant.</i></p>
-                </div>
-
-                <div th:each="msg : ${messages}">
-                    <p
-                        th:style="${msg.utilisateursend.id == other.id}
-                                ? 'text-align:left'
-                                : 'text-align:right'"
-                    >
-                        <b th:text="${msg.utilisateursend.username}">User</b> :
-                        <span th:text="${msg.contenu}">Message</span>
-                    </p>
-                </div>
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h5 class="mb-3">Conversations</h5>
+                <form method="get" th:action="@{/messages}">
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-0"><i class="fas fa-search text-muted"></i></span>
+                        <input type="text" name="q" class="form-control bg-light border-0" placeholder="Rechercher..." th:value="${q}">
+                    </div>
+                </form>
             </div>
 
-            <!-- Formulaire envoi -->
-            <form
-                th:action="@{/messages/envoyer}"
-                method="post"
-                style="margin-top: 10px"
-            >
-                <input type="hidden" name="destinataireId" th:value="${other.id}" />
+            <div class="conversation-list">
+                <div th:if="${resultatsRecherche != null}" class="p-2 border-bottom bg-light">
+                    <small class="text-muted px-2">Résultats de recherche</small>
+                    <a th:each="u : ${resultatsRecherche}" th:href="@{/messages/{id}(id=${u.id})}" class="conv-item">
+                        <div class="d-flex align-items-center">
+                            <div class="avatar-circle" th:text="${#strings.substring(u.username,0,1).toUpperCase()}">U</div>
+                            <span class="fw-bold" th:text="${u.username}"></span>
+                        </div>
+                    </a>
+                </div>
 
-                <textarea
-                    name="contenu"
-                    required
-                    placeholder="Écrire un message…"
-                    style="width: 100%; height: 60px"
-                ></textarea>
+                <a th:each="conv : ${conversations}"
+                   th:href="@{/messages/{id}(id=${conv.key.id})}"
+                   class="conv-item"
+                   th:classappend="${other != null and other.id == conv.key.id} ? 'active' : ''">
+                    <div class="d-flex align-items-center">
+                        <div class="avatar-circle"
+                             th:style="${other != null and other.id == conv.key.id} ? 'background:#2c3e50' : ''"
+                             th:text="${#strings.substring(conv.key.username,0,1).toUpperCase()}">U</div>
+                        <div class="flex-grow-1 overflow-hidden">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="fw-bold text-truncate" th:text="${conv.key.username}">Utilisateur</span>
+                                <span th:if="${unreadByUser != null and unreadByUser[conv.key.id] > 0}" class="unread-badge" th:text="${unreadByUser[conv.key.id]}"></span>
+                            </div>
+                            <div class="small text-muted text-truncate">
+                                <span th:if="${#lists.isEmpty(conv.value)}"><i>Aucun message</i></span>
+                                <span th:if="${!#lists.isEmpty(conv.value)}" th:text="${conv.value[#lists.size(conv.value)-1].contenu}">Aperçu...</span>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
 
-                <button type="submit">Envoyer</button>
-            </form>
+        <div class="chat-area">
+            <div th:if="${other == null}" class="h-100 d-flex flex-column align-items-center justify-content-center text-muted">
+                <i class="fas fa-comments fa-4x mb-3" style="opacity: 0.2"></i>
+                <h5>Sélectionnez une discussion</h5>
+                <p>Ou recherchez un utilisateur pour démarrer.</p>
+            </div>
+
+            <th:block th:if="${other != null}">
+                <div class="chat-header">
+                    <div class="avatar-circle" th:text="${#strings.substring(other.username,0,1).toUpperCase()}">O</div>
+                    <div>
+                        <h6 class="mb-0 fw-bold" th:text="${other.username}">Nom Utilisateur</h6>
+                        <small class="text-success"><i class="fas fa-circle font-size-xs"></i> En ligne</small>
+                    </div>
+                </div>
+
+                <div class="messages-display" id="messageContainer">
+                    <div th:if="${#lists.isEmpty(messages)}" class="text-center mt-5 text-muted">
+                        <p>Dites bonjour à <span th:text="${other.username}"></span> !</p>
+                    </div>
+
+                    <div th:each="msg : ${messages}" class="message-row">
+                        <div class="msg-info"
+                             th:style="${msg.utilisateursend.id == other.id} ? 'text-align:left' : 'text-align:right'">
+                            <span th:text="${msg.utilisateursend.username}"></span>
+                        </div>
+                        <div class="message-bubble"
+                             th:classappend="${msg.utilisateursend.id == other.id} ? 'msg-received' : 'msg-sent'"
+                             th:text="${msg.contenu}">
+                            Contenu du message
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chat-footer">
+                    <form th:action="@{/messages/envoyer}" method="post">
+                        <input type="hidden" name="destinataireId" th:value="${other.id}" />
+                        <div class="input-group">
+                            <textarea name="contenu" class="form-control border-0 bg-light"
+                                      rows="1" placeholder="Écrivez votre message..." required
+                                      style="resize: none; border-radius: 20px 0 0 20px; padding: 12px 20px;"></textarea>
+                            <button class="btn btn-primary" type="submit" style="border-radius: 0 20px 20px 0; padding: 0 25px;">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </th:block>
         </div>
     </div>
 </div>
+
+<script>
+    // Scroll automatique vers le bas des messages
+    const container = document.getElementById('messageContainer');
+    if(container) {
+        container.scrollTop = container.scrollHeight;
+    }
+</script>
 
 </body>
 </html>
