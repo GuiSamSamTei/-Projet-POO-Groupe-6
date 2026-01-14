@@ -46,6 +46,7 @@ public class AgentParMVCController {
 
         // Stockage de l'utilisateur connecté
         session.setAttribute("user", agentPar.getId());
+        session.setAttribute("role", "AGENT_PAR");
 
         return "redirect:/agent-par/profil";
     }

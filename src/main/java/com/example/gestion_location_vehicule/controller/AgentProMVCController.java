@@ -44,6 +44,7 @@ public class AgentProMVCController {
 
         // Stockage de l'utilisateur connecté
         session.setAttribute("user", agentPro.getId());
+        session.setAttribute("role", "AGENT_PRO");
 
         return "redirect:/agent-pro/profil";
     }
