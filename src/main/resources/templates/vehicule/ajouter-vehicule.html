@@ -807,54 +807,78 @@
             sendData('/api/scooters', formData);
         }
 
-        function sendData(url, data) {
-        fetch(url, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(data)
-        })
-        .then(response => {
-            return response.json().then(json => {
-                if (!response.ok) {
-                    throw new Error(json.message || `Erreur ${response.status}`);
-                }
-                return json;
+function sendData(url, data) {
+    fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => {
+        if (!response.ok) {
+            return response.json().then(err => {
+                throw new Error(err.message || `Erreur ${response.status}`);
             });
-        })
-        .then(data => {
-            showLoading(false);
+        }
+        return response.json();
+    })
+    .then(responseJson => {
+        showLoading(false);
+
+        const createdVehicle = responseJson.data || responseJson;
+        const newVehicleId = createdVehicle.id;
+
+        if (newVehicleId) {
+            Swal.fire({
+                icon: 'success',
+                title: 'Véhicule ajouté !',
+                html: `
+                    Le véhicule a été enregistré avec succès.<br>
+                    <strong>Voulez-vous définir ses disponibilités maintenant ?</strong>
+                `,
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#7066e0',
+                confirmButtonText: '<i class="fas fa-calendar-alt me-2"></i>Oui, gérer le planning',
+                cancelButtonText: '<i class="fas fa-arrow-left me-2"></i>Non, retour au profil',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = `/vehicules/${newVehicleId}/disponibilites`;
+                } else {
+                    window.location.href = redirectUrl;
+                }
+            });
+        } else {
+            console.warn("ID du véhicule introuvable dans la réponse:", responseJson);
             Swal.fire({
                 icon: 'success',
                 title: 'Succès!',
-                text: data.message || 'Véhicule ajouté avec succès!',
+                text: 'Véhicule ajouté avec succès!',
                 confirmButtonText: 'OK'
             }).then(() => {
                 window.location.href = redirectUrl;
             });
-        })
-        .catch(error => {
-            showLoading(false);
-            console.error('Erreur détaillée:', error);
+        }
+    })
+    .catch(error => {
+        showLoading(false);
+        console.error('Erreur détaillée:', error);
 
-            let errorMsg = error.message;
-            if (error.message.includes('Unexpected token')) {
-                errorMsg = 'Erreur de format de réponse du serveur. Le véhicule a peut-être été ajouté.';
-            }
+        let errorMsg = error.message;
+        if (error.message && error.message.includes('Unexpected token')) {
+            errorMsg = 'Erreur de format de réponse. Le véhicule a peut-être été ajouté.';
+        }
 
-            Swal.fire({
-                icon: 'error',
-                title: 'Erreur',
-                html: `Erreur lors de l'ajout:<br><small>${errorMsg}</small>`,
-                confirmButtonText: 'OK'
-            }).then(() => {
-                setTimeout(() => {
-                    window.location.href = redirectUrl;
-                }, 1000);
-            });
+        Swal.fire({
+            icon: 'error',
+            title: 'Erreur',
+            html: `Une erreur est survenue:<br><small>${errorMsg}</small>`,
+            confirmButtonText: 'OK'
         });
-    }
+    });
+}
 </script>
 </body>
 </html>

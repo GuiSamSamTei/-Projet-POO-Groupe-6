@@ -18,6 +18,7 @@ import com.example.gestion_location_vehicule.model.ControleTechnique;
 import com.example.gestion_location_vehicule.model.Loueur;
 import com.example.gestion_location_vehicule.model.Message;
 import com.example.gestion_location_vehicule.model.Utilisateur;
+import com.example.gestion_location_vehicule.model.*;
 import com.example.gestion_location_vehicule.repository.UtilisateurRepository;
 import com.example.gestion_location_vehicule.request.ConnexionRequest;
 import com.example.gestion_location_vehicule.service.AgentParService.AgentParService;
@@ -26,9 +27,15 @@ import com.example.gestion_location_vehicule.service.ControleTechniqueService.Co
 import com.example.gestion_location_vehicule.service.LoueurService.LoueurService;
 import com.example.gestion_location_vehicule.service.MessageService.MessageService;
 import com.example.gestion_location_vehicule.service.UtilisateurService.UtilisateurService;
-
+import com.example.gestion_location_vehicule.service.VehiculeService.VehiculeService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/utilisateur")
@@ -42,33 +49,27 @@ public class UtilisateurMVCController {
     private final LoueurService loueurService;
     private final MessageService messageService;
     private final ControleTechniqueService controleTechniqueService;
+    private final VehiculeService vehiculeService;
 
-    // Afficher le formulaire
     @GetMapping("/connexion")
     public String showForm(Model model, HttpSession session) {
+        System.out.println("DEBUG - Showing login form");
 
         Long userid = (Long) session.getAttribute("user");
         if (session.getAttribute("user") != null) {
             Utilisateur user = utilisateurService.getUserbyID(userid);
             if (user instanceof Loueur) {
-
                 return "redirect:/loueur/profil";
             }
-
             if (user instanceof AgentPar) {
-
                 return "redirect:/agent-par/profil";
             }
-
             if (user instanceof AgentPro) {
-
                 return "redirect:/agent-pro/profil";
             }
-
         }
 
         model.addAttribute("connexionRequest", new ConnexionRequest());
-
         return "utilisateur/connexion/login";
     }
 
@@ -84,6 +85,13 @@ public class UtilisateurMVCController {
 
         Utilisateur user = userOpt.get();
         session.setAttribute("user", user.getId());
+
+        String redirectUrl = (String) session.getAttribute("redirectAfterLogin");
+        if (redirectUrl != null && !redirectUrl.trim().isEmpty()) {
+            session.removeAttribute("redirectAfterLogin");
+            return "redirect:" + redirectUrl;
+        }
+
 
         // 🔥 Redirection selon le type réel
         if (user instanceof Loueur) {
@@ -115,6 +123,23 @@ public class UtilisateurMVCController {
 
         if (user instanceof AgentPro) {
             session.setAttribute("role", "AGENT_PRO");
+            Utilisateur admin = utilisateurRepository.findById(40L).orElse(null);
+            List<ControleTechnique> controles = ((AgentPro) user).getAllControlesTechniques();
+            for (ControleTechnique ct : controles) {
+                //if controle va expirer dans moins de 60 jours
+                if (ct.isExpiringSoon(60) && !ct.isNotifie() && admin != null) {
+                    //créer un message d'alerte
+                    String alertContent = String.format("""
+                            Message de part de l'administration:
+                            Alerte: Le contrôle technique du véhicule avec l'ID %d expirera le %s. Veuillez prendre les mesures nécessaires.""",
+                            ct.getVehicule().getId(), ct.getDateExpiration());
+                    Message alertMessage = new Message(null, alertContent, new Date(), false, admin, user);
+                    messageService.saveMessage(alertMessage);
+                    //marquer le controle comme notifié
+                    ct.setNotifie(true);
+                    controleTechniqueService.enregistrerControleTechnique(ct);
+                }   
+            }
             return "redirect:/agent-pro/profil";
         }
 
@@ -124,30 +149,68 @@ public class UtilisateurMVCController {
     }
 
     @GetMapping("/profile/{id}")
-    public String profil(@PathVariable Long id, Model model
-    ) {
+    public String profil(@PathVariable Long id, Model model, HttpSession session) {
+        try {
+            Long currentUserId = (Long) session.getAttribute("user");
+            if (currentUserId == null) {
+                session.setAttribute("redirectAfterLogin", "/utilisateur/profile/" + id);
+                return "redirect:/utilisateur/connexion";
+            }
 
-        Utilisateur user = utilisateurService.getUserbyID(id);
+            Utilisateur currentUser = utilisateurService.getUserbyID(currentUserId);
+            if (currentUser == null) {
+                session.invalidate();
+                return "redirect:/utilisateur/connexion";
+            }
 
-        if (user instanceof AgentPar) {
+            Utilisateur userToView = utilisateurService.getUserbyID(id);
+            if (userToView == null) {
+                return "redirect:/?error=user-not-found";
+            }
 
-            model.addAttribute("utilisateur", user);
-            return "agentPar/profilVisitAgentPar";
+            model.addAttribute("userToView", userToView);
+            model.addAttribute("currentUser", currentUser);
+
+            boolean isViewingOwnProfile = currentUserId.equals(id);
+            model.addAttribute("isViewingOwnProfile", isViewingOwnProfile);
+
+            if (currentUser instanceof Loueur) {
+                model.addAttribute("currentUserProfileUrl", "/loueur/profil");
+            } else if (currentUser instanceof AgentPar) {
+                model.addAttribute("currentUserProfileUrl", "/agent-par/profil");
+            } else if (currentUser instanceof AgentPro) {
+                model.addAttribute("currentUserProfileUrl", "/agent-pro/profil");
+            }
+
+            if (userToView instanceof Loueur) {
+                model.addAttribute("userType", "Loueur");
+            } else if (userToView instanceof AgentPar) {
+                model.addAttribute("userType", "Agent Particulier");
+            } else if (userToView instanceof AgentPro) {
+                model.addAttribute("userType", "Agent Professionnel");
+            }
+
+            System.out.println("DEBUG - Current user: " + currentUser.getUsername() +
+                    " viewing profile of: " + userToView.getUsername());
+
+            List<Vehicule> vehicles = vehiculeService.getVehiculesParAgent(id);
+            System.out.println("DEBUG - Found " + vehicles.size() + " vehicles for user " + id);
+            model.addAttribute("vehicles", vehicles);
+
+            if (userToView instanceof AgentPar) {
+                return "agentPar/profilVisitAgentPar";
+            } else if (userToView instanceof AgentPro) {
+                return "agentPro/profilVisitAgentPro";
+            } else if (userToView instanceof Loueur) {
+                return "loueur/profilVisitLoueur";
+            }
+
+            return "redirect:/?error=user-type-not-found";
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "redirect:/?error=user-profile-error";
         }
-        if (user instanceof AgentPro) {
-            model.addAttribute("utilisateur", user);
-
-            return "agentPro/profilVisitAgentPro";
-        }
-        if (user instanceof Loueur) {
-            model.addAttribute("utilisateur", user);
-
-            return "loueur/profilVisitLoueur";
-
-        }
-
-        return "redirect:/utilisateur/profil?error=true";
-
     }
 
     // Déconnexion

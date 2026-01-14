@@ -18,11 +18,83 @@
             display: block;
             margin-bottom: 5px;
         }
+        /* ===== Carte Agent ===== */
+.agent-card {
+    margin-top: 25px;
+    padding: 20px;
+    max-width: 420px;
+    background: #ffffff;
+    border-radius: 12px;
+    border: 1px solid #e0e0e0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* Titre */
+.agent-card h3 {
+    margin-bottom: 15px;
+    font-size: 20px;
+    color: #333;
+    border-bottom: 2px solid #007bff;
+    padding-bottom: 6px;
+}
+
+/* Infos agent */
+.agent-card p {
+    margin: 8px 0;
+    font-size: 15px;
+    color: #555;
+}
+
+.agent-card strong {
+    color: #222;
+}
+
+/* Actions */
+.agent-actions {
+    margin-top: 18px;
+    display: flex;
+    gap: 12px;
+}
+
+/* Boutons */
+.agent-actions a {
+    flex: 1;
+    text-align: center;
+    padding: 10px 0;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+/* Bouton profil */
+.btn-profile {
+    background-color: #007bff;
+    color: #fff;
+}
+
+.btn-profile:hover {
+    background-color: #0056b3;
+}
+
+/* Bouton message */
+.btn-message {
+    background-color: #28a745;
+    color: #fff;
+}
+
+.btn-message:hover {
+    background-color: #1e7e34;
+}
+
     </style>
 </head>
 <body>
 
 <h1>Louer un véhicule</h1>
+
+
 
 <!-- 🚗 INFOS VEHICULE -->
 <div class="vehicule-card">
@@ -77,16 +149,42 @@
 
 </div>
 
+<!-- après les infos du véhicule -->
+<div class="agent-card" th:if="${vehicule.agent != null}">
+    <h3>Agent responsable</h3>
+    <p>
+    <span th:if="${vehicule.agent instanceof T(com.example.gestion_location_vehicule.model.AgentPro)}"
+          th:text="${vehicule.agent.raisonsociale}">
+    </span>
+
+        <span th:if="${vehicule.agent instanceof T(com.example.gestion_location_vehicule.model.AgentPar)}"
+              th:text="${vehicule.agent.nom + ' ' + vehicule.agent.prenom}">
+    </span>
+    </p>
+
+    <a th:href="@{/utilisateur/profile/{id}(id=${vehicule.agent.id})}">
+        Voir le profil
+    </a>
+    <br>
+    <a th:href="@{/messages/{id}(id=${vehicule.agent.id})}">
+        Envoyer un message
+    </a>
+
+
 <!-- 📄 FORMULAIRE LOCATION -->
 <form th:action="@{/loueur/location/valider}" method="post">
 
     <h3>Dates de location</h3>
 
     <label>Date de début :</label>
-    <input type="date" name="dateDebut" required><br><br>
+    <input type="date" id="dateDebut" name="dateDebut" required>
+    <br><br>
 
     <label>Date de fin :</label>
-    <input type="date" name="dateFin" required><br><br>
+    <input type="date" id="dateFin" name="dateFin" required>
+    <br><br>
+
+
 
     <hr>
 
@@ -99,23 +197,49 @@
     <hr>
 
     <h3>Lieu de dépose</h3>
-    <h3>Choisir un parking</h3>
 
     <select name="parkingId" required>
         <option value="">-- Sélectionnez un parking --</option>
+
+        <!-- Si la liste parkings n'est pas vide -->
         <option th:each="p : ${parkings}"
                 th:value="${p.id}"
-                th:text="'[' + ${p.ville} + ' ' + ${p.codepostal} + '] ' + ${p.nomparking} + ' - (' + ${p.adresse} + ')'">
+                th:text="'[' + ${p.ville} + ' ' + ${p.codepostal} + '] ' + ${p.nomparking} + ' - (' + ${p.adresse} + ')' "
+                th:if="${parkings != null and !parkings.isEmpty()}">
+        </option>
+
+
+        <!-- Si la liste est vide ou null -->
+        <option  value="0">
+            Je le rends au meme endrois
         </option>
     </select>
 
     <br><br>
 
-    <br><br>
 
     <button type="submit">Confirmer la location</button>
 
 </form>
+<script>
+    const dateDebutInput = document.getElementById("dateDebut");
+    const dateFinInput   = document.getElementById("dateFin");
 
+    // aujourd'hui
+    const today = new Date().toISOString().split("T")[0];
+
+    // min dateDebut = aujourd'hui
+    dateDebutInput.min = today;
+
+    // quand on choisit dateDebut
+    dateDebutInput.addEventListener("change", function () {
+        dateFinInput.min = this.value;
+
+        // si dateFin < dateDebut → on corrige
+        if (dateFinInput.value && dateFinInput.value < this.value) {
+            dateFinInput.value = this.value;
+        }
+    });
+</script>
 </body>
 </html>

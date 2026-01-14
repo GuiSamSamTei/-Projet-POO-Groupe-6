@@ -84,6 +84,19 @@
         }
         .badge-dispo { background-color: #d4edda; color: #155724; }
         .badge-indispo { background-color: #f8d7da; color: #721c24; }
+
+        .share-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+        }
+
+        .history-stat-card {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border: none;
+        }
     </style>
 </head>
 <body>
@@ -95,6 +108,9 @@
         </a>
         <div class="d-flex align-items-center">
             <span class="text-white me-3">Bonjour, <span th:text="${user.raisonsociale}">Société</span></span>
+            <a th:href="@{/agent-pro/historique-location}" class="btn btn-warning me-2">
+                <i class="fas fa-history me-1"></i> Historique
+            </a>
             <a th:href="@{/utilisateur/logout}" class="btn btn-outline-light btn-sm">
                 <i class="fas fa-sign-out-alt me-1"></i>Déconnexion
             </a>
@@ -129,6 +145,9 @@
                 <a th:href="@{/parking}" class="btn btn-info text-white shadow-sm">
                     <i class="fas fa-parking me-2"></i>Gérer mes Parkings
                 </a>
+                <a th:href="@{/agent-pro/historique-location}" class="btn btn-warning shadow-sm">
+                    <i class="fas fa-history me-2"></i>Historique des locations
+                </a>
                 <a th:href="@{/agent-pro/profil/modifier}" class="btn btn-outline-secondary btn-sm">
                     <i class="fas fa-cog me-2"></i>Modifier mon profil
                 </a>
@@ -142,7 +161,7 @@
         <div class="col-md-3 col-6">
             <div class="stat-card">
                 <i class="fas fa-car stat-icon"></i>
-                <div class="stat-value" th:text="${user.nombrevehicules}">0</div>
+                <div class="stat-value" th:text="${vehicules != null ? vehicules.size() : 0}">0</div>
                 <div class="text-muted small">Véhicules</div>
             </div>
         </div>
@@ -169,9 +188,53 @@
         </div>
     </div>
 
-    <h3 class="fw-bold mb-4 border-bottom pb-2">
-        <i class="fas fa-th-list me-2 text-primary"></i>Mes Véhicules
-    </h3>
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="stat-card history-stat-card">
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <h4 class="text-white mb-2"><i class="fas fa-history me-2"></i>Historique des locations</h4>
+                        <p class="text-white mb-0">Consultez l'historique complet de toutes les locations de vos véhicules.</p>
+                    </div>
+                    <div class="col-md-4 text-end">
+                        <a th:href="@{/agent-pro/historique-location}" class="btn btn-light btn-lg">
+                            <i class="fas fa-eye me-2"></i> Voir l'historique
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="card share-card">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="fas fa-share-alt me-2"></i>Partager votre profil</h5>
+                    <p class="card-text mb-3">Voici le lien vers votre profil public que vous pouvez partager avec vos clients :</p>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="profileLink"
+                               th:value="${'http://localhost:9191/utilisateur/profile/' + user.id}" readonly>
+                        <button class="btn btn-light" type="button" onclick="copyProfileLink()">
+                            <i class="fas fa-copy me-1"></i> Copier
+                        </button>
+                    </div>
+                    <small class="text-white-50 mt-2 d-block">
+                        <i class="fas fa-info-circle me-1"></i>Les utilisateurs connectés pourront voir vos informations et véhicules disponibles.
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 class="fw-bold border-bottom pb-2">
+            <i class="fas fa-th-list me-2 text-primary"></i>Mes Véhicules
+        </h3>
+        <a th:href="@{/agent-pro/historique-location}" class="btn btn-outline-warning">
+            <i class="fas fa-history me-1"></i> Voir l'historique
+        </a>
+    </div>
 
     <div th:if="${#lists.isEmpty(vehicules)}" class="text-center py-5">
         <img src="https://cdn-icons-png.flaticon.com/512/7486/7486747.png" width="120" class="mb-3 opacity-50" alt="Vide">
@@ -238,6 +301,46 @@
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    function copyProfileLink() {
+        const profileLinkInput = document.getElementById('profileLink');
+        profileLinkInput.select();
+        profileLinkInput.setSelectionRange(0, 99999); // Pour mobile
+
+        try {
+            navigator.clipboard.writeText(profileLinkInput.value);
+
+            // Utiliser SweetAlert2 pour une notification visuelle
+            Swal.fire({
+                icon: 'success',
+                title: 'Lien copié !',
+                text: 'Le lien de votre profil a été copié dans le presse-papier.',
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                    toast.addEventListener('mouseenter', Swal.stopTimer)
+                    toast.addEventListener('mouseleave', Swal.resumeTimer)
+                }
+            });
+        } catch (err) {
+            console.error('Erreur lors de la copie : ', err);
+            // Fallback pour les anciens navigateurs
+            document.execCommand('copy');
+
+            Swal.fire({
+                icon: 'info',
+                title: 'Lien copié',
+                text: 'Le lien a été copié dans le presse-papier.',
+                timer: 2000,
+                showConfirmButton: false
+            });
+        }
+    }
+</script>
 
 </body>
 </html>
