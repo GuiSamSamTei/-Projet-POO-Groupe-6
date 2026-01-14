@@ -18,7 +18,6 @@ public class Loueur extends Utilisateur {
     private String nom;
     private String prenom;
     private String typepermis;
-    private String ville;
 
     @OneToMany(mappedBy = "loueur")
     private List<EvalA> evaldonnees;
