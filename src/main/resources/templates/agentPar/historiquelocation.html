@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Historique des locations (Agent Par)</title>
+
+    <style>
+        .location-card {
+            border: 1px solid #ccc;
+            padding: 15px;
+            margin-bottom: 25px;
+            background: #f9f9f9;
+        }
+
+        .location-card h2 {
+            margin-top: 0;
+        }
+
+        .info span {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .section-title {
+            margin-top: 15px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Historique de mes véhicules loués (Agent Par)</h1>
+
+<div th:if="${vehicules.isEmpty()}">
+    <p>Aucun véhicule loué trouvé.</p>
+</div>
+
+<!-- 🔁 LISTE DES VÉHICULES -->
+<div th:each="vehicule : ${vehicules}" class="location-card">
+
+    <h2 th:text="${vehicule.marque + ' ' + vehicule.modele}"></h2>
+
+    <!-- 📌 INFOS VÉHICULE -->
+    <div class="info">
+        <span><strong>Type :</strong> <span th:text="${vehicule.typeVehicule}"></span></span>
+        <span><strong>Couleur :</strong> <span th:text="${vehicule.couleur}"></span></span>
+        <span><strong>Ville :</strong> <span th:text="${vehicule.villedispo}"></span></span>
+        <span><strong>Prix / jour :</strong> <span th:text="${vehicule.prixjour}"></span> €</span>
+    </div>
+
+    <!-- 🚘 DÉTAILS SPÉCIFIQUES -->
+    <div th:if="${vehicule instanceof T(com.example.gestion_location_vehicule.model.Voiture)}">
+        <p class="section-title">Détails voiture</p>
+        <span>Portes : <span th:text="${vehicule.nombreportes}"></span></span>
+        <span>Places : <span th:text="${vehicule.nombreplaces}"></span></span>
+        <span>Automatique : <span th:text="${vehicule.automatique ? 'Oui' : 'Non'}"></span></span>
+        <span>Carburant : <span th:text="${vehicule.carburant}"></span></span>
+        <span>GPS : <span th:text="${vehicule.gps ? 'Oui' : 'Non'}"></span></span>
+    </div>
+
+    <div th:if="${vehicule instanceof T(com.example.gestion_location_vehicule.model.Velo)}">
+        <p class="section-title">Détails vélo</p>
+        <span>Électrique : <span th:text="${vehicule.electrique ? 'Oui' : 'Non'}"></span></span>
+        <span>Vitesses : <span th:text="${vehicule.nombreVitesses}"></span></span>
+        <span>Type : <span th:text="${vehicule.typeVelo}"></span></span>
+    </div>
+
+    <div th:if="${vehicule instanceof T(com.example.gestion_location_vehicule.model.Moto)}">
+        <p class="section-title">Détails moto</p>
+        <span>Cylindrée : <span th:text="${vehicule.cylindree}"></span> cc</span>
+        <span>Chevaux : <span th:text="${vehicule.nbchevaux}"></span></span>
+    </div>
+
+    <div th:if="${vehicule instanceof T(com.example.gestion_location_vehicule.model.Camion)}">
+        <p class="section-title">Détails camion</p>
+        <span>Charge max : <span th:text="${vehicule.chargemax}"></span> kg</span>
+        <span>Volume : <span th:text="${vehicule.volume}"></span> m³</span>
+    </div>
+
+    <div th:if="${vehicule instanceof T(com.example.gestion_location_vehicule.model.Van)}">
+        <p class="section-title">Détails van</p>
+        <span>Places : <span th:text="${vehicule.nombreplaces}"></span></span>
+    </div>
+
+    <hr>
+
+    <!-- 🔁 LISTE DES CONTRATS POUR CE VÉHICULE -->
+    <div th:each="contrat : ${contratsParVehicule[vehicule.id]}">
+        <div class="info">
+            <p class="section-title">Informations de location</p>
+            <span><strong>Date début :</strong> <span th:text="${contrat.datedebut}"></span></span>
+            <span><strong>Date fin :</strong> <span th:text="${contrat.datefin}"></span></span>
+            <span><strong>Assurance :</strong> <span>Assurance vide</span></span>
+            <span><strong>Lieu de dépôt :</strong> <span th:text="${contrat.lieudepot}"></span></span>
+            <span><strong>Parking :</strong> <span>Parking vide</span></span>
+        </div>
+
+        <!-- 👤 INFOS LOUEUR -->
+        <div class="info">
+            <p class="section-title">Informations sur le loueur</p>
+            <span><strong>Nom :</strong> <span th:text="${contrat.loueur.nom}"></span></span>
+            <span><strong>Prénom :</strong> <span th:text="${contrat.loueur.prenom}"></span></span>
+            <span><strong>Type permis :</strong> <span th:text="${contrat.loueur.typepermis}"></span></span>
+            <span><strong>Ville :</strong> <span th:text="${contrat.loueur.ville}"></span></span>
+        </div>
+
+        <hr>
+    </div>
+
+</div>
+
+</body>
+</html>
+l>
