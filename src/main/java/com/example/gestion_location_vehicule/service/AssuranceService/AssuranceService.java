@@ -47,7 +47,7 @@ public class AssuranceService implements IAssuranceService {
 
     @Override
     public Assurance getAssuranceParDefaut() {
-        return assuranceRepository.findByAssurancepardefautTrue();
+        return assuranceRepository.findByAssuranceParDefautTrue();
     }
 
     @Override

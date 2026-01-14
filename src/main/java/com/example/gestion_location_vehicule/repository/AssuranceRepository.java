@@ -13,7 +13,7 @@ public interface AssuranceRepository extends JpaRepository<Assurance, Long> {
     List<Assurance> findByActiveTrue();
 
     // Récupérer l'assurance par défaut (AZA)
-    Assurance findByAssurancepardefautTrue();
+    Assurance findByAssuranceParDefautTrue();
 
     Assurance findByNom(String nom);
 }

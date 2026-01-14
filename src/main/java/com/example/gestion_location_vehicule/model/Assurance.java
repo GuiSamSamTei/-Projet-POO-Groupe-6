@@ -3,12 +3,8 @@ package com.example.gestion_location_vehicule.model;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.List;
-
 @Entity
 @Data
-@Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class Assurance {
@@ -16,18 +12,18 @@ public class Assurance {
     @Id
     private Long id;
 
-    private String nom;
+    @Column(nullable = false)
+    private String nom; // Par Défaut, Basique, Premium
+
+    @Column(name = "ASSURANCE_PAR_DEFAUT")
+    private boolean assuranceParDefaut;
 
     @Column(nullable = false)
-    private boolean assurancepardefaut;
-    //assurance AZA
+    private boolean active; // Si l'assurance est active sur la plateforme
+
     @Column(nullable = false)
-    private boolean active;     //si l'assurance n'a plus de contrat avec la plateforme ou avec un agent
+    private double prixFixe; // Prix fixe par jour
 
-
-    @OneToMany(mappedBy = "assurance")
-    private List<PrixAssurance> prixassurance;
-
-    @OneToMany(mappedBy = "assurance")
-    private List<Contratlocation> contratlocations;
+    @Column(nullable = false)
+    private double pourcentage; // Pourcentage sur le prix du véhicule
 }

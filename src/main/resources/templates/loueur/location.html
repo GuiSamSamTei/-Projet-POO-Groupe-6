@@ -72,6 +72,10 @@
             border-color: var(--primary-color);
             background: #f0f7ff;
         }
+        #zonePrix {
+            font-size: 1.2em;
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body>
@@ -117,6 +121,7 @@
                             <div class="col-md-3 col-6"><div class="spec-badge"><i class="fas fa-palette"></i> <span th:text="${vehicule.couleur}">Couleur</span></div></div>
                             <div class="col-md-3 col-6"><div class="spec-badge"><i class="fas fa-map-marker-alt"></i> <span th:text="${vehicule.villedispo}">Ville</span></div></div>
 
+<<<<<<< HEAD
                             <th:block th:if="${vehicule instanceof T(com.example.gestion_location_vehicule.model.Voiture)}">
                                 <div class="col-md-3 col-6"><div class="spec-badge"><i class="fas fa-door-open"></i> <span th:text="${vehicule.nombreportes + ' portes'}"></span></div></div>
                                 <div class="col-md-3 col-6"><div class="spec-badge"><i class="fas fa-gas-pump"></i> <span th:text="${vehicule.carburant}"></span></div></div>
@@ -230,6 +235,13 @@
             </div>
         </div>
     </form>
+=======
+    <!-- 🚐 VAN -->
+    <div th:if="${vehicule instanceof T(com.example.gestion_location_vehicule.model.Van)}">
+        <h4>Détails van</h4>
+        <span>Places : <span th:text="${vehicule.nombreplaces}"></span></span>
+    </div>
+>>>>>>> 277ed33 (assurence)
 </div>
 
 <script>
@@ -238,6 +250,7 @@
     const prixJour = [[${vehicule.prixjour}]];
     const totalDisplay = document.getElementById("totalPrice");
 
+<<<<<<< HEAD
     // aujourd'hui
     const today = new Date().toISOString().split("T")[0];
     dateDebutInput.min = today;
@@ -255,6 +268,14 @@
             }
         }
     }
+=======
+    <h3>Dates de location</h3>
+    <label>Date de début :</label>
+    <input type="date" name="dateDebut" id="dateDebut" required><br><br>
+
+    <label>Date de fin :</label>
+    <input type="date" name="dateFin" id="dateFin" required><br><br>
+>>>>>>> 277ed33 (assurence)
 
     dateDebutInput.addEventListener("change", function () {
         dateFinInput.min = this.value;
@@ -264,7 +285,75 @@
         calculateTotal();
     });
 
+<<<<<<< HEAD
     dateFinInput.addEventListener("change", calculateTotal);
+</script>
+=======
+    <h3>Choisir une assurance</h3>
+    <input type="radio" name="assurance" value="1" checked> Assurance par défaut<br>
+    <input type="radio" name="assurance" value="2"> Assurance basique<br>
+    <input type="radio" name="assurance" value="3"> Assurance premium<br>
+
+    <hr>
+
+    <!-- AFFICHAGE PRIX EN TEMPS RÉEL -->
+    <h3>Prix estimé</h3>
+    <div id="zonePrix">
+        Prix total : <strong><span id="prixTotal">--</span> €</strong>
+    </div>
+
+    <hr>
+
+    <h3>Lieu de dépose</h3>
+    <select name="lieuDepot">
+        <option value="">Même lieu que le retrait</option>
+        <option value="AGENCE_CENTRE">Agence centre-ville</option>
+        <option value="GARE">Gare</option>
+        <option value="AEROPORT">Aéroport</option>
+    </select>
+
+    <br><br>
+
+    <button type="submit">Confirmer la location</button>
+</form>
+>>>>>>> 277ed33 (assurence)
+
+<!-- 🔥 JS CALCUL PRIX DYNAMIQUE -->
+<script th:inline="javascript">
+    const vehiculeId = /*[[${vehicule.id}]]*/ 0;
+
+    const dateDebutInput = document.getElementById("dateDebut");
+    const dateFinInput = document.getElementById("dateFin");
+    const assuranceInputs = document.querySelectorAll("input[name='assurance']");
+    const prixTotalSpan = document.getElementById("prixTotal");
+
+    function calculerPrix() {
+        const dateDebut = dateDebutInput.value;
+        const dateFin = dateFinInput.value;
+
+        let assuranceId = null;
+        assuranceInputs.forEach(radio => {
+            if (radio.checked) assuranceId = radio.value;
+        });
+
+        if (!dateDebut || !dateFin || !assuranceId) return;
+
+        fetch(`/api/prix/global?vehiculeId=${vehiculeId}&assuranceId=${assuranceId}&dateDebut=${dateDebut}&dateFin=${dateFin}`)
+            .then(response => {
+                if (!response.ok) throw new Error("Erreur serveur");
+                return response.json();
+            })
+            .then(data => {
+                prixTotalSpan.textContent = data.prixTotal != null ? data.prixTotal.toFixed(2) : "Erreur";
+            })
+            .catch(() => {
+                prixTotalSpan.textContent = "Erreur";
+            });
+    }
+
+    dateDebutInput.addEventListener("change", calculerPrix);
+    dateFinInput.addEventListener("change", calculerPrix);
+    assuranceInputs.forEach(radio => radio.addEventListener("change", calculerPrix));
 </script>
 
 </body>
