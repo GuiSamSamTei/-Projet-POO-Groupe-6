@@ -1,13 +1,12 @@
 package com.example.gestion_location_vehicule.controller;
 
-import com.example.gestion_location_vehicule.model.Contratlocation;
-import com.example.gestion_location_vehicule.model.Loueur;
-import com.example.gestion_location_vehicule.model.Parking;
-import com.example.gestion_location_vehicule.model.Vehicule;
+import com.example.gestion_location_vehicule.model.*;
 import com.example.gestion_location_vehicule.repository.VehiculeRepository;
+import com.example.gestion_location_vehicule.service.AssuranceService.AssuranceService;
 import com.example.gestion_location_vehicule.service.ContratlocationService.ContratlocationService;
 import com.example.gestion_location_vehicule.service.LoueurService.ILoueurService;
 import com.example.gestion_location_vehicule.service.ParkingService.ParkingService;
+import com.example.gestion_location_vehicule.service.TarificationService.TarificationService;
 import com.example.gestion_location_vehicule.service.VehiculeService.VehiculeService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.http.HttpStatus;
@@ -29,15 +28,19 @@ public class LoueurMVCController {
     private final ContratlocationService contratlocationService;
     private final ParkingService parkingService;
     private final VehiculeService vehiculeService;
+    private final AssuranceService assuranceService;
+    private final TarificationService tarificationService;
 
     public LoueurMVCController(ILoueurService loueurService,
                                VehiculeRepository vehiculeRepository,
-                               ContratlocationService contratlocationService, ParkingService parkingService, VehiculeService vehiculeService) {
+                               ContratlocationService contratlocationService, ParkingService parkingService, VehiculeService vehiculeService, AssuranceService assuranceService, TarificationService tarificationService) {
         this.loueurService = loueurService;
         this.vehiculeRepository = vehiculeRepository;
         this.contratlocationService = contratlocationService;
         this.parkingService = parkingService;
         this.vehiculeService = vehiculeService;
+        this.assuranceService = assuranceService;
+        this.tarificationService = tarificationService;
     }
 
     /* ===================== INSCRIPTION ===================== */
@@ -144,10 +147,15 @@ public class LoueurMVCController {
             return "redirect:/vehicule/liste?indisponible=true";
         }
 
+        List<Assurance> assuranceList = assuranceService.getAllAssurances();
+        Long anneeCourante = (long) java.time.LocalDate.now().getYear();
+
+        Double tarifFixe = tarificationService.getbyAnnee(anneeCourante).getPrixfixe();
         session.setAttribute("vehiculeEnCours", vehicule);
         model.addAttribute("vehicule", vehicule);
         model.addAttribute("parkings" , parkings);
-
+        model.addAttribute("assurances", assuranceList);
+        model.addAttribute("fraisServiceValue",tarifFixe);
         return "loueur/location";
     }
 
@@ -160,45 +168,93 @@ public class LoueurMVCController {
             return "redirect:/vehicule/liste?sessionExpired=true";
         }
 
-
-
+        // 1. Récupération des dates et calcul de la durée
         LocalDate dateDebut = LocalDate.parse(formData.get("dateDebut"));
         LocalDate dateFin = LocalDate.parse(formData.get("dateFin"));
-        String lieuDepot = formData.get("lieuDepot");
 
+        // Calcul du nombre de jours (incluant le premier jour)
+        long nbJours = java.time.temporal.ChronoUnit.DAYS.between(dateDebut, dateFin) + 1;
 
-
-        if(!vehiculeService.estDisponible(vehicule.getId(),dateDebut,dateFin))
-        {
+        // 2. Vérification de disponibilité
+        if(!vehiculeService.estDisponible(vehicule.getId(), dateDebut, dateFin)) {
             return "redirect:/vehicule/liste?VehiculeDispo=False";
         }
 
+        // 3. Récupération du loueur
         Long loueurId = (Long) session.getAttribute("user");
         Loueur loueur = loueurService.getById(loueurId);
 
+        // 4. Gestion de l'assurance et calcul du prix
+        Long assuranceId = Long.parseLong(formData.get("assuranceId"));
+        // Note: Assurez-vous d'avoir injecté assuranceRepository ou assuranceService
+        Assurance assuranceChoisie = assuranceService.getAssuranceById(assuranceId).get();
+
+        double prixLocationBase = vehicule.getPrixjour();
+        double montantAssurance = 0.0;
+
+        if (assuranceChoisie != null) {
+            // Formule : prixlocation * pourcentage + prix_fixe
+            montantAssurance = (prixLocationBase * (assuranceChoisie.getPourcentage() / 100.0))
+                    + assuranceChoisie.getPrixFixe();
+        }
+
+        Long anneeCourante = (long) java.time.LocalDate.now().getYear();
+
+        Double tarifFixe = tarificationService.getbyAnnee(anneeCourante).getPrixfixe();
+        double fraisService = tarifFixe; // À adapter selon votre attribut en base de données
+
+        // Formule Finale : (prixlocation * nbJours) + prixassurance + frais_service
+        double montantTotal = (prixLocationBase * nbJours) + montantAssurance + fraisService;
+
+        // 5. Création du contrat
         Contratlocation contrat = new Contratlocation();
         contrat.setDatedebut(dateDebut);
         contrat.setDatefin(dateFin);
-        contrat.setLieudepot(lieuDepot);
         contrat.setVehicule(vehicule);
         contrat.setLoueur(loueur);
-        if(Long.parseLong(formData.get("parkingId"))!=0)
-        {
+        contrat.setAssurance(assuranceChoisie); // Liaison avec l'assurance
+        contrat.setPrixtotal(montantTotal);
+        contrat.setPrixLocationJour(vehicule.getPrixjour());
+        contrat.setPrixAssuranceApplique(montantAssurance);
+        contrat.setFraisServiceApplique(fraisService);
+        contrat.setPrixtotal(montantTotal);
+        contrat.setNombreJours((int) nbJours);
+
+        // Gestion du lieu de dépôt / parking
+        if(Long.parseLong(formData.get("parkingId")) != 0) {
             Long parking_id = Long.parseLong(formData.get("parkingId"));
             Parking parking = parkingService.trouverParkingparId(parking_id);
             contrat.setParking(parking);
+
+        } else {
+            contrat.setLieudepot(vehicule.getVilledispo()); // Lieu par défaut
         }
 
+        // 6. Sauvegarde et mise à jour
         contratlocationService.ajouterContralocation(contrat);
 
         vehicule.setVehiculedispo(false);
         vehiculeRepository.save(vehicule);
 
         session.removeAttribute("vehiculeEnCours");
-        // je m'occupe de ca
-        return "redirect:/vehicule/liste?locationSuccess=true";
+        session.setAttribute("dernierContrat", contrat);
+        return "redirect:/loueur/confirmation";
+
+
     }
 
+    @GetMapping("/confirmation")
+    public String afficherRecap(HttpSession session, Model model) {
+        Contratlocation contrat = (Contratlocation) session.getAttribute("dernierContrat");
+        if (contrat == null) return "redirect:/vehicule/liste";
+
+        // Calcul de la durée pour l'affichage si non stocké
+        long nbJours = java.time.temporal.ChronoUnit.DAYS.between(contrat.getDatedebut(), contrat.getDatefin()) + 1;
+        model.addAttribute("nbJours", nbJours);
+        model.addAttribute("c", contrat);
+
+        return "loueur/recapitulatif";
+    }
     /* ===================== CONSULTER UN PROFIL DE LOUEUR ===================== */
     @GetMapping("/consulter/{id}")
     public String consulterProfil(@PathVariable Long id, Model model) {

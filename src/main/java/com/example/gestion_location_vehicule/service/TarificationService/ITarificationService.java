@@ -28,4 +28,6 @@ public interface ITarificationService {
     List<Tarification> getByPourcentageMax(double pourcentageMax);
 
     List<Tarification> getByPrixfixeAndPourcentageMax(double prixMax, double pourcentageMax);
+
+    Tarification getbyAnnee(Long annee);
 }

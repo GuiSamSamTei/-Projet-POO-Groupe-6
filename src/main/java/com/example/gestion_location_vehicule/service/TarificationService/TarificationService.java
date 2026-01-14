@@ -67,4 +67,9 @@ public class TarificationService implements ITarificationService {
     public List<Tarification> getByPrixfixeAndPourcentageMax(double prixMax, double pourcentageMax) {
         return tarificationRepository.findByPrixfixeLessThanEqualAndPourcentageLessThanEqual(prixMax, pourcentageMax);
     }
+
+    @Override
+    public Tarification getbyAnnee(Long annee) {
+        return tarificationRepository.findByAnnee(annee);
+    }
 }

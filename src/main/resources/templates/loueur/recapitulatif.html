@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Récapitulatif de Réservation - AutoPartage</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root { --primary-color: #3498db; --secondary-color: #2c3e50; }
+        body { background-color: #f0f2f5; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+
+        .receipt-container { max-width: 800px; margin: 40px auto; }
+        .card-receipt { border: none; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); overflow: hidden; }
+
+        .receipt-header { background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); color: white; padding: 40px; text-align: center; }
+        .receipt-body { padding: 40px; background: white; }
+
+        .info-section { border-bottom: 1px solid #f0f0f0; padding-bottom: 20px; margin-bottom: 20px; }
+        .section-title { font-size: 0.8rem; font-weight: 800; color: #adb5bd; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px; }
+
+        .detail-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.95rem; }
+        .detail-label { color: #6c757d; }
+        .detail-value { font-weight: 600; color: var(--secondary-color); }
+
+        .price-table { background: #f8f9fa; border-radius: 15px; padding: 25px; margin-top: 30px; }
+        .total-row { font-size: 1.25rem; font-weight: 800; color: var(--primary-color); border-top: 2px dashed #dee2e6; margin-top: 15px; padding-top: 15px; }
+
+        .stamp { border: 3px solid #2ecc71; color: #2ecc71; text-transform: uppercase; font-weight: 900; padding: 5px 15px; border-radius: 10px; display: inline-block; transform: rotate(-10deg); font-size: 1.2rem; }
+
+        @media print { .no-print { display: none; } .card-receipt { box-shadow: none; border: 1px solid #ddd; } }
+    </style>
+</head>
+<body>
+
+<div class="container receipt-container">
+    <div class="card card-receipt">
+        <div class="receipt-header">
+            <div class="stamp mb-3">Payé</div>
+            <h2 class="fw-bold mb-0">Confirmation de Réservation</h2>
+            <p class="mb-0 opacity-75">Référence du contrat : <strong th:text="'#' + ${c.id}"></strong></p>
+        </div>
+
+        <div class="receipt-body">
+            <div class="row">
+                <div class="col-md-6 info-section">
+                    <div class="section-title">Informations Conducteur</div>
+                    <div class="d-flex align-items-center">
+                        <div class="bg-light rounded-circle p-3 me-3"><i class="fas fa-user text-primary fa-lg"></i></div>
+                        <div>
+                            <div class="detail-value" th:text="${c.loueur.prenom + ' ' + c.loueur.nom}">Conducteur</div>
+                            <div class="small text-muted" th:text="${c.loueur.email}">email@test.com</div>
+                            <div class="small text-muted" th:text="'Permis : ' + ${c.loueur.typepermis}">B</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 info-section">
+                    <div class="section-title">Véhicule Loué</div>
+                    <div class="d-flex align-items-center">
+                        <div class="bg-light rounded-circle p-3 me-3"><i class="fas fa-car text-primary fa-lg"></i></div>
+                        <div>
+                            <div class="detail-value" th:text="${c.vehicule.marque + ' ' + c.vehicule.modele}">Peugeot 208</div>
+                            <div class="small text-muted" th:text="${c.vehicule.typeVehicule}">Berline</div>
+                            <div class="small text-muted" th:text="'Couleur : ' + ${c.vehicule.couleur}">Bleu</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="info-section">
+                <div class="section-title">Itinéraire et Dates</div>
+                <div class="row text-center">
+                    <div class="col-5">
+                        <small class="text-muted d-block">Départ</small>
+                        <div class="fw-bold" th:text="${#temporals.format(c.datedebut, 'dd MMMM yyyy')}">Date</div>
+                        <div class="small text-primary"><i class="fas fa-map-marker-alt"></i> <span th:text="${c.vehicule.villedispo}">Ville</span></div>
+                    </div>
+                    <div class="col-2 d-flex align-items-center justify-content-center">
+                        <i class="fas fa-long-arrow-alt-right fa-2x text-muted opacity-25"></i>
+                    </div>
+                    <div class="col-5">
+                        <small class="text-muted d-block">Retour</small>
+                        <div class="fw-bold" th:text="${#temporals.format(c.datefin, 'dd MMMM yyyy')}">Date</div>
+                        <div class="small text-primary"><i class="fas fa-parking"></i> <span th:text="${c.lieudepot}">Lieu</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="price-table">
+                <div class="section-title text-dark">Détail du paiement</div>
+
+                <div class="detail-row">
+                    <span class="detail-label">Location : <span th:text="${nbJours}">0</span> jour(s) x <span th:text="${c.prixLocationJour}">0</span>€</span>
+                    <span class="detail-value" th:text="${(c.prixLocationJour * nbJours) + ' €'}">0.00 €</span>
+                </div>
+
+                <div class="detail-row">
+                    <span class="detail-label">Option Assurance : <strong th:text="${c.assurance.nom}"></strong></span>
+                    <span class="detail-value" th:text="${'+ ' + c.prixAssuranceApplique + ' €'}">0.00 €</span>
+                </div>
+
+                <div class="detail-row">
+                    <span class="detail-label">Frais de service AutoPartage</span>
+                    <span class="detail-value" th:text="${'+ ' + c.fraisServiceApplique + ' €'}">2.50 €</span>
+                </div>
+
+                <div class="detail-row total-row">
+                    <span>Montant Total (TTC)</span>
+                    <span th:text="${c.prixtotal + ' €'}">0.00 €</span>
+                </div>
+            </div>
+
+            <div class="mt-5 d-flex gap-3 no-print">
+                <a href="/vehicule/liste" class="btn btn-secondary px-4 rounded-pill">
+                    <i class="fas fa-arrow-left me-2"></i>Retour au catalogue
+                </a>
+                <button onclick="window.print()" class="btn btn-primary px-4 rounded-pill flex-grow-1 shadow-sm">
+                    <i class="fas fa-print me-2"></i>Imprimer le récapitulatif (PDF)
+                </button>
+            </div>
+        </div>
+
+        <div class="bg-light p-3 text-center small text-muted">
+            <i class="fas fa-shield-alt text-success me-1"></i>
+            Ce document fait office de preuve de réservation. Merci d'avoir choisi AutoPartage.
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

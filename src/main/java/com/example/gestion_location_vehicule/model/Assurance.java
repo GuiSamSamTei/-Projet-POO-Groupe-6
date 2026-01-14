@@ -16,10 +16,10 @@ public class Assurance {
     private String nom; // Par Défaut, Basique, Premium
 
     @Column(name = "ASSURANCE_PAR_DEFAUT")
-    private boolean assuranceParDefaut;
+    private Boolean assuranceParDefaut;
 
     @Column(nullable = false)
-    private boolean active; // Si l'assurance est active sur la plateforme
+    private Boolean active; // Si l'assurance est active sur la plateforme
 
     @Column(nullable = false)
     private double prixFixe; // Prix fixe par jour

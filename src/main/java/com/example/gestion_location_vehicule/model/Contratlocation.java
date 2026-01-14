@@ -17,30 +17,29 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Data
-@Getter
-@Setter
+@Data // Remplace Getter, Setter, RequiredArgsConstructor, etc.
 @NoArgsConstructor
 @AllArgsConstructor
 public class Contratlocation {
     @Id
-    @GeneratedValue(
-            strategy = GenerationType.SEQUENCE,
-            generator = "contratlocation_seq"
-    )
-    @SequenceGenerator(
-            name = "contratlocation_seq",
-            sequenceName = "CONTRATLOCATION_SEQ",
-            allocationSize = 1
-    )
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "contratlocation_seq")
+    @SequenceGenerator(name = "contratlocation_seq", sequenceName = "CONTRATLOCATION_SEQ", allocationSize = 1)
     private Long id;
+
     private LocalDate datedebut;
-    private LocalDate  datefin;
+    private LocalDate datefin;
     private String lieudepot;
-    //les attributs liées au classes
+
+    // --- Amélioration des prix ---
+    private Double prixLocationJour; // Le prix du véhicule par jour au moment de la loc
+    private Double prixAssuranceApplique; // Le coût calculé de l'assurance pour ce contrat
+    private Double fraisServiceApplique; // Les frais de service au moment de la loc
+    private Double prixtotal; // (prixLocationJour * jours) + prixAssuranceApplique + fraisServiceApplique
+
+    private Integer nombreJours; // Stocker la durée calculée
 
     @ManyToOne
-    @JoinColumn(name = "vehicule_id")
+    @JoinColumn(name = "vehicule_id", nullable = false) // On ajoute nullable = false pour la sécurité
     private Vehicule vehicule;
 
     @ManyToOne
@@ -48,11 +47,10 @@ public class Contratlocation {
     private Assurance assurance;
 
     @ManyToOne
-    @JoinColumn(name = "loueur_id")
+    @JoinColumn(name = "loueur_id", nullable = false)
     private Loueur loueur;
 
     @ManyToOne
     @JoinColumn(name = "parking_id")
     private Parking parking;
-
 }
