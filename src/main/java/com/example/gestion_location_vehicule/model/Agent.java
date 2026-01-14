@@ -73,4 +73,16 @@ public class Agent extends Utilisateur {
 
         return parkings;
     }
+
+    public List<ControleTechnique> getAllControlesTechniques()
+    {
+        List<ControleTechnique> controles = new ArrayList<>();
+
+        for(Vehicule v : this.vehicules)
+        {
+            controles.addAll(v.getControlesTechniques());
+        }
+
+        return controles;
+    }
 }
