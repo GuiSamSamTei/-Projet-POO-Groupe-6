@@ -245,7 +245,18 @@
         </div>
     </div>
 </nav>
-
+<div th:if="${param.VehiculeDispo != null and param.VehiculeDispo[0] == 'False'}"
+     class="alert alert-danger alert-dismissible fade show shadow-sm border-0 mb-4"
+     role="alert" style="border-radius: 15px;">
+    <div class="d-flex align-items-center">
+        <i class="fas fa-exclamation-triangle me-3 fa-2x"></i>
+        <div>
+            <h5 class="alert-heading fw-bold mb-1">Véhicule non disponible</h5>
+            <p class="mb-0">Ce véhicule n'est plus disponible pour les dates choisies. Veuillez <strong>contacter le support</strong> ou <strong>l'Agent</strong> directement pour plus d'informations.</p>
+        </div>
+    </div>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
 <div class="container">
     <!-- Page Header -->
     <div class="row mb-4">

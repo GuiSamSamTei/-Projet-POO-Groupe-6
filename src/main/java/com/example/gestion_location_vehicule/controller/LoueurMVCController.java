@@ -192,7 +192,7 @@ public class LoueurMVCController {
         vehiculeRepository.save(vehicule);
 
         session.removeAttribute("vehiculeEnCours");
-
+        // je m'occupe de ca
         return "redirect:/vehicule/liste?locationSuccess=true";
     }
 
