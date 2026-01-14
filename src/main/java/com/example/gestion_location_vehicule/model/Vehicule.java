@@ -80,7 +80,14 @@ public class Vehicule {
     @JsonIgnore
     private List<DisponibiliteVehicule> disponibilites; // <-- relation vers disponibilités
 
+    @OneToMany(mappedBy = "vehicule", cascade = CascadeType.ALL)
+    private List<ControleTechnique> controlesTechniques;
+
     public String getTypeVehicule() {
         return this.getClass().getSimpleName();
+    }
+
+    public List<ControleTechnique> getControlesTechniques() {
+        return this.controlesTechniques;
     }
 }

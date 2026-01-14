@@ -40,4 +40,11 @@ public class ControleTechnique {
     @OneToOne
     @JoinColumn(name = "vehicule_id", nullable = false, unique = true)
     private Vehicule vehicule;
+
+    // Méthode pour vérifier si le contrôle technique va expirer dans un certain nombre de jours
+    public boolean isExpiringSoon(int days) {
+        LocalDate now = LocalDate.now();
+        LocalDate thresholdDate = now.plusDays(days);
+        return dateExpiration.isBefore(thresholdDate) || dateExpiration.isEqual(thresholdDate);
+    }
 }
