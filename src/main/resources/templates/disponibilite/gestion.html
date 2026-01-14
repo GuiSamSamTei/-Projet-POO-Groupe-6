@@ -1,80 +1,225 @@
-    <!DOCTYPE html>
-    <html xmlns:th="http://www.thymeleaf.org">
-    <head>
-        <meta charset="UTF-8">
-        <title>
-            Gestion des disponibilités -
-            <span th:text="${vehicule.marque} + ' ' + ${vehicule.modele}"></span>
-        </title>
-        <link rel="stylesheet"
-              href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
-    </head>
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Disponibilités - AutoPartage</title>
 
-    <body class="container mt-4">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
-    <h1>
-        Disponibilités du véhicule :
-        <span th:text="${vehicule.marque + ' ' + vehicule.modele}"></span>
-    </h1>
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2c3e50;
+        }
 
-    <h3>Calendrier des disponibilités :</h3>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7f6;
+            color: var(--secondary-color);
+        }
 
-    <table class="table table-bordered">
-        <thead>
-        <tr>
-            <th>Date de début</th>
-            <th>Date de fin</th>
-            <th>Description</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="dispo : ${disponibilites}">
-            <td th:text="${dispo.dateDebut}"></td>
-            <td th:text="${dispo.dateFin}"></td>
-            <td th:text="${dispo.description}"></td>
-        </tr>
-        </tbody>
-    </table>
+        .header-bg {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 40px 0;
+            border-radius: 0 0 20px 20px;
+            margin-bottom: 30px;
+        }
 
-    <h3>Ajouter une disponibilité :</h3>
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            margin-bottom: 25px;
+        }
 
-    <form th:action="@{'/vehicules/' + ${vehicule.id} + '/disponibilites'}"
-          method="post">
+        .card-header {
+            background: white;
+            border-bottom: 1px solid #edf2f7;
+            padding: 20px;
+            border-radius: 15px 15px 0 0 !important;
+        }
 
-        <div class="mb-3">
-            <label for="dateDebut" class="form-label">Date de début :</label>
-            <input type="date"
-                   id="dateDebut"
-                   name="dateDebut"
-                   class="form-control"
-                   required>
+        .table thead {
+            background-color: #f8fafc;
+        }
+
+        .table thead th {
+            border-top: none;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 0.05em;
+            color: #64748b;
+        }
+
+        .status-badge {
+            background: #e1f5fe;
+            color: #0288d1;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .form-control {
+            border-radius: 10px;
+            padding: 12px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .form-control:focus {
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+            border-color: var(--primary-color);
+        }
+
+        .btn-add {
+            border-radius: 10px;
+            padding: 12px 30px;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #94a3b8;
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+    <div class="container">
+        <a class="navbar-brand" href="/">
+            <i class="fas fa-car me-2 text-primary"></i>
+            <span class="fw-bold">AutoPartage</span>
+        </a>
+        <a th:href="@{/vehicule/liste}" class="btn btn-outline-secondary btn-sm">
+            <i class="fas fa-arrow-left me-1"></i> Mes véhicules
+        </a>
+    </div>
+</nav>
+
+<header class="header-bg shadow-sm">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h1 class="fw-bold mb-1">Gestion des disponibilités</h1>
+                <p class="lead opacity-75 mb-0" th:text="${vehicule.marque + ' ' + vehicule.modele}"></p>
+            </div>
+            <div class="col-md-4 text-md-end d-none d-md-block">
+                <i class="far fa-calendar-check fa-4x opacity-25"></i>
+            </div>
+        </div>
+    </div>
+</header>
+
+<main class="container">
+    <div class="row">
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0 fw-bold"><i class="fas fa-plus-circle me-2 text-primary"></i>Ajouter une période</h5>
+                </div>
+                <div class="card-body p-4">
+                    <form th:action="@{'/vehicules/' + ${vehicule.id} + '/disponibilites'}" method="post">
+                        <div class="mb-3">
+                            <label for="dateDebut" class="form-label small fw-bold text-muted">DATE DE DÉBUT</label>
+                            <input type="date" id="dateDebut" name="dateDebut" class="form-control" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="dateFin" class="form-label small fw-bold text-muted">DATE DE FIN</label>
+                            <input type="date" id="dateFin" name="dateFin" class="form-control" required>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="description" class="form-label small fw-bold text-muted">DESCRIPTION (OPTIONNEL)</label>
+                            <input type="text" id="description" name="description" class="form-control" placeholder="Ex: Disponible weekend">
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-add w-100 shadow-sm">
+                            Enregistrer la période
+                        </button>
+                    </form>
+                </div>
+            </div>
         </div>
 
-        <div class="mb-3">
-            <label for="dateFin" class="form-label">Date de fin :</label>
-            <input type="date"
-                   id="dateFin"
-                   name="dateFin"
-                   class="form-control"
-                   required>
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0 fw-bold"><i class="fas fa-list me-2 text-primary"></i>Calendrier actuel</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table mb-0 align-middle">
+                            <thead>
+                            <tr>
+                                <th class="ps-4">Période</th>
+                                <th>Durée</th>
+                                <th>Description</th>
+                                <th class="text-center">Statut</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:if="${#lists.isEmpty(disponibilites)}">
+                                <td colspan="4" class="empty-state">
+                                    <i class="fas fa-calendar-times fa-3x mb-3"></i>
+                                    <p>Aucune période de disponibilité définie.</p>
+                                </td>
+                            </tr>
+
+                            <tr th:each="dispo : ${disponibilites}">
+                                <td class="ps-4">
+                                    <div class="d-flex align-items-center">
+                                        <i class="far fa-calendar-alt me-2 text-primary"></i>
+                                        <div>
+                                            <span class="d-block fw-bold" th:text="${#temporals.format(dispo.dateDebut, 'dd MMM yyyy')}"></span>
+                                            <small class="text-muted">au <span th:text="${#temporals.format(dispo.dateFin, 'dd MMM yyyy')}"></span></small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                        <span class="text-muted small">
+                                            <i class="fas fa-hourglass-half me-1"></i>
+                                            Période définie
+                                        </span>
+                                </td>
+                                <td>
+                                        <span class="text-truncate d-inline-block" style="max-width: 150px;"
+                                              th:text="${#strings.isEmpty(dispo.description) ? '-' : dispo.description}"></span>
+                                </td>
+                                <td class="text-center pe-4">
+                                    <span class="status-badge">Actif</span>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
+    </div>
+</main>
 
-        <div class="mb-3">
-            <label for="description" class="form-label">Description :</label>
-            <input type="text"
-                   id="description"
-                   name="description"
-                   class="form-control">
-        </div>
+<script>
+    // Sécurité dates : date de début aujourd'hui min, et date fin >= date début
+    const dateDebutInput = document.getElementById("dateDebut");
+    const dateFinInput   = document.getElementById("dateFin");
+    const today = new Date().toISOString().split("T")[0];
 
-        <button type="submit" class="btn btn-primary">
-            Ajouter
-        </button>
+    dateDebutInput.min = today;
+    dateDebutInput.addEventListener("change", function () {
+        dateFinInput.min = this.value;
+        if (dateFinInput.value && dateFinInput.value < this.value) {
+            dateFinInput.value = this.value;
+        }
+    });
+</script>
 
-
-    </form>
-
-
-
-    </body>
-    </html>
+</body>
+</html>
