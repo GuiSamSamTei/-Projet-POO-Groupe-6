@@ -27,13 +27,13 @@ public class CalculPrixController {
      * Calcul du prix global d'une location
      *
      * @param vehiculeId  ID du véhicule choisi
-     * @param assuranceId ID de l'assurance choisie
+     * @param assuranceId ID de l'assurance choisie (par défaut, complète ou premium)
      * @param dateDebut   date de début de la location (format yyyy-MM-dd)
      * @param dateFin     date de fin de la location (format yyyy-MM-dd)
      * @return JSON contenant le détail du prix
      */
     @GetMapping("/global")
-    public Map<String, Double> getPrixGlobal(
+    public Map<String, Object> getPrixGlobal(
             @RequestParam Long vehiculeId,
             @RequestParam Long assuranceId,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateDebut,
@@ -52,16 +52,24 @@ public class CalculPrixController {
             throw new IllegalArgumentException("La date de fin doit être après la date de début");
         }
 
-        // Calcul des différents prix
-        double prixVehicule = vehicule.getPrixjour() * jours;
-        double prixAssurance = calculPrixService.getPrixAssurance(vehicule, assurance);
-        double commission = prixVehicule * 0.10 + 2 * jours;
-        double prixTotal = prixVehicule + prixAssurance + commission;
+        // Utiliser le service centralisé pour calculer le prix global
+        double prixTotal = calculPrixService.calculerPrixGlobal(vehicule, assurance, dateDebut, dateFin);
 
-        // Retour sous forme JSON
-        Map<String, Double> resultat = new HashMap<>();
+        // Calcul des détails pour la réponse
+        double prixVehicule = vehicule.getPrixjour() * jours;
+        double prixAssuranceParJour = calculPrixService.getPrixAssurance(vehicule, assurance);
+        double prixAssuranceTotal = prixAssuranceParJour * jours;
+        double commission = prixTotal - prixVehicule - prixAssuranceTotal;
+
+        // Retour sous forme JSON avec détails
+        Map<String, Object> resultat = new HashMap<>();
+        resultat.put("vehiculeId", vehiculeId);
+        resultat.put("assuranceId", assuranceId);
+        resultat.put("assuranceNom", assurance.getNom());
+        resultat.put("nombreJours", jours);
         resultat.put("prixVehicule", prixVehicule);
-        resultat.put("prixAssurance", prixAssurance);
+        resultat.put("prixAssuranceParJour", prixAssuranceParJour);
+        resultat.put("prixAssuranceTotal", prixAssuranceTotal);
         resultat.put("commission", commission);
         resultat.put("prixTotal", prixTotal);
 
