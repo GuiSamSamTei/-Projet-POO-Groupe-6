@@ -5,6 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title th:text="${pageTitle}">AutoPartage - Location de véhicules</title>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB-8BMh0DN05o7KtELzcn93fK4_sS1U5Ic&callback=initMap" async defer></script>
+
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
@@ -412,15 +418,10 @@
 <!-- Google Maps API -->
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB-8BMh0DN05o7KtELzcn93fK4_sS1U5Ic&callback=initMap" async defer></script>
 
-<script>
-    /*<![CDATA[*/
-    var isUserLoggedIn = /*[[${currentUser != null}]]*/ false;
-    var isLoueur = false;
-    /*]]>*/
-    if (isUserLoggedIn) {
-        var profileUrl = '/*[[${profileUrl}]]*/';
-        isLoueur = profileUrl === '/loueur/profil';
-    }
+<script th:inline="javascript">
+    const userRole = [[${session.role}]];
+    const userId = [[${session.user}]];
+
     let map;
     let markers = [];
     let clusters = [];
@@ -436,28 +437,18 @@
             center: userLocation,
             zoom: currentZoomLevel,
             styles: [
-                {
-                    featureType: "poi",
-                    elementType: "labels",
-                    stylers: [{ visibility: "off" }]
-                },
-                {
-                    featureType: "transit",
-                    elementType: "labels",
-                    stylers: [{ visibility: "off" }]
-                }
+                { featureType: "poi", elementType: "labels", stylers: [{ visibility: "off" }] },
+                { featureType: "transit", elementType: "labels", stylers: [{ visibility: "off" }] }
             ]
         });
 
         infoWindow = new google.maps.InfoWindow();
 
-        // Gestionnaire d'événement pour le changement de zoom
         google.maps.event.addListener(map, 'zoom_changed', function() {
             currentZoomLevel = map.getZoom();
             updateMapView();
         });
 
-        // Bouton de réinitialisation de la vue
         document.getElementById('resetView').addEventListener('click', function() {
             map.setCenter(userLocation);
             map.setZoom(12);
@@ -466,12 +457,10 @@
             updateMapHint();
         });
 
-        // Bouton de localisation
         document.getElementById('locateMe').addEventListener('click', function() {
             locateUser();
         });
 
-        // Bouton de basculement de vue
         document.getElementById('toggleView').addEventListener('click', function() {
             isClusterView = !isClusterView;
             this.classList.toggle('active', isClusterView);
@@ -479,14 +468,10 @@
             updateMapHint();
         });
 
-        // Chargement initial - d'abord essayer de localiser l'utilisateur
         locateUser();
-
-        // Mise à jour de l'indicateur de vue
         document.getElementById('toggleView').classList.remove('active');
     }
 
-    // Localiser l'utilisateur
     function locateUser() {
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
@@ -498,133 +483,77 @@
                     map.setCenter(userLocation);
                     map.setZoom(12);
                     isClusterView = false;
-
-                    // Tenter de déterminer la ville à partir des coordonnées
                     geocodeCity(position.coords.latitude, position.coords.longitude);
-
                     updateMapView();
                     updateMapHint();
                 },
                 (error) => {
-                    console.log("Permission de localisation refusée ou erreur:", error);
-                    // Utiliser Toulouse par défaut
+                    console.log("Erreur localisation:", error);
+                    // Default to Toulouse
                     userLocation = { lat: 43.6047, lng: 1.4442 };
-                    userCity = "Toulouse";
                     map.setCenter(userLocation);
                     map.setZoom(12);
-                    isClusterView = false;
                     updateMapView();
-                    updateMapHint();
                 }
             );
         } else {
-            alert("La géolocalisation n'est pas supportée par votre navigateur. Toulouse sera affichée par défaut.");
             userLocation = { lat: 43.6047, lng: 1.4442 };
-            userCity = "Toulouse";
             map.setCenter(userLocation);
             map.setZoom(12);
-            isClusterView = false;
             updateMapView();
-            updateMapHint();
         }
     }
 
-    // Géocodage inverse pour obtenir le nom de la ville
     function geocodeCity(lat, lng) {
-        // Vous pouvez utiliser une API de géocodage ici (Google Geocoding API)
-        // Pour l'instant, nous utilisons une approche simplifiée
-        console.log("Géocodage des coordonnées:", lat, lng);
-
-        // Simuler la détection de ville (en production, utiliser une vraie API)
+        // Simuler la détection de ville
         setTimeout(() => {
-            // Pour la démo, nous gardons Toulouse
-            userCity = "Votre ville";
+            userCity = "Votre position";
             updateMapHint();
         }, 100);
     }
 
-    // Mise à jour du texte d'indication de la carte
     function updateMapHint() {
         const hintElement = document.getElementById('mapHint');
         if (currentZoomLevel < 8 || isClusterView) {
-            hintElement.textContent = "Vue d'ensemble de la France - Zoomer pour voir les véhicules disponibles";
+            hintElement.textContent = "Vue d'ensemble de la France - Zoomer pour voir les véhicules";
         } else {
-            hintElement.textContent = `Véhicules disponibles à ${userCity} - Dézoomer pour voir la France entière`;
+            hintElement.textContent = `Véhicules disponibles près de ${userCity}`;
         }
     }
 
-    // Mise à jour de la vue de la carte
     function updateMapView() {
         clearAllMarkers();
-
         if (currentZoomLevel < 8 || isClusterView) {
-            // Vue cluster (villes) - France entière
             loadCityClusters();
         } else {
-            // Vue détaillée (véhicules individuels) - Ville spécifique
             loadIndividualVehicles();
         }
         updateMapHint();
     }
 
-    // Charger les clusters de villes (France entière)
     function loadCityClusters() {
-        // Charger les statistiques de toutes les villes
         fetch('/api/map/city-stats')
-            .then(response => {
-                if (!response.ok) throw new Error('Erreur réseau');
-                return response.json();
-            })
-            .then(cityStats => {
-                cityStats.forEach(city => {
-                    if (city.totalVehicles > 0) {
-                        addCityClusterMarker(city);
-                    }
-                });
-            })
-            .catch(error => {
-                console.error('Erreur lors du chargement des statistiques des villes:', error);
-                loadMockCityClusters();
-            });
+            .then(res => res.json())
+            .then(stats => stats.forEach(city => { if(city.totalVehicles > 0) addCityClusterMarker(city); }))
+            .catch(() => loadMockCityClusters());
     }
 
-    // Charger les véhicules individuels (ville spécifique)
     function loadIndividualVehicles() {
-    fetch(`/api/map/all-vehicles?city=${encodeURIComponent(userCity)}`)
-        .then(response => {
-            if (!response.ok) throw new Error('Erreur réseau');
-            return response.json();
-        })
-        .then(vehicles => {
-            console.log(`Chargé ${vehicles.length} véhicules pour ${userCity}`);
-            vehicles.forEach(vehicle => {
-                addVehicleMarker(vehicle);
-            });
-        })
-        .catch(error => {
-            console.error('Erreur lors du chargement des véhicules:', error);
-            loadMockVehicles();
-        });
+        fetch(`/api/map/all-vehicles?city=${encodeURIComponent(userCity)}`)
+            .then(res => res.json())
+            .then(vehicles => vehicles.forEach(v => addVehicleMarker(v)))
+            .catch(() => loadMockVehicles());
     }
 
-    // Ajouter un marqueur de cluster de ville
     function addCityClusterMarker(city) {
         const clusterSize = Math.min(30 + (city.totalVehicles * 5), 80);
-
         const icon = {
             url: `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(`
                 <svg xmlns="http://www.w3.org/2000/svg" width="${clusterSize}" height="${clusterSize}" viewBox="0 0 ${clusterSize} ${clusterSize}">
-                    <circle cx="${clusterSize/2}" cy="${clusterSize/2}" r="${clusterSize/2 - 2}"
-                        fill="#3498db" stroke="white" stroke-width="3" opacity="0.8"/>
-                    <text x="${clusterSize/2}" y="${clusterSize/2 + 5}"
-                        font-family="Arial" font-size="${Math.max(14, clusterSize/4)}"
-                        fill="white" text-anchor="middle" font-weight="bold">
-                        ${city.totalVehicles}
-                    </text>
-                </svg>
-            `)}`,
+                    <circle cx="${clusterSize/2}" cy="${clusterSize/2}" r="${clusterSize/2 - 2}" fill="#3498db" stroke="white" stroke-width="3" opacity="0.8"/>
+                    <text x="${clusterSize/2}" y="${clusterSize/2 + 5}" font-family="Arial" font-size="${Math.max(14, clusterSize/4)}" fill="white" text-anchor="middle" font-weight="bold">${city.totalVehicles}</text>
+                </svg>`)}`,
             scaledSize: new google.maps.Size(clusterSize, clusterSize),
-            origin: new google.maps.Point(0, 0),
             anchor: new google.maps.Point(clusterSize/2, clusterSize/2)
         };
 
@@ -632,61 +561,30 @@
             position: { lat: city.latitude, lng: city.longitude },
             map: map,
             icon: icon,
-            title: `${city.cityName}: ${city.totalVehicles} véhicules disponibles`,
-            zIndex: 999
+            title: city.cityName
         });
 
         marker.addListener('click', () => {
-            const content = createCityInfoWindowContent(city);
-            infoWindow.setContent(content);
+            infoWindow.setContent(createCityInfoWindowContent(city));
             infoWindow.open(map, marker);
         });
-
         clusters.push(marker);
     }
 
-    // Créer le contenu de la fenêtre d'information pour une ville
     function createCityInfoWindowContent(city) {
-        let vehicleTypesHtml = '';
-        if (city.vehicleTypes) {
-            for (const [type, count] of Object.entries(city.vehicleTypes)) {
-                const iconClass = getVehicleIconClass(type);
-                vehicleTypesHtml += `
-                    <div class="d-flex justify-content-between mb-1">
-                        <span>
-                            <i class="fas ${iconClass} me-2"></i>
-                            ${type.charAt(0).toUpperCase() + type.slice(1)}
-                        </span>
-                        <span class="badge bg-secondary">${count}</span>
-                    </div>
-                `;
-            }
-        }
-
         return `
             <div class="city-info-window">
                 <h6 class="fw-bold mb-2">${city.cityName}</h6>
-                <p class="mb-2"><i class="fas fa-car me-2"></i> Total: <strong>${city.totalVehicles}</strong> véhicules disponibles</p>
-                <hr class="my-2">
-                <div class="mb-2">
-                    <small class="text-muted">Types de véhicules disponibles:</small>
-                    ${vehicleTypesHtml}
-                </div>
+                <p class="mb-2"><strong>${city.totalVehicles}</strong> véhicules</p>
                 <div class="d-grid gap-2 mt-2">
-                    <a href="/vehicule/filtres?villedispo=${encodeURIComponent(city.cityName)}"
-                       class="btn btn-sm btn-primary">
-                        <i class="fas fa-search me-1"></i> Voir les véhicules
-                    </a>
-                    <button onclick="zoomToCity('${city.cityName}', ${city.latitude}, ${city.longitude})"
-                            class="btn btn-sm btn-outline-primary">
-                        <i class="fas fa-map-marker-alt me-1"></i> Zoom sur cette ville
+                    <button onclick="zoomToCity('${city.cityName}', ${city.latitude}, ${city.longitude})" class="btn btn-sm btn-outline-primary">
+                        <i class="fas fa-search-plus me-1"></i> Zoomer ici
                     </button>
                 </div>
             </div>
         `;
     }
 
-    // Zoomer sur une ville spécifique
     function zoomToCity(cityName, lat, lng) {
         userLocation = { lat: lat, lng: lng };
         userCity = cityName;
@@ -697,218 +595,126 @@
         updateMapView();
     }
 
-    // Ajouter un marqueur pour un véhicule individuel
     function addVehicleMarker(vehicle) {
-        const icon = getVehicleIcon(vehicle.type);
-
         const marker = new google.maps.Marker({
             position: { lat: vehicle.latitude, lng: vehicle.longitude },
             map: map,
-            icon: icon,
-            title: `${vehicle.marque} ${vehicle.modele} - ${vehicle.city || userCity}`
+            icon: getVehicleIcon(vehicle.type),
+            title: `${vehicle.marque} ${vehicle.modele}`
         });
 
         marker.addListener('click', () => {
-            const content = createVehicleInfoWindowContent(vehicle);
-            infoWindow.setContent(content);
+            infoWindow.setContent(createVehicleInfoWindowContent(vehicle));
             infoWindow.open(map, marker);
         });
-
         markers.push(marker);
     }
 
-    // Obtenir l'icône pour un type de véhicule
-    function getVehicleIcon(vehicleType) {
-        const baseIcon = {
+    function getVehicleIcon(type) {
+        return {
             url: `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(`
                 <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40">
-                    <circle cx="20" cy="20" r="18" fill="${getVehicleColor(vehicleType)}" stroke="white" stroke-width="3"/>
-                    <text x="20" y="25" font-family="Arial" font-size="18" fill="white" text-anchor="middle">
-                        ${getVehicleIconLetter(vehicleType)}
-                    </text>
-                </svg>
-            `)}`,
+                    <circle cx="20" cy="20" r="18" fill="${getVehicleColor(type)}" stroke="white" stroke-width="3"/>
+                    <text x="20" y="25" font-family="Arial" font-size="18" fill="white" text-anchor="middle">${getVehicleIconLetter(type)}</text>
+                </svg>`)}`,
             scaledSize: new google.maps.Size(40, 40),
-            origin: new google.maps.Point(0, 0),
             anchor: new google.maps.Point(20, 20)
         };
-
-        return baseIcon;
     }
 
-    // Obtenir la couleur pour un type de véhicule
     function getVehicleColor(type) {
-        const colors = {
-            'voiture': '#3498db',
-            'moto': '#2ecc71',
-            'camion': '#f39c12',
-            'van': '#9b59b6',
-            'scooter': '#1abc9c',
-            'velo': '#e74c3c'
-        };
+        const colors = { 'voiture': '#3498db', 'moto': '#2ecc71', 'camion': '#f39c12', 'van': '#9b59b6', 'scooter': '#1abc9c', 'velo': '#e74c3c' };
         return colors[type] || '#3498db';
     }
 
-    // Obtenir la lettre pour l'icône d'un type de véhicule
     function getVehicleIconLetter(type) {
-        const letters = {
-            'voiture': 'V',
-            'moto': 'M',
-            'camion': 'C',
-            'van': 'V',
-            'scooter': 'S',
-            'velo': 'B'
-        };
+        const letters = { 'voiture': 'V', 'moto': 'M', 'camion': 'C', 'van': 'V', 'scooter': 'S', 'velo': 'B' };
         return letters[type] || 'V';
     }
 
-    // Obtenir la classe d'icône pour un type de véhicule
-    function getVehicleIconClass(type) {
-        const iconClasses = {
-            'voiture': 'fa-car',
-            'moto': 'fa-motorcycle',
-            'camion': 'fa-truck',
-            'van': 'fa-shuttle-van',
-            'scooter': 'fa-motorcycle',
-            'velo': 'fa-bicycle'
-        };
-        return iconClasses[type] || 'fa-car';
-    }
-
-    // Créer le contenu de la fenêtre d'information pour un véhicule
-
-    // Créer le contenu de la fenêtre d'information pour un véhicule
     function createVehicleInfoWindowContent(vehicle) {
-        var reserveUrl = "/loueur/louer-vehicule/" + vehicle.id;
-
-        var onClickHandler = "";
-        if (isUserLoggedIn && !isLoueur) {
-            onClickHandler = `onclick="event.preventDefault(); alert('Seuls les loueurs peuvent réserver des véhicules.');"`;
-        }
-
         return `
             <div class="vehicle-info-window">
                 <h6 class="fw-bold">${vehicle.marque} ${vehicle.modele}</h6>
-                <p class="mb-1 text-muted">
-                    <i class="fas fa-map-marker-alt me-1"></i> ${vehicle.city || userCity}
-                </p>
+                <p class="mb-1 text-muted"><i class="fas fa-map-marker-alt me-1"></i> ${vehicle.city || userCity}</p>
                 <p class="mb-1">
-                    <i class="fas fa-tag me-1"></i>
                     <span class="badge bg-${getVehicleColorClass(vehicle.type)}">
-                        ${vehicle.type.charAt(0).toUpperCase() + vehicle.type.slice(1)}
+                        ${vehicle.type ? vehicle.type.charAt(0).toUpperCase() + vehicle.type.slice(1) : 'Véhicule'}
                     </span>
                 </p>
                 <p class="mb-1"><i class="fas fa-euro-sign me-1"></i> ${vehicle.prixJournalier} €/jour</p>
-                <p class="mb-1"><i class="fas fa-check-circle text-success me-1"></i> Disponible maintenant</p>
-                <div class="d-grid gap-2">
-                    <a href="${reserveUrl}" class="btn btn-sm btn-primary" ${onClickHandler}>
+                <div class="d-grid gap-2 mt-2">
+                    <button onclick="handleMapReservation(${vehicle.id})" class="btn btn-sm btn-primary">
                         <i class="fas fa-calendar-check me-1"></i> Réserver
-                    </a>
+                    </button>
                 </div>
             </div>
         `;
     }
 
-    // Obtenir la classe de couleur Bootstrap pour un type de véhicule
+    function handleMapReservation(vehicleId) {
+
+        if (!userId) {
+            Swal.fire({
+                icon: 'info',
+                title: 'Connexion requise',
+                text: 'Vous devez être connecté en tant que Loueur pour réserver un véhicule.',
+                showCancelButton: true,
+                confirmButtonText: 'Se connecter',
+                cancelButtonText: 'Annuler',
+                confirmButtonColor: '#3498db'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = '/loueur/louer-vehicule/' + vehicleId;
+                }
+            });
+            return;
+        }
+
+        if (userRole === 'AGENT_PRO' || userRole === 'AGENT_PAR') {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Action impossible',
+                html: `
+                    <p>Vous êtes connecté en tant qu'<strong>Agent</strong>.</p>
+                    <p class="mb-0">Les agents ne peuvent pas louer de véhicules.</p>
+                `,
+                confirmButtonColor: '#3085d6',
+                confirmButtonText: 'Compris'
+            });
+            return;
+        }
+
+        window.location.href = `/loueur/louer-vehicule/${vehicleId}`;
+    }
+
     function getVehicleColorClass(type) {
-        const classes = {
-            'voiture': 'primary',
-            'moto': 'success',
-            'camion': 'warning',
-            'van': 'info',
-            'scooter': 'secondary',
-            'velo': 'danger'
-        };
+        const classes = { 'voiture': 'primary', 'moto': 'success', 'camion': 'warning', 'van': 'info', 'scooter': 'secondary', 'velo': 'danger' };
         return classes[type] || 'primary';
     }
 
-    // Effacer tous les marqueurs
     function clearAllMarkers() {
-        markers.forEach(marker => marker.setMap(null));
-        markers = [];
-
-        clusters.forEach(cluster => cluster.setMap(null));
-        clusters = [];
+        markers.forEach(m => m.setMap(null)); markers = [];
+        clusters.forEach(c => c.setMap(null)); clusters = [];
     }
 
-    // Données de démonstration pour les clusters de villes
+    // Mock data functions (kept for fallback)
     function loadMockCityClusters() {
-        const mockCities = [
-            {
-                cityName: "Toulouse",
-                totalVehicles: 18,
-                vehicleTypes: { "voiture": 12, "moto": 4, "van": 2 },
-                latitude: 43.6047,
-                longitude: 1.4442
-            },
-            {
-                cityName: "Paris",
-                totalVehicles: 24,
-                vehicleTypes: { "voiture": 15, "moto": 5, "van": 3, "camion": 1 },
-                latitude: 48.8566,
-                longitude: 2.3522
-            },
-            {
-                cityName: "Lyon",
-                totalVehicles: 12,
-                vehicleTypes: { "voiture": 8, "moto": 3, "van": 1 },
-                latitude: 45.7640,
-                longitude: 4.8357
-            }
-        ];
-
-        mockCities.forEach(city => {
-            addCityClusterMarker(city);
-        });
+        [{cityName:"Toulouse",totalVehicles:18,latitude:43.6047,longitude:1.4442},
+         {cityName:"Paris",totalVehicles:24,latitude:48.8566,longitude:2.3522},
+         {cityName:"Lyon",totalVehicles:12,latitude:45.7640,longitude:4.8357}]
+        .forEach(c => addCityClusterMarker(c));
     }
 
-    // Données de démonstration pour les véhicules individuels
     function loadMockVehicles() {
-        const mockVehicles = [
-            {
-                id: 1,
-                marque: 'Peugeot',
-                modele: '208',
-                type: 'voiture',
-                city: 'Toulouse',
-                latitude: 43.6047 + (Math.random() * 0.03 - 0.015),
-                longitude: 1.4442 + (Math.random() * 0.03 - 0.015),
-                prixJournalier: 45
-            },
-            {
-                id: 2,
-                marque: 'Renault',
-                modele: 'Clio',
-                type: 'voiture',
-                city: 'Toulouse',
-                latitude: 43.6047 + (Math.random() * 0.03 - 0.015),
-                longitude: 1.4442 + (Math.random() * 0.03 - 0.015),
-                prixJournalier: 40
-            }
-        ];
-
-        mockVehicles.forEach(vehicle => {
-            addVehicleMarker(vehicle);
-        });
+        [{id:1,marque:'Peugeot',modele:'208',type:'voiture',latitude:43.6047+0.01,longitude:1.4442+0.01,prixJournalier:45},
+         {id:2,marque:'Renault',modele:'Clio',type:'voiture',latitude:43.6047-0.01,longitude:1.4442-0.01,prixJournalier:40}]
+        .forEach(v => addVehicleMarker(v));
     }
 
-    // Initialisation lorsque le DOM est chargé
     document.addEventListener('DOMContentLoaded', function() {
-        const dateInputs = document.querySelectorAll('input[type="date"]');
-        dateInputs.forEach(input => {
-            const today = new Date().toISOString().split('T')[0];
-            input.min = today;
-            input.setAttribute('lang', 'fr-FR');
-            input.setAttribute('title', 'Choisissez une date');
-        });
-
-        // Initialisation différée pour s'assurer que la carte est prête
-        if (typeof google !== 'undefined' && google.maps) {
-            initMap();
-        } else {
-            // Si Google Maps n'est pas encore chargé, attendre
-            window.addEventListener('load', initMap);
-        }
+        if (typeof google !== 'undefined' && google.maps) initMap();
+        else window.addEventListener('load', initMap);
     });
 </script>
 </body>

@@ -128,11 +128,27 @@ public class LoueurMVCController {
             return "redirect:/utilisateur/connexion?required=true";
         }
 
+        String role = (String) session.getAttribute("role");
+        if (role != null && !role.equals("LOUEUR")) {
+            if ("AGENT_PRO".equals(role)) {
+                return "redirect:/agent-pro/profil";
+            } else if ("AGENT_PAR".equals(role)) {
+                return "redirect:/agent-par/profil";
+            }
+            return "redirect:/";
+        }
+
 
 
         Long loueur_id = (Long) session.getAttribute("user");
 
-        Loueur loueur = loueurService.getById(loueur_id);
+        Loueur loueur = null;
+        try {
+            loueur = loueurService.getById(loueur_id);
+        } catch (Exception e) {
+            return "redirect:/";
+        }
+
 
 
 
