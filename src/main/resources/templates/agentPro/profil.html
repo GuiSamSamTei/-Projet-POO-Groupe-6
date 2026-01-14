@@ -84,6 +84,13 @@
         }
         .badge-dispo { background-color: #d4edda; color: #155724; }
         .badge-indispo { background-color: #f8d7da; color: #721c24; }
+
+        .share-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+        }
     </style>
 </head>
 <body>
@@ -142,7 +149,7 @@
         <div class="col-md-3 col-6">
             <div class="stat-card">
                 <i class="fas fa-car stat-icon"></i>
-                <div class="stat-value" th:text="${user.nombrevehicules}">0</div>
+                <div class="stat-value" th:text="${vehicules != null ? vehicules.size() : 0}">0</div>
                 <div class="text-muted small">Véhicules</div>
             </div>
         </div>
@@ -165,6 +172,26 @@
                 <i class="fas fa-euro-sign stat-icon text-success"></i>
                 <div class="stat-value" th:text="${user.revenustotaux}">0</div>
                 <div class="text-muted small">Revenus Totaux</div>
+            </div>
+        </div>
+    </div>
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="card share-card">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="fas fa-share-alt me-2"></i>Partager votre profil</h5>
+                    <p class="card-text mb-3">Voici le lien vers votre profil public que vous pouvez partager avec vos clients :</p>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="profileLink"
+                               th:value="${'http://localhost:9191/utilisateur/profile/' + user.id}" readonly>
+                        <button class="btn btn-light" type="button" onclick="copyProfileLink()">
+                            <i class="fas fa-copy me-1"></i> Copier
+                        </button>
+                    </div>
+                    <small class="text-white-50 mt-2 d-block">
+                        <i class="fas fa-info-circle me-1"></i>Les utilisateurs connectés pourront voir vos informations et véhicules disponibles.
+                    </small>
+                </div>
             </div>
         </div>
     </div>
@@ -238,6 +265,46 @@
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    function copyProfileLink() {
+        const profileLinkInput = document.getElementById('profileLink');
+        profileLinkInput.select();
+        profileLinkInput.setSelectionRange(0, 99999); // Pour mobile
+
+        try {
+            navigator.clipboard.writeText(profileLinkInput.value);
+
+            // Utiliser SweetAlert2 pour une notification visuelle
+            Swal.fire({
+                icon: 'success',
+                title: 'Lien copié !',
+                text: 'Le lien de votre profil a été copié dans le presse-papier.',
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                    toast.addEventListener('mouseenter', Swal.stopTimer)
+                    toast.addEventListener('mouseleave', Swal.resumeTimer)
+                }
+            });
+        } catch (err) {
+            console.error('Erreur lors de la copie : ', err);
+            // Fallback pour les anciens navigateurs
+            document.execCommand('copy');
+
+            Swal.fire({
+                icon: 'info',
+                title: 'Lien copié',
+                text: 'Le lien a été copié dans le presse-papier.',
+                timer: 2000,
+                showConfirmButton: false
+            });
+        }
+    }
+</script>
 
 </body>
 </html>
