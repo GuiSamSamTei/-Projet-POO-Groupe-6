@@ -86,6 +86,12 @@ public class UtilisateurMVCController {
         Utilisateur user = userOpt.get();
         session.setAttribute("user", user.getId());
 
+        Long pendingVehicleId = (Long) session.getAttribute("pendingVehicleId");
+        if (pendingVehicleId != null) {
+            session.removeAttribute("pendingVehicleId");
+            return "redirect:/loueur/louer-vehicule/" + pendingVehicleId;
+        }
+
         String redirectUrl = (String) session.getAttribute("redirectAfterLogin");
         if (redirectUrl != null && !redirectUrl.trim().isEmpty()) {
             session.removeAttribute("redirectAfterLogin");

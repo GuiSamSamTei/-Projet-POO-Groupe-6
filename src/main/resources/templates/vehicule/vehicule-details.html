@@ -97,14 +97,20 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 
 <script th:inline="javascript">
-    document.addEventListener('DOMContentLoaded', function() {
-        const type = [[${type}]].toLowerCase();
-        const id = [[${id}]];
+    const userRole = [[${session.role}]];
+    const userId = [[${session.user}]];
 
-        loadVehicleDetails(type, id);
-    });
+        document.addEventListener('DOMContentLoaded', function() {
+            const rawType = [[${type}]];
+                    const type = rawType ? rawType.toLowerCase() : '';
+                    const id = [[${id}]];
 
-    function loadVehicleDetails(type, id) {
+                    if(type && id) {
+                        loadVehicleDetails(type, id);
+                    }
+        });
+
+        function loadVehicleDetails(type, id) {
         let apiUrl = '';
 
         switch(type) {
@@ -115,16 +121,13 @@
             case 'van':     apiUrl = `/api/vans/${id}`; break;
             case 'camion':  apiUrl = `/api/camions/${id}`; break;
             default:
-                console.error("Type reçu:", type);
                 document.getElementById('loading').innerHTML = `<p class="text-danger">Type de véhicule non supporté: ${type}</p>`;
                 return;
         }
 
         fetch(apiUrl)
             .then(response => {
-                if (!response.ok) {
-                    throw new Error('Véhicule non trouvé');
-                }
+                if (!response.ok) throw new Error('Véhicule non trouvé');
                 return response.json();
             })
             .then(vehicle => {
@@ -132,23 +135,19 @@
             })
             .catch(error => {
                 document.getElementById('loading').innerHTML = `
-                    <div class="alert alert-danger" role="alert">
-                        <i class="fas fa-exclamation-triangle me-2"></i>
-                        Erreur: ${error.message}
+                    <div class="alert alert-danger">
+                        <i class="fas fa-exclamation-triangle me-2"></i> Erreur: ${error.message}
                     </div>
-                    <a href="/vehicule/liste" class="btn btn-primary mt-3">
-                        <i class="fas fa-arrow-left me-2"></i> Retour à la liste
-                    </a>
+                    <a href="/vehicule/liste" class="btn btn-primary mt-3">Retour à la liste</a>
                 `;
             });
     }
 
-    function displayVehicleDetails(vehicle, type) {
+        function displayVehicleDetails(vehicle, type) {
         document.getElementById('loading').style.display = 'none';
         const container = document.getElementById('vehicleDetails');
         container.style.display = 'block';
 
-        const userRole = [[${session.role}]];
         let backUrl = '/vehicule/liste';
         let backText = 'Retour à la liste';
 
@@ -158,15 +157,14 @@
         } else if (userRole === 'AGENT_PRO') {
             backUrl = '/agent-pro/profil';
             backText = 'Retour au profil';
+        } else if (userRole === 'LOUEUR' || (userId && !userRole)) {
+            backUrl = '/loueur/profil';
+            backText = 'Retour au profil';
         }
 
         const typeDisplay = {
-            'voiture': 'Voiture',
-            'velo': 'Vélo',
-            'scooter': 'Scooter',
-            'moto': 'Moto',
-            'van': 'Van',
-            'camion': 'Camion'
+            'voiture': 'Voiture', 'velo': 'Vélo', 'scooter': 'Scooter',
+            'moto': 'Moto', 'van': 'Van', 'camion': 'Camion'
         }[type] || type;
 
         container.innerHTML = `
@@ -175,14 +173,11 @@
                     <div>
                         <h2>${vehicle.marque || ''} ${vehicle.modele || ''}</h2>
                         <p class="text-muted">
-                            <i class="fas fa-tag me-2"></i>
                             <span class="badge bg-primary">${typeDisplay}</span>
                             <span class="badge ${vehicle.vehiculedispo ? 'bg-success' : 'bg-danger'} ms-2">
                                 ${vehicle.vehiculedispo ? 'Disponible' : 'Indisponible'}
                             </span>
                         </p>
-                    </div>
-                    <div class="btn-group">
                     </div>
                 </div>
             </div>
@@ -192,10 +187,10 @@
                     <div class="info-card">
                         <h5><i class="fas fa-info-circle me-2"></i> Informations générales</h5>
                         <ul class="list-unstyled">
-                            <li class="mb-2"><strong>Marque:</strong> ${vehicle.marque || 'Non spécifié'}</li>
-                            <li class="mb-2"><strong>Modèle:</strong> ${vehicle.modele || 'Non spécifié'}</li>
-                            <li class="mb-2"><strong>Couleur:</strong> ${vehicle.couleur || 'Non spécifié'}</li>
-                            <li class="mb-2"><strong>Prix/jour:</strong> ${vehicle.prixjour ? vehicle.prixjour + ' €' : 'Non spécifié'}</li>
+                            <li class="mb-2"><strong>Marque:</strong> ${vehicle.marque || '-'}</li>
+                            <li class="mb-2"><strong>Modèle:</strong> ${vehicle.modele || '-'}</li>
+                            <li class="mb-2"><strong>Couleur:</strong> ${vehicle.couleur || '-'}</li>
+                            <li class="mb-2"><strong>Prix/jour:</strong> <span class="text-primary fw-bold">${vehicle.prixjour} €</span></li>
                             <li class="mb-2"><strong>Note:</strong> ${vehicle.notevehicule ? vehicle.notevehicule + '/5' : 'Non évalué'}</li>
                         </ul>
                     </div>
@@ -205,7 +200,7 @@
                     <div class="info-card">
                         <h5><i class="fas fa-map-marker-alt me-2"></i> Localisation</h5>
                         <ul class="list-unstyled">
-                            <li class="mb-2"><strong>Ville:</strong> ${vehicle.villedispo || 'Non spécifié'}</li>
+                            <li class="mb-2"><strong>Ville:</strong> ${vehicle.villedispo || '-'}</li>
                             <li class="mb-2"><strong>Disponibilité:</strong> ${vehicle.vehiculedispo ? 'Immédiate' : 'Non disponible'}</li>
                         </ul>
                     </div>
@@ -215,162 +210,207 @@
             ${getSpecificDetails(vehicle, type)}
 
             <div class="mt-4 pt-3 border-top">
-                <div class="d-flex justify-content-between">
+                <div class="d-flex justify-content-between align-items-center">
                     <a href="${backUrl}" class="btn btn-outline-secondary">
                         <i class="fas fa-arrow-left me-2"></i> ${backText}
                     </a>
 
                     <div>
-                        <a href="#" class="btn btn-outline-primary me-2">
-                            <i class="fas fa-calendar me-2"></i> Voir disponibilités
-                        </a>
-                        <a href="#" class="btn btn-success">
-                            <i class="fas fa-shopping-cart me-2"></i> Réserver
-                        </a>
+                        <button onclick="handleReservation(${vehicle.id}, ${vehicle.vehiculedispo})" class="btn ${vehicle.vehiculedispo ? 'btn-success' : 'btn-secondary'} btn-lg shadow-sm">
+                            <i class="fas ${vehicle.vehiculedispo ? 'fa-calendar-check' : 'fa-times-circle'} me-2"></i>
+                            ${vehicle.vehiculedispo ? 'Réserver ce véhicule' : 'Véhicule Indisponible'}
+                        </button>
                     </div>
                 </div>
             </div>
         `;
     }
 
-    function getSpecificDetails(vehicle, type) {
-        if (type === 'voiture') {
-            return `
-                <div class="info-card">
-                    <h5><i class="fas fa-car me-2"></i> Spécificités Voiture</h5>
-                    <div class="d-flex flex-wrap">
-                        ${vehicle.nombreportes ? `<span class="spec-badge"><i class="fas fa-door-open me-1"></i> ${vehicle.nombreportes} portes</span>` : ''}
-                        ${vehicle.nombreplaces ? `<span class="spec-badge"><i class="fas fa-users me-1"></i> ${vehicle.nombreplaces} places</span>` : ''}
-                        ${vehicle.carburant ? `<span class="spec-badge"><i class="fas fa-gas-pump me-1"></i> ${vehicle.carburant}</span>` : ''}
-                        ${vehicle.automatique !== null ? `<span class="spec-badge"><i class="fas fa-cog me-1"></i> ${vehicle.automatique ? 'Automatique' : 'Manuelle'}</span>` : ''}
-                        ${vehicle.gps !== null ? `<span class="spec-badge"><i class="fas fa-map-marked-alt me-1"></i> ${vehicle.gps ? 'Avec GPS' : 'Sans GPS'}</span>` : ''}
-                        ${vehicle.coffrevolume ? `<span class="spec-badge"><i class="fas fa-suitcase me-1"></i> ${vehicle.coffrevolume}L coffre</span>` : ''}
-                        ${vehicle.nbchevaux ? `<span class="spec-badge"><i class="fas fa-horse me-1"></i> ${vehicle.nbchevaux} chevaux</span>` : ''}
-                    </div>
-                </div>
-            `;
+    function handleReservation(vehicleId, isAvailable) {
+
+        if (!isAvailable) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Véhicule indisponible',
+                html: `
+                    <p>Ce véhicule est actuellement en cours de location ou indisponible.</p>
+                    <small class="text-muted">Veuillez choisir un autre véhicule ou revenir plus tard.</small>
+                `,
+                confirmButtonColor: '#d33',
+                confirmButtonText: 'Compris'
+            });
+            return;
         }
-        else if (type === 'velo') {
-            return `
-                <div class="info-card">
-                    <h5><i class="fas fa-bicycle me-2"></i> Spécificités Vélo</h5>
-                    <div class="d-flex flex-wrap">
-                        ${vehicle.typeVelo ? `<span class="spec-badge"><i class="fas fa-bicycle me-1"></i> ${vehicle.typeVelo}</span>` : ''}
-                        ${vehicle.nombrevitesses ? `<span class="spec-badge"><i class="fas fa-cogs me-1"></i> ${vehicle.nombrevitesses} vitesses</span>` : ''}
-                        ${vehicle.electrique !== null ? `<span class="spec-badge"><i class="fas fa-bolt me-1"></i> ${vehicle.electrique ? 'Électrique' : 'Non électrique'}</span>` : ''}
-                    </div>
-                </div>
-            `;
+
+        if (!userId) {
+            Swal.fire({
+                icon: 'info',
+                title: 'Connexion requise',
+                text: 'Vous devez être connecté en tant que Loueur pour réserver un véhicule.',
+                showCancelButton: true,
+                confirmButtonText: 'Se connecter',
+                cancelButtonText: 'Annuler',
+                confirmButtonColor: '#3498db'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = '/utilisateur/connexion';
+                }
+            });
+            return;
         }
-        else if (type === 'scooter') {
-            return `
-                <div class="info-card">
-                    <h5><i class="fas fa-motorcycle me-2"></i> Spécificités Scooter</h5>
-                    <div class="d-flex flex-wrap">
-                        ${vehicle.cylindree ? `<span class="spec-badge"><i class="fas fa-tachometer-alt me-1"></i> ${vehicle.cylindree} cc</span>` : ''}
-                        ${vehicle.electrique !== null ? `<span class="spec-badge"><i class="fas fa-bolt me-1"></i> ${vehicle.electrique ? 'Électrique' : 'Thermique'}</span>` : ''}
-                    </div>
-                </div>
-            `;
+
+        if (userRole === 'AGENT_PRO' || userRole === 'AGENT_PAR') {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Action impossible',
+                text: 'Vous êtes connecté en tant qu\'Agent (Propriétaire). Vous ne pouvez pas louer de véhicules avec ce compte.',
+                confirmButtonColor: '#3085d6'
+            });
+            return;
         }
-        else if (type === 'moto') {
-            return `
-                <div class="info-card">
-                    <h5><i class="fas fa-motorcycle me-2"></i> Spécificités Moto</h5>
-                    <div class="d-flex flex-wrap">
-                        ${vehicle.cylindree ? `<span class="spec-badge"><i class="fas fa-tachometer-alt me-1"></i> ${vehicle.cylindree} cc</span>` : ''}
-                        ${vehicle.nbchevaux ? `<span class="spec-badge"><i class="fas fa-horse me-1"></i> ${vehicle.nbchevaux} ch</span>` : ''}
-                    </div>
-                </div>
-            `;
-        }
-        else if (type === 'van') {
-            return `
-                <div class="info-card">
-                    <h5><i class="fas fa-shuttle-van me-2"></i> Spécificités Van</h5>
-                    <div class="d-flex flex-wrap">
-                        ${vehicle.nombreplaces ? `<span class="spec-badge"><i class="fas fa-users me-1"></i> ${vehicle.nombreplaces} places</span>` : ''}
-                    </div>
-                </div>
-            `;
-        }
-        else if (type === 'camion') {
-            return `
-                <div class="info-card">
-                    <h5><i class="fas fa-truck me-2"></i> Spécificités Camion</h5>
-                    <div class="d-flex flex-wrap">
-                        ${vehicle.chargemax ? `<span class="spec-badge"><i class="fas fa-weight-hanging me-1"></i> Max ${vehicle.chargemax} T</span>` : ''}
-                        ${vehicle.volume ? `<span class="spec-badge"><i class="fas fa-box me-1"></i> ${vehicle.volume} m³</span>` : ''}
-                    </div>
-                </div>
-            `;
-        }
-        return '';
+
+        window.location.href = `/loueur/louer-vehicule/${vehicleId}`;
     }
 
-    function deleteVehicle(type, id) {
-        Swal.fire({
-            title: 'Êtes-vous sûr?',
-            text: "Cette action ne peut pas être annulée!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#d33',
-            cancelButtonColor: '#3085d6',
-            confirmButtonText: 'Oui, supprimer!',
-            cancelButtonText: 'Annuler'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                let apiUrl = '';
 
-                switch(type) {
-                    case 'voiture': apiUrl = `/api/voitures/${id}`; break;
-                    case 'velo':    apiUrl = `/api/velos/${id}`; break;
-                    case 'scooter': apiUrl = `/api/scooters/${id}`; break;
-                    case 'moto':    apiUrl = `/api/motos/${id}`; break;
-                    case 'van':     apiUrl = `/api/vans/${id}`; break;
-                    case 'camion':  apiUrl = `/api/camions/${id}`; break;
-                    default:
-                        Swal.fire('Erreur', 'Type de véhicule non supporté: ' + type, 'error');
-                        return;
-                }
+        function getSpecificDetails(vehicle, type) {
+            if (type === 'voiture') {
+                return `
+                    <div class="info-card">
+                        <h5><i class="fas fa-car me-2"></i> Spécificités Voiture</h5>
+                        <div class="d-flex flex-wrap">
+                            ${vehicle.nombreportes ? `<span class="spec-badge"><i class="fas fa-door-open me-1"></i> ${vehicle.nombreportes} portes</span>` : ''}
+                            ${vehicle.nombreplaces ? `<span class="spec-badge"><i class="fas fa-users me-1"></i> ${vehicle.nombreplaces} places</span>` : ''}
+                            ${vehicle.carburant ? `<span class="spec-badge"><i class="fas fa-gas-pump me-1"></i> ${vehicle.carburant}</span>` : ''}
+                            ${vehicle.automatique !== null ? `<span class="spec-badge"><i class="fas fa-cog me-1"></i> ${vehicle.automatique ? 'Automatique' : 'Manuelle'}</span>` : ''}
+                            ${vehicle.gps !== null ? `<span class="spec-badge"><i class="fas fa-map-marked-alt me-1"></i> ${vehicle.gps ? 'Avec GPS' : 'Sans GPS'}</span>` : ''}
+                            ${vehicle.coffrevolume ? `<span class="spec-badge"><i class="fas fa-suitcase me-1"></i> ${vehicle.coffrevolume}L coffre</span>` : ''}
+                            ${vehicle.nbchevaux ? `<span class="spec-badge"><i class="fas fa-horse me-1"></i> ${vehicle.nbchevaux} chevaux</span>` : ''}
+                        </div>
+                    </div>
+                `;
+            }
+            else if (type === 'velo') {
+                return `
+                    <div class="info-card">
+                        <h5><i class="fas fa-bicycle me-2"></i> Spécificités Vélo</h5>
+                        <div class="d-flex flex-wrap">
+                            ${vehicle.typeVelo ? `<span class="spec-badge"><i class="fas fa-bicycle me-1"></i> ${vehicle.typeVelo}</span>` : ''}
+                            ${vehicle.nombrevitesses ? `<span class="spec-badge"><i class="fas fa-cogs me-1"></i> ${vehicle.nombrevitesses} vitesses</span>` : ''}
+                            ${vehicle.electrique !== null ? `<span class="spec-badge"><i class="fas fa-bolt me-1"></i> ${vehicle.electrique ? 'Électrique' : 'Non électrique'}</span>` : ''}
+                        </div>
+                    </div>
+                `;
+            }
+            else if (type === 'scooter') {
+                return `
+                    <div class="info-card">
+                        <h5><i class="fas fa-motorcycle me-2"></i> Spécificités Scooter</h5>
+                        <div class="d-flex flex-wrap">
+                            ${vehicle.cylindree ? `<span class="spec-badge"><i class="fas fa-tachometer-alt me-1"></i> ${vehicle.cylindree} cc</span>` : ''}
+                            ${vehicle.electrique !== null ? `<span class="spec-badge"><i class="fas fa-bolt me-1"></i> ${vehicle.electrique ? 'Électrique' : 'Thermique'}</span>` : ''}
+                        </div>
+                    </div>
+                `;
+            }
+            else if (type === 'moto') {
+                return `
+                    <div class="info-card">
+                        <h5><i class="fas fa-motorcycle me-2"></i> Spécificités Moto</h5>
+                        <div class="d-flex flex-wrap">
+                            ${vehicle.cylindree ? `<span class="spec-badge"><i class="fas fa-tachometer-alt me-1"></i> ${vehicle.cylindree} cc</span>` : ''}
+                            ${vehicle.nbchevaux ? `<span class="spec-badge"><i class="fas fa-horse me-1"></i> ${vehicle.nbchevaux} ch</span>` : ''}
+                        </div>
+                    </div>
+                `;
+            }
+            else if (type === 'van') {
+                return `
+                    <div class="info-card">
+                        <h5><i class="fas fa-shuttle-van me-2"></i> Spécificités Van</h5>
+                        <div class="d-flex flex-wrap">
+                            ${vehicle.nombreplaces ? `<span class="spec-badge"><i class="fas fa-users me-1"></i> ${vehicle.nombreplaces} places</span>` : ''}
+                        </div>
+                    </div>
+                `;
+            }
+            else if (type === 'camion') {
+                return `
+                    <div class="info-card">
+                        <h5><i class="fas fa-truck me-2"></i> Spécificités Camion</h5>
+                        <div class="d-flex flex-wrap">
+                            ${vehicle.chargemax ? `<span class="spec-badge"><i class="fas fa-weight-hanging me-1"></i> Max ${vehicle.chargemax} T</span>` : ''}
+                            ${vehicle.volume ? `<span class="spec-badge"><i class="fas fa-box me-1"></i> ${vehicle.volume} m³</span>` : ''}
+                        </div>
+                    </div>
+                `;
+            }
+            return '';
+        }
 
-                fetch(apiUrl, {
-                    method: 'DELETE'
-                })
-                .then(response => {
-                    if (response.ok) {
-                        Swal.fire(
-                            'Supprimé!',
-                            'Le véhicule a été supprimé.',
-                            'success'
-                        ).then(() => {
-                            const userRole = [[${session.role}]];
-                            if (userRole === 'AGENT_PRO') {
-                                window.location.href = '/agent-pro/profil';
-                            } else if (userRole === 'AGENT_PAR') {
-                                window.location.href = '/agent-par/profil';
-                            } else {
-                                window.location.href = '/vehicule/liste';
-                            }
-                        });
-                    } else {
+        function deleteVehicle(type, id) {
+            Swal.fire({
+                title: 'Êtes-vous sûr?',
+                text: "Cette action ne peut pas être annulée!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Oui, supprimer!',
+                cancelButtonText: 'Annuler'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    let apiUrl = '';
+
+                    switch(type) {
+                        case 'voiture': apiUrl = `/api/voitures/${id}`; break;
+                        case 'velo':    apiUrl = `/api/velos/${id}`; break;
+                        case 'scooter': apiUrl = `/api/scooters/${id}`; break;
+                        case 'moto':    apiUrl = `/api/motos/${id}`; break;
+                        case 'van':     apiUrl = `/api/vans/${id}`; break;
+                        case 'camion':  apiUrl = `/api/camions/${id}`; break;
+                        default:
+                            Swal.fire('Erreur', 'Type de véhicule non supporté: ' + type, 'error');
+                            return;
+                    }
+
+                    fetch(apiUrl, {
+                        method: 'DELETE'
+                    })
+                    .then(response => {
+                        if (response.ok) {
+                            Swal.fire(
+                                'Supprimé!',
+                                'Le véhicule a été supprimé.',
+                                'success'
+                            ).then(() => {
+                                const userRole = [[${session.role}]];
+                                if (userRole === 'AGENT_PRO') {
+                                    window.location.href = '/agent-pro/profil';
+                                } else if (userRole === 'AGENT_PAR') {
+                                    window.location.href = '/agent-par/profil';
+                                } else {
+                                    window.location.href = '/vehicule/liste';
+                                }
+                            });
+                        } else {
+                            Swal.fire(
+                                'Erreur!',
+                                'Erreur lors de la suppression.',
+                                'error'
+                            );
+                        }
+                    })
+                    .catch(error => {
                         Swal.fire(
                             'Erreur!',
-                            'Erreur lors de la suppression.',
+                            'Erreur réseau: ' + error.message,
                             'error'
                         );
-                    }
-                })
-                .catch(error => {
-                    Swal.fire(
-                        'Erreur!',
-                        'Erreur réseau: ' + error.message,
-                        'error'
-                    );
-                });
-            }
-        });
-    }
+                    });
+                }
+            });
+        }
 </script>
 </body>
 </html>

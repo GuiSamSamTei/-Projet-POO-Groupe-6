@@ -120,8 +120,11 @@ public class LoueurMVCController {
                                 HttpSession session,
                                 Model model) {
 
-        if(session.getAttribute("user")==null)
+        if(session.getAttribute("user")==null){
+            session.setAttribute("pendingVehicleId", id);
             return "redirect:/utilisateur/connexion?required=true";
+        }
+
 
 
         Long loueur_id = (Long) session.getAttribute("user");

@@ -7,8 +7,6 @@
 
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Leaflet CSS -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
@@ -42,9 +40,10 @@
         }
 
         #map {
-            height: 400px;
+            height: 500px;
             border-radius: 10px;
             margin-top: 20px;
+            transition: height 0.3s;
         }
 
         .city-card {
@@ -75,6 +74,35 @@
         .type-camion { background: #e8f5e9; color: #2e7d32; }
         .type-van { background: #fff3e0; color: #ef6c00; }
 
+        /* Style pour les boutons de contrôle de la carte */
+        .map-controls {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 1000;
+        }
+
+        .map-controls .btn {
+            margin-bottom: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        #toggleView.active {
+            background-color: #3498db;
+            color: white;
+        }
+
+        /* Style pour les fenêtres d'information */
+        .city-info-window, .vehicle-info-window {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 10px;
+            max-width: 250px;
+        }
+
+        .city-info-window h6, .vehicle-info-window h6 {
+            color: #2c3e50;
+        }
+
         @media (max-width: 768px) {
             .hero-section {
                 padding: 40px 0;
@@ -82,6 +110,10 @@
 
             .search-container {
                 padding: 20px;
+            }
+
+            #map {
+                height: 300px;
             }
         }
     </style>
@@ -97,6 +129,18 @@
         </a>
 
         <div class="d-flex align-items-center">
+            <!-- Boutons de contrôle de la carte -->
+            <div class="btn-group me-2" role="group">
+                <button id="toggleView" class="btn btn-outline-secondary btn-sm"
+                        title="Basculer entre la vue cluster et la vue détaillée">
+                    <i class="fas fa-layer-group"></i>
+                </button>
+                <button id="locateMe" class="btn btn-outline-secondary btn-sm"
+                        title="Me localiser">
+                    <i class="fas fa-location-arrow"></i>
+                </button>
+            </div>
+
             <a th:href="@{/vehicule/liste}" class="btn btn-outline-primary me-2">
                 <i class="fas fa-search me-1"></i> Voir tous les véhicules
             </a>
@@ -162,7 +206,7 @@
             <div class="col-md-4">
                 <label class="form-label">📍 Où allez-vous ?</label>
                 <input type="text" class="form-control" name="villedispo"
-                       placeholder="Paris, Lyon, Marseille...">
+                       placeholder="Toulouse, Paris, Lyon...">
             </div>
 
             <div class="col-md-3">
@@ -206,11 +250,18 @@
     <div class="row">
         <div class="col-md-8">
             <h4 class="mb-3">
-                <i class="fas fa-map-marked-alt me-2"></i>Véhicules disponibles près de vous
+                <i class="fas fa-map-marked-alt me-2"></i>
+                <span id="mapTitle">Véhicules disponibles près de vous</span>
             </h4>
             <div id="map"></div>
+            <div class="map-controls">
+                <button id="resetView" class="btn btn-outline-secondary btn-sm" title="Réinitialiser la vue">
+                    <i class="fas fa-home"></i>
+                </button>
+            </div>
             <p class="text-muted mt-2">
-                <small><i class="fas fa-info-circle me-1"></i> Cliquez sur les marqueurs pour voir les détails des véhicules</small>
+                <small><i class="fas fa-info-circle me-1"></i>
+                    <span id="mapHint">Chargement de votre position...</span></small>
             </p>
         </div>
 
@@ -362,18 +413,36 @@
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB-8BMh0DN05o7KtELzcn93fK4_sS1U5Ic&callback=initMap" async defer></script>
 
 <script>
+    /*<![CDATA[*/
+    var isUserLoggedIn = /*[[${currentUser != null}]]*/ false;
+    var isLoueur = false;
+    /*]]>*/
+    if (isUserLoggedIn) {
+        var profileUrl = '/*[[${profileUrl}]]*/';
+        isLoueur = profileUrl === '/loueur/profil';
+    }
     let map;
     let markers = [];
+    let clusters = [];
     let infoWindow;
-    let userLocation = { lat: 48.8566, lng: 2.3522 }; // 默认巴黎
+    let currentZoomLevel = 12;
+    let isClusterView = false;
+    let userLocation = { lat: 43.6047, lng: 1.4442 }; // Toulouse par défaut
+    let userCity = "Toulouse";
 
+    // Initialisation de la carte
     function initMap() {
         map = new google.maps.Map(document.getElementById('map'), {
             center: userLocation,
-            zoom: 12,
+            zoom: currentZoomLevel,
             styles: [
                 {
                     featureType: "poi",
+                    elementType: "labels",
+                    stylers: [{ visibility: "off" }]
+                },
+                {
+                    featureType: "transit",
                     elementType: "labels",
                     stylers: [{ visibility: "off" }]
                 }
@@ -382,8 +451,43 @@
 
         infoWindow = new google.maps.InfoWindow();
 
-        loadVehicles();
+        // Gestionnaire d'événement pour le changement de zoom
+        google.maps.event.addListener(map, 'zoom_changed', function() {
+            currentZoomLevel = map.getZoom();
+            updateMapView();
+        });
 
+        // Bouton de réinitialisation de la vue
+        document.getElementById('resetView').addEventListener('click', function() {
+            map.setCenter(userLocation);
+            map.setZoom(12);
+            isClusterView = false;
+            updateMapView();
+            updateMapHint();
+        });
+
+        // Bouton de localisation
+        document.getElementById('locateMe').addEventListener('click', function() {
+            locateUser();
+        });
+
+        // Bouton de basculement de vue
+        document.getElementById('toggleView').addEventListener('click', function() {
+            isClusterView = !isClusterView;
+            this.classList.toggle('active', isClusterView);
+            updateMapView();
+            updateMapHint();
+        });
+
+        // Chargement initial - d'abord essayer de localiser l'utilisateur
+        locateUser();
+
+        // Mise à jour de l'indicateur de vue
+        document.getElementById('toggleView').classList.remove('active');
+    }
+
+    // Localiser l'utilisateur
+    function locateUser() {
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
                 (position) => {
@@ -392,64 +496,208 @@
                         lng: position.coords.longitude
                     };
                     map.setCenter(userLocation);
-                    addUserMarker();
+                    map.setZoom(12);
+                    isClusterView = false;
+
+                    // Tenter de déterminer la ville à partir des coordonnées
+                    geocodeCity(position.coords.latitude, position.coords.longitude);
+
+                    updateMapView();
+                    updateMapHint();
                 },
-                () => {
-                    console.log("Location permission denied");
+                (error) => {
+                    console.log("Permission de localisation refusée ou erreur:", error);
+                    // Utiliser Toulouse par défaut
+                    userLocation = { lat: 43.6047, lng: 1.4442 };
+                    userCity = "Toulouse";
+                    map.setCenter(userLocation);
+                    map.setZoom(12);
+                    isClusterView = false;
+                    updateMapView();
+                    updateMapHint();
                 }
             );
+        } else {
+            alert("La géolocalisation n'est pas supportée par votre navigateur. Toulouse sera affichée par défaut.");
+            userLocation = { lat: 43.6047, lng: 1.4442 };
+            userCity = "Toulouse";
+            map.setCenter(userLocation);
+            map.setZoom(12);
+            isClusterView = false;
+            updateMapView();
+            updateMapHint();
         }
+    }
 
-        document.getElementById('locateMe').addEventListener('click', function() {
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(
-                    (position) => {
-                        userLocation = {
-                            lat: position.coords.latitude,
-                            lng: position.coords.longitude
-                        };
-                        map.setCenter(userLocation);
-                        map.setZoom(15);
-                        addUserMarker();
+    // Géocodage inverse pour obtenir le nom de la ville
+    function geocodeCity(lat, lng) {
+        // Vous pouvez utiliser une API de géocodage ici (Google Geocoding API)
+        // Pour l'instant, nous utilisons une approche simplifiée
+        console.log("Géocodage des coordonnées:", lat, lng);
+
+        // Simuler la détection de ville (en production, utiliser une vraie API)
+        setTimeout(() => {
+            // Pour la démo, nous gardons Toulouse
+            userCity = "Votre ville";
+            updateMapHint();
+        }, 100);
+    }
+
+    // Mise à jour du texte d'indication de la carte
+    function updateMapHint() {
+        const hintElement = document.getElementById('mapHint');
+        if (currentZoomLevel < 8 || isClusterView) {
+            hintElement.textContent = "Vue d'ensemble de la France - Zoomer pour voir les véhicules disponibles";
+        } else {
+            hintElement.textContent = `Véhicules disponibles à ${userCity} - Dézoomer pour voir la France entière`;
+        }
+    }
+
+    // Mise à jour de la vue de la carte
+    function updateMapView() {
+        clearAllMarkers();
+
+        if (currentZoomLevel < 8 || isClusterView) {
+            // Vue cluster (villes) - France entière
+            loadCityClusters();
+        } else {
+            // Vue détaillée (véhicules individuels) - Ville spécifique
+            loadIndividualVehicles();
+        }
+        updateMapHint();
+    }
+
+    // Charger les clusters de villes (France entière)
+    function loadCityClusters() {
+        // Charger les statistiques de toutes les villes
+        fetch('/api/map/city-stats')
+            .then(response => {
+                if (!response.ok) throw new Error('Erreur réseau');
+                return response.json();
+            })
+            .then(cityStats => {
+                cityStats.forEach(city => {
+                    if (city.totalVehicles > 0) {
+                        addCityClusterMarker(city);
                     }
-                );
-            }
-        });
-    }
-
-    function addUserMarker() {
-        new google.maps.Marker({
-            position: userLocation,
-            map: map,
-            icon: {
-                path: google.maps.SymbolPath.CIRCLE,
-                scale: 8,
-                fillColor: "#4285F4",
-                fillOpacity: 1,
-                strokeWeight: 2,
-                strokeColor: "#FFFFFF"
-            },
-            title: "Votre position"
-        });
-    }
-
-    function loadVehicles() {
-
-        fetch('/api/vehicules/nearby?lat=' + userLocation.lat + '&lng=' + userLocation.lng + '&radius=10')
-            .then(response => response.json())
-            .then(vehicles => {
-                clearMarkers();
-
-                vehicles.forEach(vehicle => {
-                    addVehicleMarker(vehicle);
                 });
             })
             .catch(error => {
-                console.error('Error loading vehicles:', error);
-                loadMockVehicles();
+                console.error('Erreur lors du chargement des statistiques des villes:', error);
+                loadMockCityClusters();
             });
     }
 
+    // Charger les véhicules individuels (ville spécifique)
+    function loadIndividualVehicles() {
+    fetch(`/api/map/all-vehicles?city=${encodeURIComponent(userCity)}`)
+        .then(response => {
+            if (!response.ok) throw new Error('Erreur réseau');
+            return response.json();
+        })
+        .then(vehicles => {
+            console.log(`Chargé ${vehicles.length} véhicules pour ${userCity}`);
+            vehicles.forEach(vehicle => {
+                addVehicleMarker(vehicle);
+            });
+        })
+        .catch(error => {
+            console.error('Erreur lors du chargement des véhicules:', error);
+            loadMockVehicles();
+        });
+    }
+
+    // Ajouter un marqueur de cluster de ville
+    function addCityClusterMarker(city) {
+        const clusterSize = Math.min(30 + (city.totalVehicles * 5), 80);
+
+        const icon = {
+            url: `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(`
+                <svg xmlns="http://www.w3.org/2000/svg" width="${clusterSize}" height="${clusterSize}" viewBox="0 0 ${clusterSize} ${clusterSize}">
+                    <circle cx="${clusterSize/2}" cy="${clusterSize/2}" r="${clusterSize/2 - 2}"
+                        fill="#3498db" stroke="white" stroke-width="3" opacity="0.8"/>
+                    <text x="${clusterSize/2}" y="${clusterSize/2 + 5}"
+                        font-family="Arial" font-size="${Math.max(14, clusterSize/4)}"
+                        fill="white" text-anchor="middle" font-weight="bold">
+                        ${city.totalVehicles}
+                    </text>
+                </svg>
+            `)}`,
+            scaledSize: new google.maps.Size(clusterSize, clusterSize),
+            origin: new google.maps.Point(0, 0),
+            anchor: new google.maps.Point(clusterSize/2, clusterSize/2)
+        };
+
+        const marker = new google.maps.Marker({
+            position: { lat: city.latitude, lng: city.longitude },
+            map: map,
+            icon: icon,
+            title: `${city.cityName}: ${city.totalVehicles} véhicules disponibles`,
+            zIndex: 999
+        });
+
+        marker.addListener('click', () => {
+            const content = createCityInfoWindowContent(city);
+            infoWindow.setContent(content);
+            infoWindow.open(map, marker);
+        });
+
+        clusters.push(marker);
+    }
+
+    // Créer le contenu de la fenêtre d'information pour une ville
+    function createCityInfoWindowContent(city) {
+        let vehicleTypesHtml = '';
+        if (city.vehicleTypes) {
+            for (const [type, count] of Object.entries(city.vehicleTypes)) {
+                const iconClass = getVehicleIconClass(type);
+                vehicleTypesHtml += `
+                    <div class="d-flex justify-content-between mb-1">
+                        <span>
+                            <i class="fas ${iconClass} me-2"></i>
+                            ${type.charAt(0).toUpperCase() + type.slice(1)}
+                        </span>
+                        <span class="badge bg-secondary">${count}</span>
+                    </div>
+                `;
+            }
+        }
+
+        return `
+            <div class="city-info-window">
+                <h6 class="fw-bold mb-2">${city.cityName}</h6>
+                <p class="mb-2"><i class="fas fa-car me-2"></i> Total: <strong>${city.totalVehicles}</strong> véhicules disponibles</p>
+                <hr class="my-2">
+                <div class="mb-2">
+                    <small class="text-muted">Types de véhicules disponibles:</small>
+                    ${vehicleTypesHtml}
+                </div>
+                <div class="d-grid gap-2 mt-2">
+                    <a href="/vehicule/filtres?villedispo=${encodeURIComponent(city.cityName)}"
+                       class="btn btn-sm btn-primary">
+                        <i class="fas fa-search me-1"></i> Voir les véhicules
+                    </a>
+                    <button onclick="zoomToCity('${city.cityName}', ${city.latitude}, ${city.longitude})"
+                            class="btn btn-sm btn-outline-primary">
+                        <i class="fas fa-map-marker-alt me-1"></i> Zoom sur cette ville
+                    </button>
+                </div>
+            </div>
+        `;
+    }
+
+    // Zoomer sur une ville spécifique
+    function zoomToCity(cityName, lat, lng) {
+        userLocation = { lat: lat, lng: lng };
+        userCity = cityName;
+        map.setCenter(userLocation);
+        map.setZoom(12);
+        isClusterView = false;
+        infoWindow.close();
+        updateMapView();
+    }
+
+    // Ajouter un marqueur pour un véhicule individuel
     function addVehicleMarker(vehicle) {
         const icon = getVehicleIcon(vehicle.type);
 
@@ -457,11 +705,11 @@
             position: { lat: vehicle.latitude, lng: vehicle.longitude },
             map: map,
             icon: icon,
-            title: vehicle.marque + ' ' + vehicle.modele
+            title: `${vehicle.marque} ${vehicle.modele} - ${vehicle.city || userCity}`
         });
 
         marker.addListener('click', () => {
-            const content = createInfoWindowContent(vehicle);
+            const content = createVehicleInfoWindowContent(vehicle);
             infoWindow.setContent(content);
             infoWindow.open(map, marker);
         });
@@ -469,6 +717,7 @@
         markers.push(marker);
     }
 
+    // Obtenir l'icône pour un type de véhicule
     function getVehicleIcon(vehicleType) {
         const baseIcon = {
             url: `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(`
@@ -487,6 +736,7 @@
         return baseIcon;
     }
 
+    // Obtenir la couleur pour un type de véhicule
     function getVehicleColor(type) {
         const colors = {
             'voiture': '#3498db',
@@ -499,6 +749,7 @@
         return colors[type] || '#3498db';
     }
 
+    // Obtenir la lettre pour l'icône d'un type de véhicule
     function getVehicleIconLetter(type) {
         const letters = {
             'voiture': 'V',
@@ -511,10 +762,36 @@
         return letters[type] || 'V';
     }
 
-    function createInfoWindowContent(vehicle) {
+    // Obtenir la classe d'icône pour un type de véhicule
+    function getVehicleIconClass(type) {
+        const iconClasses = {
+            'voiture': 'fa-car',
+            'moto': 'fa-motorcycle',
+            'camion': 'fa-truck',
+            'van': 'fa-shuttle-van',
+            'scooter': 'fa-motorcycle',
+            'velo': 'fa-bicycle'
+        };
+        return iconClasses[type] || 'fa-car';
+    }
+
+    // Créer le contenu de la fenêtre d'information pour un véhicule
+
+    // Créer le contenu de la fenêtre d'information pour un véhicule
+    function createVehicleInfoWindowContent(vehicle) {
+        var reserveUrl = "/loueur/louer-vehicule/" + vehicle.id;
+
+        var onClickHandler = "";
+        if (isUserLoggedIn && !isLoueur) {
+            onClickHandler = `onclick="event.preventDefault(); alert('Seuls les loueurs peuvent réserver des véhicules.');"`;
+        }
+
         return `
             <div class="vehicle-info-window">
                 <h6 class="fw-bold">${vehicle.marque} ${vehicle.modele}</h6>
+                <p class="mb-1 text-muted">
+                    <i class="fas fa-map-marker-alt me-1"></i> ${vehicle.city || userCity}
+                </p>
                 <p class="mb-1">
                     <i class="fas fa-tag me-1"></i>
                     <span class="badge bg-${getVehicleColorClass(vehicle.type)}">
@@ -522,13 +799,9 @@
                     </span>
                 </p>
                 <p class="mb-1"><i class="fas fa-euro-sign me-1"></i> ${vehicle.prixJournalier} €/jour</p>
-                <p class="mb-1"><i class="fas fa-gas-pump me-1"></i> ${vehicle.carburant}</p>
-                <p class="mb-3"><i class="fas fa-calendar-alt me-1"></i> Disponible maintenant</p>
+                <p class="mb-1"><i class="fas fa-check-circle text-success me-1"></i> Disponible maintenant</p>
                 <div class="d-grid gap-2">
-                    <a href="/vehicule/details/${vehicle.id}" class="btn btn-sm btn-primary">
-                        <i class="fas fa-info-circle me-1"></i> Détails
-                    </a>
-                    <a href="/reservation/nouvelle/${vehicle.id}" class="btn btn-sm btn-success">
+                    <a href="${reserveUrl}" class="btn btn-sm btn-primary" ${onClickHandler}>
                         <i class="fas fa-calendar-check me-1"></i> Réserver
                     </a>
                 </div>
@@ -536,6 +809,7 @@
         `;
     }
 
+    // Obtenir la classe de couleur Bootstrap pour un type de véhicule
     function getVehicleColorClass(type) {
         const classes = {
             'voiture': 'primary',
@@ -548,11 +822,47 @@
         return classes[type] || 'primary';
     }
 
-    function clearMarkers() {
+    // Effacer tous les marqueurs
+    function clearAllMarkers() {
         markers.forEach(marker => marker.setMap(null));
         markers = [];
+
+        clusters.forEach(cluster => cluster.setMap(null));
+        clusters = [];
     }
 
+    // Données de démonstration pour les clusters de villes
+    function loadMockCityClusters() {
+        const mockCities = [
+            {
+                cityName: "Toulouse",
+                totalVehicles: 18,
+                vehicleTypes: { "voiture": 12, "moto": 4, "van": 2 },
+                latitude: 43.6047,
+                longitude: 1.4442
+            },
+            {
+                cityName: "Paris",
+                totalVehicles: 24,
+                vehicleTypes: { "voiture": 15, "moto": 5, "van": 3, "camion": 1 },
+                latitude: 48.8566,
+                longitude: 2.3522
+            },
+            {
+                cityName: "Lyon",
+                totalVehicles: 12,
+                vehicleTypes: { "voiture": 8, "moto": 3, "van": 1 },
+                latitude: 45.7640,
+                longitude: 4.8357
+            }
+        ];
+
+        mockCities.forEach(city => {
+            addCityClusterMarker(city);
+        });
+    }
+
+    // Données de démonstration pour les véhicules individuels
     function loadMockVehicles() {
         const mockVehicles = [
             {
@@ -560,50 +870,20 @@
                 marque: 'Peugeot',
                 modele: '208',
                 type: 'voiture',
-                latitude: 48.8566,
-                longitude: 2.3522,
-                prixJournalier: 45,
-                carburant: 'Essence'
+                city: 'Toulouse',
+                latitude: 43.6047 + (Math.random() * 0.03 - 0.015),
+                longitude: 1.4442 + (Math.random() * 0.03 - 0.015),
+                prixJournalier: 45
             },
             {
                 id: 2,
                 marque: 'Renault',
                 modele: 'Clio',
                 type: 'voiture',
-                latitude: 48.8600,
-                longitude: 2.3400,
-                prixJournalier: 40,
-                carburant: 'Diesel'
-            },
-            {
-                id: 3,
-                marque: 'Yamaha',
-                modele: 'MT-07',
-                type: 'moto',
-                latitude: 48.8500,
-                longitude: 2.3600,
-                prixJournalier: 65,
-                carburant: 'Essence'
-            },
-            {
-                id: 4,
-                marque: 'Mercedes',
-                modele: 'Sprinter',
-                type: 'van',
-                latitude: 48.8550,
-                longitude: 2.3300,
-                prixJournalier: 120,
-                carburant: 'Diesel'
-            },
-            {
-                id: 5,
-                marque: 'Peugeot',
-                modele: 'Partner',
-                type: 'camion',
-                latitude: 48.8650,
-                longitude: 2.3200,
-                prixJournalier: 85,
-                carburant: 'Diesel'
+                city: 'Toulouse',
+                latitude: 43.6047 + (Math.random() * 0.03 - 0.015),
+                longitude: 1.4442 + (Math.random() * 0.03 - 0.015),
+                prixJournalier: 40
             }
         ];
 
@@ -612,17 +892,23 @@
         });
     }
 
+    // Initialisation lorsque le DOM est chargé
     document.addEventListener('DOMContentLoaded', function() {
         const dateInputs = document.querySelectorAll('input[type="date"]');
         dateInputs.forEach(input => {
             const today = new Date().toISOString().split('T')[0];
             input.min = today;
-
             input.setAttribute('lang', 'fr-FR');
             input.setAttribute('title', 'Choisissez une date');
         });
 
-        initMap();
+        // Initialisation différée pour s'assurer que la carte est prête
+        if (typeof google !== 'undefined' && google.maps) {
+            initMap();
+        } else {
+            // Si Google Maps n'est pas encore chargé, attendre
+            window.addEventListener('load', initMap);
+        }
     });
 </script>
 </body>

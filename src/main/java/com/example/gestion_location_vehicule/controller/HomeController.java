@@ -26,7 +26,7 @@ public class HomeController {
         try {
             model.addAttribute("pageTitle", "AutoPartage - Location de véhicules");
 
-            model.addAttribute("popularCities", List.of("Paris", "Lyon", "Marseille", "Bordeaux", "Lille"));
+            model.addAttribute("popularCities", List.of("Toulouse", "Paris", "Lyon", "Marseille", "Bordeaux", "Lille"));
 
             Long userId = (Long) session.getAttribute("user");
             System.out.println("DEBUG - User ID from session: " + userId);
