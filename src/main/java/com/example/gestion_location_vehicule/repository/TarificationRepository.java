@@ -25,6 +25,7 @@ public interface TarificationRepository extends JpaRepository<Tarification, Long
     // Récupérer toutes les tarifications dont le pourcentage est inférieur ou égal à une valeur
     List<Tarification> findByPourcentageLessThanEqual(double pourcentageMax);
 
+    Tarification findByAnnee(Long annee);
     // Combinaison : prix fixe et pourcentage
     List<Tarification> findByPrixfixeLessThanEqualAndPourcentageLessThanEqual(double prixMax, double pourcentageMax);
 }
