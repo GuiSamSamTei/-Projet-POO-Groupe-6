@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import com.example.gestion_location_vehicule.model.DisponibiliteVehicule;
 import org.springframework.stereotype.Service;
 
 import com.example.gestion_location_vehicule.model.Vehicule;
@@ -12,6 +13,7 @@ import com.example.gestion_location_vehicule.repository.VehiculeRepository;
 import com.example.gestion_location_vehicule.specification.VehiculeSpecification;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -97,6 +99,44 @@ public class VehiculeService implements IVehiculeService{
         return vehiculeRepository.findAll(
                 VehiculeSpecification.withFilters(filters)
         );
+    }
+
+
+
+    public boolean estDisponible(Long vehiculeId,
+                                 LocalDate dateDebut,
+                                 LocalDate dateFin) {
+
+        Vehicule vehicule =
+                vehiculeRepository.findById(vehiculeId).get();
+
+        if (!vehicule.getVehiculedispo())
+            return false;
+
+        if(vehicule.getDisponibilites()==null)
+        {
+            return false;
+        }
+
+        if(vehicule.getDisponibilites().size()==0)
+            return false;
+
+
+        for (DisponibiliteVehicule dispo : vehicule.getDisponibilites()) {
+
+            boolean debutOK =
+                    !dateDebut.isBefore(dispo.getDateDebut());
+            // dateDebut >= dispo.dateDebut
+
+            boolean finOK =
+                    !dateFin.isAfter(dispo.getDateFin());
+            // dateFin <= dispo.dateFin
+
+            if (debutOK && finOK) {
+                return true;
+            }
+        }
+        return false;
     }
 
 
