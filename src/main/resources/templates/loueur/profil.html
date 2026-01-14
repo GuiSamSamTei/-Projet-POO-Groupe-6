@@ -9,6 +9,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <style>
         :root {
@@ -56,6 +58,15 @@
 
         .info-item:last-child {
             border-bottom: none;
+        }
+
+        /* Carte de partage */
+        .share-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
         }
     </style>
 </head>
@@ -160,19 +171,21 @@
                 </div>
             </div>
 
-            <!-- Share Profile -->
-            <div class="card mt-3">
+            <div class="card share-card mt-3">
                 <div class="card-body">
-                    <h6 class="card-title">Partager votre profil</h6>
-                    <p class="card-text small text-muted">Voici le lien vers votre profil public :</p>
+                    <h5 class="card-title"><i class="fas fa-share-alt me-2"></i>Partager votre profil</h5>
+                    <p class="card-text mb-3">Voici le lien vers votre profil public que vous pouvez partager :</p>
                     <div class="input-group">
-                        <input type="text" class="form-control form-control-sm"
-                               th:value="${'http://localhost:9191/utilisateur/profile/' + loueur.id}"
-                               readonly>
-                        <button class="btn btn-outline-secondary btn-sm" type="button" onclick="copyProfileLink()">
-                            <i class="fas fa-copy"></i>
+                        <input type="text" class="form-control" id="profileLink"
+                               th:value="${'http://localhost:9191/utilisateur/profile/' + loueur.id}" readonly>
+                        <button class="btn btn-light" type="button" onclick="copyProfileLink()">
+                            <i class="fas fa-copy me-1"></i> Copier
                         </button>
                     </div>
+                    <small class="text-white-50 mt-2 d-block">
+                        <i class="fas fa-info-circle me-1"></i>
+                        Les autres utilisateurs pourront voir vos informations et évaluations.
+                    </small>
                 </div>
             </div>
         </div>
@@ -326,29 +339,43 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
+    // 更新后的复制函数，使用SweetAlert2
     function copyProfileLink() {
-        const linkInput = document.querySelector('input[readonly]');
-        linkInput.select();
-        linkInput.setSelectionRange(0, 99999);
+        const profileLinkInput = document.getElementById('profileLink');
+        profileLinkInput.select();
+        profileLinkInput.setSelectionRange(0, 99999); // Pour mobile
 
-        if (navigator.clipboard && window.isSecureContext) {
-            navigator.clipboard.writeText(linkInput.value)
-                .then(() => {
-                    alert('Lien copié dans le presse-papiers !');
-                })
-                .catch(err => {
-                    console.error('Erreur lors de la copie: ', err);
-                    copyToClipboardFallback(linkInput);
-                });
-        } else {
-            copyToClipboardFallback(linkInput);
+        try {
+            navigator.clipboard.writeText(profileLinkInput.value);
+
+            // Utiliser SweetAlert2 pour une notification visuelle
+            Swal.fire({
+                icon: 'success',
+                title: 'Lien copié !',
+                text: 'Le lien de votre profil a été copié dans le presse-papier.',
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                    toast.addEventListener('mouseenter', Swal.stopTimer)
+                    toast.addEventListener('mouseleave', Swal.resumeTimer)
+                }
+            });
+        } catch (err) {
+            console.error('Erreur lors de la copie : ', err);
+            // Fallback pour les anciens navigateurs
+            document.execCommand('copy');
+
+            Swal.fire({
+                icon: 'info',
+                title: 'Lien copié',
+                text: 'Le lien a été copié dans le presse-papier.',
+                timer: 2000,
+                showConfirmButton: false
+            });
         }
-    }
-
-    function copyToClipboardFallback(inputElement) {
-        inputElement.select();
-        document.execCommand('copy');
-        alert('Lien copié dans le presse-papiers !');
     }
 
     document.addEventListener('DOMContentLoaded', function() {
