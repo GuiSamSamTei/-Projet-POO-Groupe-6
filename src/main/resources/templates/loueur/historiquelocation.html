@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Historique des locations</title>
+
+    <style>
+        .location-card {
+            border: 1px solid #ccc;
+            padding: 15px;
+            margin-bottom: 25px;
+            background: #f9f9f9;
+        }
+
+        .location-card h2 {
+            margin-top: 0;
+        }
+
+        .info span {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .section-title {
+            margin-top: 15px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Historique de mes locations</h1>
+
+<div th:if="${contratlocationList.isEmpty()}">
+    <p>Aucune location trouvée.</p>
+</div>
+
+<!-- 🔁 LISTE DES CONTRATS -->
+<div th:each="contrat : ${contratlocationList}" class="location-card">
+
+    <!-- 🚗 VEHICULE -->
+    <h2 th:text="${contrat.vehicule.marque + ' ' + contrat.vehicule.modele}"></h2>
+
+    <div class="info">
+        <span><strong>Type :</strong> <span th:text="${contrat.vehicule.typeVehicule}"></span></span>
+        <span><strong>Couleur :</strong> <span th:text="${contrat.vehicule.couleur}"></span></span>
+        <span><strong>Ville :</strong> <span th:text="${contrat.vehicule.villedispo}"></span></span>
+        <span><strong>Prix / jour :</strong> <span th:text="${contrat.vehicule.prixjour}"></span> €</span>
+    </div>
+
+    <!-- 🚘 VOITURE -->
+    <div th:if="${contrat.vehicule instanceof T(com.example.gestion_location_vehicule.model.Voiture)}">
+        <p class="section-title">Détails voiture</p>
+        <span>Portes : <span th:text="${contrat.vehicule.nombreportes}"></span></span>
+        <span>Places : <span th:text="${contrat.vehicule.nombreplaces}"></span></span>
+        <span>Automatique : <span th:text="${contrat.vehicule.automatique ? 'Oui' : 'Non'}"></span></span>
+        <span>Carburant : <span th:text="${contrat.vehicule.carburant}"></span></span>
+        <span>GPS : <span th:text="${contrat.vehicule.gps ? 'Oui' : 'Non'}"></span></span>
+    </div>
+
+    <!-- 🚲 VELO -->
+    <div th:if="${contrat.vehicule instanceof T(com.example.gestion_location_vehicule.model.Velo)}">
+        <p class="section-title">Détails vélo</p>
+        <span>Électrique : <span th:text="${contrat.vehicule.electrique ? 'Oui' : 'Non'}"></span></span>
+        <span>Vitesses : <span th:text="${contrat.vehicule.nombreVitesses}"></span></span>
+        <span>Type : <span th:text="${contrat.vehicule.typeVelo}"></span></span>
+    </div>
+
+    <!-- 🏍 MOTO -->
+    <div th:if="${contrat.vehicule instanceof T(com.example.gestion_location_vehicule.model.Moto)}">
+        <p class="section-title">Détails moto</p>
+        <span>Cylindrée : <span th:text="${contrat.vehicule.cylindree}"></span> cc</span>
+        <span>Chevaux : <span th:text="${contrat.vehicule.nbchevaux}"></span></span>
+    </div>
+
+    <!-- 🚚 CAMION -->
+    <div th:if="${contrat.vehicule instanceof T(com.example.gestion_location_vehicule.model.Camion)}">
+        <p class="section-title">Détails camion</p>
+        <span>Charge max : <span th:text="${contrat.vehicule.chargemax}"></span> kg</span>
+        <span>Volume : <span th:text="${contrat.vehicule.volume}"></span> m³</span>
+    </div>
+
+    <!-- 🚐 VAN -->
+    <div th:if="${contrat.vehicule instanceof T(com.example.gestion_location_vehicule.model.Van)}">
+        <p class="section-title">Détails van</p>
+        <span>Places : <span th:text="${contrat.vehicule.nombreplaces}"></span></span>
+    </div>
+
+    <hr>
+
+    <!-- 📄 INFOS LOCATION -->
+    <div class="info">
+        <p class="section-title">Informations de location</p>
+        <span><strong>Date début :</strong> <span th:text="${contrat.datedebut}"></span></span>
+        <span><strong>Date fin :</strong> <span th:text="${contrat.datefin}"></span></span>
+        <span><strong>Assurance :</strong> <span > assurence vide </span></span>
+        <span><strong>Lieu de dépôt :</strong> <span th:text="${contrat.lieudepot}"></span></span>
+        <span><strong>Parking :</strong> <span > Parking vide</span></span>
+    </div>
+
+</div>
+
+</body>
+</html>

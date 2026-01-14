@@ -113,9 +113,17 @@
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">Disponibilité</label>
-                                    <div class="form-check mt-2">
-                                        <input class="form-check-input" type="checkbox" id="vehiculedispo">
-                                        <label class="form-check-label">Véhicule disponible immédiatement</label>
+                                    <div class="form-check mt-2 d-flex align-items-center">
+                                        <input class="form-check-input me-2" type="checkbox" id="vehiculedispo_voiture">
+                                        <label class="form-check-label me-3">Véhicule disponible</label>
+
+                                        <a th:href="@{'/vehicules/' + ${id} + '/disponibilites'}"
+                                           class="btn btn-sm btn-outline-info">
+                                            <i class="fas fa-calendar-alt me-1"></i> Gérer le planning
+                                        </a>
+                                    </div>
+                                    <div class="form-text text-muted">
+                                        Cochez pour une disponibilité générale, ou cliquez sur le bouton pour gérer les dates précises.
                                     </div>
                                 </div>
                             </div>
@@ -213,9 +221,17 @@
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">Disponibilité</label>
-                                    <div class="form-check mt-2">
-                                        <input class="form-check-input" type="checkbox" id="vehiculedispo_velo">
-                                        <label class="form-check-label">Véhicule disponible</label>
+                                    <div class="form-check mt-2 d-flex align-items-center">
+                                        <input class="form-check-input me-2" type="checkbox" id="vehiculedispo_velo">
+                                        <label class="form-check-label me-3">Véhicule disponible</label>
+
+                                        <a th:href="@{'/vehicules/' + ${id} + '/disponibilites'}"
+                                           class="btn btn-sm btn-outline-info">
+                                            <i class="fas fa-calendar-alt me-1"></i> Gérer le planning
+                                        </a>
+                                    </div>
+                                    <div class="form-text text-muted">
+                                        Cochez pour une disponibilité générale, ou cliquez sur le bouton pour gérer les dates précises.
                                     </div>
                                 </div>
                             </div>
@@ -286,9 +302,17 @@
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">Disponibilité</label>
-                                    <div class="form-check mt-2">
-                                        <input class="form-check-input" type="checkbox" id="vehiculedispo_van">
-                                        <label class="form-check-label">Disponible</label>
+                                    <div class="form-check mt-2 d-flex align-items-center">
+                                        <input class="form-check-input me-2" type="checkbox" id="vehiculedispo_van">
+                                        <label class="form-check-label me-3">Véhicule disponible</label>
+
+                                        <a th:href="@{'/vehicules/' + ${id} + '/disponibilites'}"
+                                           class="btn btn-sm btn-outline-info">
+                                            <i class="fas fa-calendar-alt me-1"></i> Gérer le planning
+                                        </a>
+                                    </div>
+                                    <div class="form-text text-muted">
+                                        Cochez pour une disponibilité générale, ou cliquez sur le bouton pour gérer les dates précises.
                                     </div>
                                 </div>
                             </div>
@@ -336,9 +360,17 @@
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">Disponibilité</label>
-                                    <div class="form-check mt-2">
-                                        <input class="form-check-input" type="checkbox" id="vehiculedispo_camion">
-                                        <label class="form-check-label">Disponible</label>
+                                    <div class="form-check mt-2 d-flex align-items-center">
+                                        <input class="form-check-input me-2" type="checkbox" id="vehiculedispo_camion">
+                                        <label class="form-check-label me-3">Véhicule disponible</label>
+
+                                        <a th:href="@{'/vehicules/' + ${id} + '/disponibilites'}"
+                                           class="btn btn-sm btn-outline-info">
+                                            <i class="fas fa-calendar-alt me-1"></i> Gérer le planning
+                                        </a>
+                                    </div>
+                                    <div class="form-text text-muted">
+                                        Cochez pour une disponibilité générale, ou cliquez sur le bouton pour gérer les dates précises.
                                     </div>
                                 </div>
                             </div>
@@ -390,9 +422,17 @@
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">Disponibilité</label>
-                                    <div class="form-check mt-2">
-                                        <input class="form-check-input" type="checkbox" id="vehiculedispo_moto">
-                                        <label class="form-check-label">Disponible</label>
+                                    <div class="form-check mt-2 d-flex align-items-center">
+                                        <input class="form-check-input me-2" type="checkbox" id="vehiculedispo_moto">
+                                        <label class="form-check-label me-3">Véhicule disponible</label>
+
+                                        <a th:href="@{'/vehicules/' + ${id} + '/disponibilites'}"
+                                           class="btn btn-sm btn-outline-info">
+                                            <i class="fas fa-calendar-alt me-1"></i> Gérer le planning
+                                        </a>
+                                    </div>
+                                    <div class="form-text text-muted">
+                                        Cochez pour une disponibilité générale, ou cliquez sur le bouton pour gérer les dates précises.
                                     </div>
                                 </div>
                             </div>
@@ -444,9 +484,17 @@
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">Disponibilité</label>
-                                    <div class="form-check mt-2">
-                                        <input class="form-check-input" type="checkbox" id="vehiculedispo_scooter">
-                                        <label class="form-check-label">Disponible</label>
+                                    <div class="form-check mt-2 d-flex align-items-center">
+                                        <input class="form-check-input me-2" type="checkbox" id="vehiculedispo_scooter">
+                                        <label class="form-check-label me-3">Véhicule disponible</label>
+
+                                        <a th:href="@{'/vehicules/' + ${id} + '/disponibilites'}"
+                                           class="btn btn-sm btn-outline-info">
+                                            <i class="fas fa-calendar-alt me-1"></i> Gérer le planning
+                                        </a>
+                                    </div>
+                                    <div class="form-text text-muted">
+                                        Cochez pour une disponibilité générale, ou cliquez sur le bouton pour gérer les dates précises.
                                     </div>
                                 </div>
                             </div>
@@ -515,7 +563,7 @@
 
         // Construit l'URL API (ex: /api/voitures/5)
         // Attention: assurez-vous que les controlleurs ont la méthode GET /{id}
-        const endpoint = `/api/${type}s/${id}`;
+        const endpoint = `/api/${type.toLowerCase()}s/${id}`;
 
         fetch(endpoint)
             .then(response => {
@@ -544,7 +592,7 @@
             document.getElementById('prixjour').value = data.prixjour;
             document.getElementById('couleur').value = data.couleur;
             document.getElementById('villedispo').value = data.villedispo;
-            document.getElementById('vehiculedispo').checked = data.vehiculedispo;
+            document.getElementById('vehiculedispo_voiture').checked = data.vehiculedispo;
 
             document.getElementById('nombreportes').value = data.nombreportes;
             document.getElementById('nombreplaces').value = data.nombreplaces;
@@ -650,7 +698,7 @@
             prixjour: parseFloat(document.getElementById('prixjour').value),
             couleur: document.getElementById('couleur').value,
             villedispo: document.getElementById('villedispo').value,
-            vehiculedispo: document.getElementById('vehiculedispo').checked,
+            vehiculedispo: document.getElementById('vehiculedispo_voiture').checked,
             // Spécifique
             nombreportes: parseInt(document.getElementById('nombreportes').value),
             nombreplaces: parseInt(document.getElementById('nombreplaces').value),

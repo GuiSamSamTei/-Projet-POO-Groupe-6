@@ -13,9 +13,9 @@ public interface IContratlocationService {
     void supprimerContralocation (Long contra_id);
 
     List<Contratlocation> getAllContralocations();
-    Contratlocation trouverContraByLoueurId( Long loueur_id);
+    List<Contratlocation> trouverContraByLoueurId( Long loueur_id);
     Contratlocation trouverContraByAssurence(Long assurance_id);
-    Contratlocation trouverContraByVehiculeId(Long vehicule_id);
+    List<Contratlocation> trouverContraByVehiculeId(Long vehicule_id);
 
 
 

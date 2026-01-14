@@ -45,8 +45,8 @@ public class ContratlocationService implements IContratlocationService{
     }
 
     @Override
-    public Contratlocation trouverContraByLoueurId(Long loueur_id) {
-        return contralocationRepository.findByLoueurId(loueur_id);
+    public List<Contratlocation> trouverContraByLoueurId(Long loueur_id) {
+        return contralocationRepository.findByLoueur_Id(loueur_id);
     }
 
     @Override
@@ -55,7 +55,7 @@ public class ContratlocationService implements IContratlocationService{
     }
 
     @Override
-    public Contratlocation trouverContraByVehiculeId(Long vehicule_id) {
-        return contralocationRepository.findByVehiculeId(vehicule_id);
+    public List<Contratlocation> trouverContraByVehiculeId(Long vehicule_id) {
+        return contralocationRepository.findByVehicule_Id(vehicule_id);
     }
 }

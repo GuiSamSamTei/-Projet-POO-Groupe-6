@@ -20,7 +20,21 @@
 <p><strong>Nombre d'évaluations :</strong> <span th:text="${utilisateur.nombreevaluations}"></span></p>
 <p><strong>Nombre de véhicules :</strong> <span th:text="${utilisateur.nombrevehicules}"></span></p>
 
-<a >Envoyer message</a>
+<hr/>
+
+<h3>Véhicules disponibles</h3>
+<ul>
+    <li th:each="vehicule : ${vehicules}">
+        <a th:href="@{/vehicule/afficher/{id}(id=${vehicule.id})}">
+            <span th:text="${vehicule.marque} + ' ' + ${vehicule.modele}"></span>
+        </a>
+        - Prix/jour : <span th:text="${vehicule.prixjour}"></span> €
+        - Kilométrage : <span th:text="${vehicule.kilometrage}"></span> km
+        - Note : <span th:text="${vehicule.notevehicule}"></span>/5
+    </li>
+</ul>
+
+<a>Envoyer message</a>
 
 </body>
 </html>

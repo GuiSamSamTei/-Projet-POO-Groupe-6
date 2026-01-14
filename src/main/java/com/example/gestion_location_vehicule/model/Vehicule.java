@@ -58,7 +58,7 @@ public class Vehicule {
     @ManyToOne
     @JoinColumn(name = "agent_id")
     @ToString.Exclude
-    @JsonIgnoreProperties({"vehicules", "evalrecues", "contratlocations"})
+    @JsonIgnore
     private Agent agent;
 
     @OneToMany(mappedBy = "vehicule")

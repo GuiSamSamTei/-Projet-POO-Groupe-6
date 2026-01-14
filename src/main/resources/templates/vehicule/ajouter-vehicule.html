@@ -571,8 +571,9 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 
-<script>
+<script th:inline="javascript">
     // Gestionnaire pour Voiture
+    const redirectUrl = [[${redirectUrl}]] || '/agent-par/profil';
     const voitureForm = document.getElementById('voitureForm');
     if (voitureForm) {
         voitureForm.addEventListener('submit', function(e) {
@@ -830,7 +831,7 @@
                 text: data.message || 'Véhicule ajouté avec succès!',
                 confirmButtonText: 'OK'
             }).then(() => {
-                window.location.href = '/profil';
+                window.location.href = redirectUrl;
             });
         })
         .catch(error => {
@@ -849,7 +850,7 @@
                 confirmButtonText: 'OK'
             }).then(() => {
                 setTimeout(() => {
-                    window.location.href = '/profil';
+                    window.location.href = redirectUrl;
                 }, 1000);
             });
         });
