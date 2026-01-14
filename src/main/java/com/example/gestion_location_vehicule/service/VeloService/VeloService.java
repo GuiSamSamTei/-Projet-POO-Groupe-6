@@ -29,7 +29,7 @@ public class VeloService implements IVeloService{
         Velo velo = new Velo();
 
         velo.setCouleur(veloRequest.getCouleur());
-        velo.setElectrique(veloRequest.getElectrique());
+        velo.setElectrique(veloRequest.getElectrique() != null ? veloRequest.getElectrique() : false);
         velo.setTypeVelo(veloRequest.getTypeVelo());
         velo.setNombreVitesses(veloRequest.getNombrevitesses());
 
@@ -91,5 +91,10 @@ public class VeloService implements IVeloService{
     public void supprimerVelo(Long velo_id) {
 
         veloRepository.deleteById(velo_id);
+    }
+
+    @Override
+    public Optional<Velo> getVeloById(Long id) {
+        return veloRepository.findById(id);
     }
 }

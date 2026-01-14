@@ -185,6 +185,9 @@
                     <a th:href="@{/vehicule/type-select}" class="btn btn-primary">
                         <i class="fas fa-plus me-1"></i> Ajouter un véhicule
                     </a>
+                    <a th:href="@{/parking}" class="btn btn-info text-white">
+                        <i class="fas fa-parking me-1"></i> Gérer mes Parkings
+                    </a>
                     <a th:href="@{/}" class="btn btn-outline-primary">
                         <i class="fas fa-search me-1"></i> Explorer les véhicules
                     </a>
@@ -241,7 +244,7 @@
                                     </p>
 
                                     <div class="action-buttons">
-                                        <a th:href="@{/vehicule/details/{id}(id=${vehicule.id})}"
+                                        <a th:href="@{'/vehicule/details/' + ${#strings.toLowerCase(vehicule.typeVehicule)} + '/' + ${vehicule.id}}"
                                            class="btn btn-outline-primary btn-sm flex-fill">
                                             <i class="fas fa-eye me-1"></i> Voir
                                         </a>

@@ -87,6 +87,14 @@ public class VehiculePageController {
         model.addAttribute("agentId", agentId); // Important pour le champ caché dans le HTML
         model.addAttribute("agentName", agentName);
 
+        String role = (String) session.getAttribute("role");
+        String redirectUrl = "/agent-par/profil"; // Default
+
+        if ("AGENT_PRO".equals(role)) {
+            redirectUrl = "/agent-pro/profil";
+        }
+        model.addAttribute("redirectUrl", redirectUrl);
+
         return "vehicule/ajouter-vehicule";
     }
 

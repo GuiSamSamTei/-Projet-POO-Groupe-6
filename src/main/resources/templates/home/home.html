@@ -7,9 +7,9 @@
 
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Leaflet CSS (地图库) -->
+    <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
-    <!-- Font Awesome 图标 -->
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
     <style>
@@ -23,7 +23,6 @@
             background-color: #f8f9fa;
         }
 
-        /* Hero 区域 */
         .hero-section {
             background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             color: white;
@@ -32,7 +31,6 @@
             border-radius: 0 0 20px 20px;
         }
 
-        /* 搜索框 */
         .search-container {
             background: white;
             border-radius: 15px;
@@ -43,14 +41,12 @@
             z-index: 10;
         }
 
-        /* 地图容器 */
         #map {
             height: 400px;
             border-radius: 10px;
             margin-top: 20px;
         }
 
-        /* 热门城市卡片 */
         .city-card {
             background: white;
             border-radius: 10px;
@@ -66,7 +62,6 @@
             box-shadow: 0 10px 20px rgba(0,0,0,0.15);
         }
 
-        /* 车辆类型标签 */
         .type-badge {
             display: inline-block;
             padding: 5px 15px;
@@ -80,7 +75,6 @@
         .type-camion { background: #e8f5e9; color: #2e7d32; }
         .type-van { background: #fff3e0; color: #ef6c00; }
 
-        /* 响应式调整 */
         @media (max-width: 768px) {
             .hero-section {
                 padding: 40px 0;
@@ -93,7 +87,7 @@
     </style>
 </head>
 <body>
-<!-- 导航栏 -->
+
 <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
     <div class="container">
         <!-- Logo -->
@@ -102,19 +96,43 @@
             <span class="fw-bold">AutoPartage</span>
         </a>
 
-        <!-- 导航链接 -->
         <div class="d-flex align-items-center">
             <a th:href="@{/vehicule/liste}" class="btn btn-outline-primary me-2">
                 <i class="fas fa-search me-1"></i> Voir tous les véhicules
             </a>
-            <a th:href="@{/utilisateur/connexion}" class="btn btn-primary">
-                <i class="fas fa-sign-in-alt me-1"></i> Se connecter
-            </a>
+
+            <th:block th:if="${currentUser != null}">
+                <div class="d-flex align-items-center">
+                    <a th:href="${profileUrl}" class="text-decoration-none me-3">
+                        <div class="d-flex align-items-center">
+                            <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center me-2"
+                                 style="width: 35px; height: 35px;">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div>
+                                <div class="fw-bold" th:text="${currentUser.username}"></div>
+                                <div class="small text-muted">
+                                    <span th:if="${profileUrl == '/loueur/profil'}">Loueur</span>
+                                    <span th:if="${profileUrl == '/agent-par/profil' or profileUrl == '/agent-pro/profil'}">Agent</span>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                    <a th:href="@{/utilisateur/logout}" class="btn btn-outline-secondary btn-sm">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </a>
+                </div>
+            </th:block>
+
+            <th:block th:unless="${currentUser != null}">
+                <a th:href="@{/utilisateur/connexion}" class="btn btn-primary">
+                    <i class="fas fa-sign-in-alt me-1"></i> Se connecter
+                </a>
+            </th:block>
         </div>
     </div>
 </nav>
 
-<!-- Hero 区域 -->
 <section class="hero-section">
     <div class="container">
         <div class="row align-items-center">
@@ -136,12 +154,10 @@
     </div>
 </section>
 
-<!-- 搜索区域 -->
 <div class="container">
     <div class="search-container">
         <h4 class="mb-4">📅 Recherchez votre véhicule</h4>
 
-        <!-- 使用已有的筛选表单，但简化版本 -->
         <form th:action="@{/vehicule/filtres}" method="get" class="row g-3">
             <div class="col-md-4">
                 <label class="form-label">📍 Où allez-vous ?</label>
@@ -166,7 +182,6 @@
             </div>
         </form>
 
-        <!-- 快速筛选按钮 -->
         <div class="mt-4">
             <p class="text-muted mb-2">Recherche rapide :</p>
             <div class="d-flex flex-wrap gap-2">
@@ -187,7 +202,6 @@
     </div>
 </div>
 
-<!-- 地图区域 -->
 <div class="container mt-5">
     <div class="row">
         <div class="col-md-8">
@@ -219,7 +233,6 @@
                 </th:block>
             </div>
 
-            <!-- 统计信息 -->
             <div class="mt-4">
                 <div class="card border-0 bg-light">
                     <div class="card-body">
@@ -237,12 +250,10 @@
     </div>
 </div>
 
-<!-- 车辆类型介绍 - 使用简化版本避免Thymeleaf语法错误 -->
 <div class="container mt-5">
     <h4 class="mb-4 text-center">🚗 Nos types de véhicules</h4>
 
     <div class="row g-4">
-        <!-- 简化：使用固定图标，避免复杂Thymeleaf表达式 -->
         <div class="col-md-4 col-6">
             <div class="text-center p-4 bg-white rounded shadow-sm">
                 <i class="fas fa-car fa-3x mb-3 text-primary"></i>
@@ -351,15 +362,12 @@
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB-8BMh0DN05o7KtELzcn93fK4_sS1U5Ic&callback=initMap" async defer></script>
 
 <script>
-    // 全局变量
     let map;
     let markers = [];
     let infoWindow;
     let userLocation = { lat: 48.8566, lng: 2.3522 }; // 默认巴黎
 
-    // 初始化地图
     function initMap() {
-        // 创建地图
         map = new google.maps.Map(document.getElementById('map'), {
             center: userLocation,
             zoom: 12,
@@ -372,13 +380,10 @@
             ]
         });
 
-        // 创建信息窗口
         infoWindow = new google.maps.InfoWindow();
 
-        // 加载车辆数据
         loadVehicles();
 
-        // 尝试获取用户位置
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
                 (position) => {
@@ -395,7 +400,6 @@
             );
         }
 
-        // "Ma position" 按钮事件
         document.getElementById('locateMe').addEventListener('click', function() {
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(
@@ -413,7 +417,6 @@
         });
     }
 
-    // 添加用户位置标记
     function addUserMarker() {
         new google.maps.Marker({
             position: userLocation,
@@ -430,29 +433,23 @@
         });
     }
 
-    // 加载车辆数据
     function loadVehicles() {
-        // 这里调用后端API获取车辆数据
-        // 示例：从后端API获取数据
+
         fetch('/api/vehicules/nearby?lat=' + userLocation.lat + '&lng=' + userLocation.lng + '&radius=10')
             .then(response => response.json())
             .then(vehicles => {
-                // 清除现有标记
                 clearMarkers();
 
-                // 为每辆车添加标记
                 vehicles.forEach(vehicle => {
                     addVehicleMarker(vehicle);
                 });
             })
             .catch(error => {
                 console.error('Error loading vehicles:', error);
-                // 如果没有API，使用模拟数据
                 loadMockVehicles();
             });
     }
 
-    // 添加车辆标记
     function addVehicleMarker(vehicle) {
         const icon = getVehicleIcon(vehicle.type);
 
@@ -463,7 +460,6 @@
             title: vehicle.marque + ' ' + vehicle.modele
         });
 
-        // 点击标记显示信息窗口
         marker.addListener('click', () => {
             const content = createInfoWindowContent(vehicle);
             infoWindow.setContent(content);
@@ -473,7 +469,6 @@
         markers.push(marker);
     }
 
-    // 根据车辆类型获取图标
     function getVehicleIcon(vehicleType) {
         const baseIcon = {
             url: `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(`
@@ -492,20 +487,18 @@
         return baseIcon;
     }
 
-    // 获取车辆颜色
     function getVehicleColor(type) {
         const colors = {
-            'voiture': '#3498db',    // 蓝色
-            'moto': '#2ecc71',       // 绿色
-            'camion': '#f39c12',     // 橙色
-            'van': '#9b59b6',        // 紫色
-            'scooter': '#1abc9c',    // 青色
-            'velo': '#e74c3c'        // 红色
+            'voiture': '#3498db',
+            'moto': '#2ecc71',
+            'camion': '#f39c12',
+            'van': '#9b59b6',
+            'scooter': '#1abc9c',
+            'velo': '#e74c3c'
         };
         return colors[type] || '#3498db';
     }
 
-    // 获取车辆图标字母
     function getVehicleIconLetter(type) {
         const letters = {
             'voiture': 'V',
@@ -518,7 +511,6 @@
         return letters[type] || 'V';
     }
 
-    // 创建信息窗口内容
     function createInfoWindowContent(vehicle) {
         return `
             <div class="vehicle-info-window">
@@ -544,7 +536,6 @@
         `;
     }
 
-    // 获取车辆颜色类
     function getVehicleColorClass(type) {
         const classes = {
             'voiture': 'primary',
@@ -557,13 +548,11 @@
         return classes[type] || 'primary';
     }
 
-    // 清除所有标记
     function clearMarkers() {
         markers.forEach(marker => marker.setMap(null));
         markers = [];
     }
 
-    // 加载模拟数据（用于测试）
     function loadMockVehicles() {
         const mockVehicles = [
             {
@@ -623,21 +612,16 @@
         });
     }
 
-    // 地图加载完成后初始化
     document.addEventListener('DOMContentLoaded', function() {
-        // 设置日期输入框的语言为法语
         const dateInputs = document.querySelectorAll('input[type="date"]');
         dateInputs.forEach(input => {
-            // 设置最小值（可选）
             const today = new Date().toISOString().split('T')[0];
             input.min = today;
 
-            // 添加法语标签
             input.setAttribute('lang', 'fr-FR');
             input.setAttribute('title', 'Choisissez une date');
         });
 
-        // 初始化地图
         initMap();
     });
 </script>

@@ -1,5 +1,6 @@
 package com.example.gestion_location_vehicule.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
 import lombok.*;
@@ -28,21 +29,25 @@ public class Agent extends Utilisateur {
 
     @OneToMany(mappedBy = "agent")
     @ToString.Exclude
+    @JsonIgnore
     private List<Vehicule> vehicules;
 
     @OneToMany(mappedBy = "agent")
     @ToString.Exclude
+    @JsonIgnore
     private List<EvalA> evalrecues;
 
     @OneToMany(mappedBy = "agent")
     @ToString.Exclude
+    @JsonIgnore
     private List<EvalL> evaldonnees;
 
     @OneToMany(mappedBy = "agent")
+    @JsonIgnore
     private List<ConventionneParking> conventionneParkingList;
 
 
-
+    @JsonIgnore
     public List<Long> getParkingConvIDs()
     {
         List<Long> parkings = new ArrayList<>();
@@ -55,7 +60,7 @@ public class Agent extends Utilisateur {
 
         return parkings;
     }
-
+    @JsonIgnore
     public List<Parking> getParkingConv()
     {
         List<Parking> parkings = new ArrayList<>();
