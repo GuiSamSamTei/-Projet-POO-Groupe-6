@@ -156,8 +156,11 @@
                 <h6><i class="fas fa-bolt me-2 text-primary"></i> Actions rapides</h6>
                 <div class="d-grid gap-2">
                     <!-- button historique -->
-                    <a th:href="@{/loueur/historique}" class="btn btn-primary">
+                    <a th:href="@{/historique-location}" class="btn btn-primary">
                         <i class="fas fa-history me-1"></i> Voir mon historique de locations
+                    </a>
+                    <a th:href="@{/messages}" class="btn btn-success text-white">
+                        <i class="fas fa-envelope me-1"></i> Messagerie
                     </a>
                     <a th:href="@{/vehicule/liste}" class="btn btn-outline-primary">
                         <i class="fas fa-search me-1"></i> Chercher un véhicule
@@ -219,7 +222,7 @@
                             <div class="card-body">
                                 <h6><i class="fas fa-history me-2 text-primary"></i> Historique de locations</h6>
                                 <p class="small text-muted mb-2">Consultez toutes vos locations passées</p>
-                                <a th:href="@{/loueur/historique}" class="btn btn-sm btn-primary">
+                                <a th:href="@{/historique-location}" class="btn btn-sm btn-primary">
                                     Voir l'historique
                                 </a>
                             </div>
@@ -298,7 +301,7 @@
                     <a th:href="@{/loueur/profil/modifier}" class="btn btn-primary">
                         <i class="fas fa-edit me-1"></i> Modifier mon profil
                     </a>
-                    <a th:href="@{/loueur/historique}" class="btn btn-outline-primary">
+                    <a th:href="@{/historique-location}" class="btn btn-outline-primary">
                         <i class="fas fa-history me-1"></i> Voir l'historique de locations
                     </a>
                 </div>
