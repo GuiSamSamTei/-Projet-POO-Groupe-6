@@ -38,7 +38,6 @@ public class LoueurMVCController {
     }
 
     /* ===================== INSCRIPTION ===================== */
-
     @GetMapping("/inscription")
     public String afficherFormulaireInscription(Model model) {
         model.addAttribute("loueur", new Loueur());
@@ -50,14 +49,13 @@ public class LoueurMVCController {
         loueur.setNotemoyenne(0.0);
         loueur.setNombreevaluations(0);
 
-        loueurService.create(loueur);  // création via save()
+        loueurService.create(loueur);
 
         session.setAttribute("user", loueur.getId());
         return "redirect:/loueur/profil";
     }
 
     /* ===================== PROFIL ===================== */
-
     @GetMapping("/profil")
     public String afficherProfil(HttpSession session, Model model) {
         Long userId = (Long) session.getAttribute("user");
@@ -72,7 +70,6 @@ public class LoueurMVCController {
     }
 
     /* ===================== MODIFICATION PROFIL ===================== */
-
     @GetMapping("/profil/modifier")
     public String afficherFormulaireModification(HttpSession session, Model model) {
         Long userId = (Long) session.getAttribute("user");
@@ -101,7 +98,6 @@ public class LoueurMVCController {
             return "redirect:/utilisateur/connexion";
         }
 
-        // Mettre à jour les champs modifiables
         existingLoueur.setNom(formLoueur.getNom());
         existingLoueur.setPrenom(formLoueur.getPrenom());
         existingLoueur.setUsername(formLoueur.getUsername());
@@ -110,14 +106,12 @@ public class LoueurMVCController {
         existingLoueur.setVille(formLoueur.getVille());
         existingLoueur.setTypepermis(formLoueur.getTypepermis());
 
-        // Sauvegarde avec save() via create()
         loueurService.create(existingLoueur);
 
         return "redirect:/loueur/profil";
     }
 
     /* ===================== LOCATION VEHICULE ===================== */
-
     @GetMapping("/louer-vehicule/{id}")
     public String louerVehicule(@PathVariable Long id,
                                 HttpSession session,
@@ -182,5 +176,20 @@ public class LoueurMVCController {
         session.removeAttribute("vehiculeEnCours");
 
         return "redirect:/vehicule/liste?locationSuccess=true";
+    }
+
+    /* ===================== CONSULTER UN PROFIL DE LOUEUR ===================== */
+    @GetMapping("/consulter/{id}")
+    public String consulterProfil(@PathVariable Long id, Model model) {
+
+        Loueur loueur = loueurService.getById(id);
+        if (loueur == null) {
+            return "redirect:/";
+        }
+
+        model.addAttribute("utilisateur", loueur);
+
+
+        return "loueur/consulterProfil";
     }
 }

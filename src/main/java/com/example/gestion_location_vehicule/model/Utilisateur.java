@@ -69,5 +69,4 @@ public class Utilisateur {
     @JsonIgnore
     private List<Message> messagesenvoyes;
 
-
 }

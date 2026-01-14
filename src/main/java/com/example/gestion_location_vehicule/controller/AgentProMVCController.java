@@ -1,6 +1,5 @@
 package com.example.gestion_location_vehicule.controller;
 
-import com.example.gestion_location_vehicule.model.AgentPar;
 import com.example.gestion_location_vehicule.model.AgentPro;
 import com.example.gestion_location_vehicule.model.Vehicule;
 import com.example.gestion_location_vehicule.service.AgentProService.IAgentProService;
@@ -25,17 +24,17 @@ public class AgentProMVCController {
         this.vehiculeService = vehiculeService;
     }
 
-    // Formulaire d'inscription
+    // ------------------ INSCRIPTION ------------------
     @GetMapping("/inscription")
     public String showForm(Model model) {
         model.addAttribute("user", new AgentPro());
         return "agentPro/inscription";
     }
 
-    // Traitement inscription
     @PostMapping("/inscription")
     public String submitForm(@ModelAttribute AgentPro agentPro, HttpSession session) {
 
+        // Valeurs par défaut
         agentPro.setNotemoyenne(0.0);
         agentPro.setNombreevaluations(0);
         agentPro.setNombrevehicules(0);
@@ -43,11 +42,13 @@ public class AgentProMVCController {
 
         agentProService.saveAgentPro(agentPro);
 
+        // Stockage de l'utilisateur connecté
         session.setAttribute("user", agentPro.getId());
 
         return "redirect:/agent-pro/profil";
     }
 
+    // ------------------ PROFIL CONNECTÉ ------------------
     @GetMapping("/profil")
     public String profil(HttpSession session, Model model) {
 
@@ -59,21 +60,21 @@ public class AgentProMVCController {
         Optional<AgentPro> agentProOpt = agentProService.getAgentProById(userId);
 
         if (agentProOpt.isPresent()) {
-            model.addAttribute("user", agentProOpt.get());
+            AgentPro agentPro = agentProOpt.get();
 
-            List<Vehicule> mesVehicules = vehiculeService.getVehiculesParAgent(userId);
-            model.addAttribute("vehicules", mesVehicules);
+            // Ajouter l'agent et ses véhicules dans le modèle
+            model.addAttribute("user", agentPro);
+            List<Vehicule> vehicules = vehiculeService.getVehiculesParAgent(userId);
+            model.addAttribute("vehicules", vehicules);
 
             return "agentPro/profil";
         }
 
-
-        // Cas incohérent : utilisateur en session mais inexistant en base
         session.invalidate();
         return "redirect:/utilisateur/connexion";
     }
 
-
+    // ------------------ MODIFICATION PROFIL ------------------
     @GetMapping("/profil/modifier")
     public String afficherFormulaireModification(HttpSession session, Model model) {
 
@@ -105,7 +106,7 @@ public class AgentProMVCController {
         if (agentProOpt.isPresent()) {
             AgentPro existingUser = agentProOpt.get();
 
-            // Mettre à jour uniquement les champs modifiables
+            // Mise à jour uniquement des champs modifiables
             existingUser.setRaisonsociale(formUser.getRaisonsociale());
             existingUser.setSiret(formUser.getSiret());
             existingUser.setUsername(formUser.getUsername());
@@ -125,4 +126,24 @@ public class AgentProMVCController {
         return "redirect:/agent-pro/inscription";
     }
 
+    // ------------------ CONSULTER UN PROFIL D'AGENT PRO ------------------
+    @GetMapping("/consulter/{id}")
+    public String consulterProfil(@PathVariable Long id, Model model) {
+
+        Optional<AgentPro> agentProOpt = agentProService.getAgentProById(id);
+
+        if (agentProOpt.isPresent()) {
+            AgentPro agentPro = agentProOpt.get();
+            model.addAttribute("utilisateur", agentPro);
+
+            // Ajouter les véhicules pour consultation
+            List<Vehicule> vehicules = vehiculeService.getVehiculesParAgent(id);
+            model.addAttribute("vehicules", vehicules);
+
+            return "agentPro/consulterProfil";
+        }
+
+        // Profil inexistant
+        return "redirect:/";
+    }
 }
