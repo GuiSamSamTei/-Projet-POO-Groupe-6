@@ -1,44 +1,182 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Contrôle technique</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enregistrer un Contrôle Technique</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --accent-color: #3498db;
+        }
+
+        body {
+            background-color: #f4f7f6;
+            font-family: 'Segoe UI', sans-serif;
+            color: #333;
+        }
+
+        .form-container {
+            max-width: 600px;
+            margin: 50px auto;
+        }
+
+        .card-form {
+            background: white;
+            border: none;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .card-header-custom {
+            background: linear-gradient(135deg, var(--primary-color), #1a252f);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .vehicle-banner {
+            background: #eef7fd;
+            border-bottom: 1px solid #d1e9f9;
+            padding: 15px;
+            text-align: center;
+            font-weight: 600;
+            color: var(--accent-color);
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+
+        .form-control, .form-select {
+            border-radius: 10px;
+            padding: 12px;
+            border: 1px solid #dee2e6;
+            transition: all 0.3s;
+        }
+
+        .form-control:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 0.25rem rgba(52, 152, 219, 0.1);
+        }
+
+        .btn-submit {
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 15px;
+            font-weight: bold;
+            width: 100%;
+            transition: all 0.3s;
+            margin-top: 20px;
+        }
+
+        .btn-submit:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+            color: white;
+        }
+
+        .input-group-text {
+            background: #f8f9fa;
+            border-radius: 10px 0 0 10px;
+            border-right: none;
+        }
+
+        .has-icon .form-control {
+            border-radius: 0 10px 10px 0;
+        }
+    </style>
 </head>
 <body>
 
-<h1>Contrôle technique du véhicule</h1>
+<div class="container">
+    <div class="form-container">
 
-<p>
-    Véhicule :
-    <span th:text="${vehicule.marque}"></span>
-    <span th:text="${vehicule.modele}"></span>
-</p>
+        <div class="mb-4">
+            <a th:href="@{/controletechnique/vehicule/{id}/controles(id=${vehicule.id})}" class="text-decoration-none text-muted">
+                <i class="fas fa-arrow-left me-2"></i> Retour à l'historique
+            </a>
+        </div>
 
-<form th:action="@{/controletechnique/enregistrer}"
-      th:object="${controleTechnique}"
-      method="post">
+        <div class="card card-form">
+            <div class="card-header-custom">
+                <i class="fas fa-clipboard-check fa-3x mb-3"></i>
+                <h3 class="fw-bold mb-0">Contrôle Technique</h3>
+            </div>
 
-    <!-- Lien avec le véhicule -->
-    <input type="hidden" th:field="*{vehicule.id}"/>
+            <div class="vehicle-banner">
+                <i class="fas fa-car me-2"></i>
+                <span th:text="${vehicule.marque + ' ' + vehicule.modele}"></span>
+            </div>
 
-    <label>Date du contrôle :</label><br>
-    <input type="date" th:field="*{dateControle}" required><br><br>
+            <div class="card-body p-4 p-md-5">
+                <form th:action="@{/controletechnique/enregistrer}"
+                      th:object="${controleTechnique}"
+                      method="post">
 
-    <label>Date d'expiration :</label><br>
-    <input type="date" th:field="*{dateExpiration}" required><br><br>
+                    <input type="hidden" th:field="*{vehicule.id}"/>
 
-    <label>Contrôle valide :</label><br>
-    <select th:field="*{valide}">
-        <option value="true">Oui</option>
-        <option value="false">Non</option>
-    </select><br><br>
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
+                            <label class="form-label"><i class="far fa-calendar-alt me-2 text-primary"></i>Date du contrôle</label>
+                            <input type="date" th:field="*{dateControle}" class="form-control" id="dateCt" required>
+                        </div>
 
-    <label>Commentaire :</label><br>
-    <textarea th:field="*{commentaire}" rows="4" cols="40"></textarea><br><br>
+                        <div class="col-md-6 mb-4">
+                            <label class="form-label"><i class="fas fa-hourglass-end me-2 text-danger"></i>Date d'expiration</label>
+                            <input type="date" th:field="*{dateExpiration}" class="form-control" id="dateExp" required>
+                        </div>
 
-    <button type="submit">Enregistrer</button>
+                        <div class="col-12 mb-4">
+                            <label class="form-label"><i class="fas fa-check-circle me-2 text-success"></i>Résultat du contrôle</label>
+                            <select th:field="*{valide}" class="form-select">
+                                <option value="true">✅ Favorable (Contrôle Valide)</option>
+                                <option value="false">❌ Défavorable (Contre-visite)</option>
+                            </select>
+                        </div>
 
-</form>
+                        <div class="col-12 mb-4">
+                            <label class="form-label"><i class="fas fa-comment-alt me-2 text-muted"></i>Commentaires ou Observations</label>
+                            <textarea th:field="*{commentaire}" class="form-control" rows="4" placeholder="Saisissez ici les remarques du technicien..."></textarea>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-submit">
+                        <i class="fas fa-save me-2"></i> Enregistrer le contrôle
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <p class="text-center mt-4 text-muted small">
+            © 2026 AutoPartage - Gestion de maintenance
+        </p>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Aide à la saisie : +2 ans automatique
+    document.getElementById('dateCt').addEventListener('change', function() {
+        const dateCt = new Date(this.value);
+        if (!isNaN(dateCt.getTime())) {
+            const dateExp = new Date(dateCt);
+            dateExp.setFullYear(dateExp.getFullYear() + 2);
+            document.getElementById('dateExp').value = dateExp.toISOString().split('T')[0];
+        }
+    });
+</script>
 
 </body>
 </html>

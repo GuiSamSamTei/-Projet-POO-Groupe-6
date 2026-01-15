@@ -5,6 +5,7 @@ import com.example.gestion_location_vehicule.model.Vehicule;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -12,4 +13,5 @@ public interface ControleTechniqueRepository extends JpaRepository<ControleTechn
 
     // Récupérer le contrôle technique d’un véhicule
     Optional<ControleTechnique> findByVehicule(Vehicule vehicule);
+    List<ControleTechnique> findByVehicule_Id( Long vehicule_id);
 }

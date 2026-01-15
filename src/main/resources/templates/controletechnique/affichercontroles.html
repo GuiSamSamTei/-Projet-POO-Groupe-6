@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Historique Contrôles Techniques - AutoPartage</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root { --primary-color: #2c3e50; --accent-color: #3498db; }
+        body { background-color: #f4f7f6; font-family: 'Segoe UI', sans-serif; }
+        .vehicle-box { background: white; border-radius: 15px; padding: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border-left: 5px solid var(--accent-color); }
+        .timeline-item { background: white; border-radius: 12px; padding: 20px; margin-bottom: 20px; position: relative; border: 1px solid #eef2f7; }
+        .status-badge { position: absolute; top: 20px; right: 20px; }
+        .date-badge { background: #eef7fd; color: #3498db; padding: 5px 15px; border-radius: 8px; font-weight: 600; }
+    </style>
+</head>
+<body>
+
+<div class="container py-5">
+    <div class="vehicle-box mb-5 d-flex justify-content-between align-items-center">
+        <div>
+            <h2 class="fw-bold mb-1">
+                <i class="fas fa-microchip me-2 text-muted"></i>
+                Historique Technique
+            </h2>
+            <p class="text-muted mb-0">
+                Véhicule : <strong th:text="${vehicule.marque + ' ' + vehicule.modele}"></strong>
+                (<span th:text="${vehicule.villedispo}"></span>)
+            </p>
+        </div>
+
+    </div>
+
+    <div th:if="${controles.isEmpty()}" class="text-center py-5">
+        <i class="fas fa-clipboard-list fa-4x text-muted mb-3 opacity-25"></i>
+        <p class="text-muted">Aucun contrôle technique enregistré pour ce véhicule.</p>
+        <a th:href="@{/controletechnique/nouveau/{id}(id=${vehicule.id})}" class="btn btn-primary rounded-pill"><i class="fas fa-plus me-2"></i>Ajouter un contrôle</a>
+    </div>
+
+    <div th:each="ct : ${controles}">
+        <div class="timeline-item shadow-sm">
+            <div class="status-badge">
+                <span th:if="${ct.valide and ct.dateExpiration.isAfter(aujourdhui)}" class="badge bg-success p-2">
+                    <i class="fas fa-check-circle me-1"></i> VALIDE
+                </span>
+                <span th:if="${ct.valide and (ct.dateExpiration.isBefore(aujourdhui) or ct.dateExpiration.isEqual(aujourdhui))}" class="badge bg-danger p-2">
+                    <i class="fas fa-exclamation-triangle me-1"></i> EXPIRÉ
+                </span>
+                <span th:if="${!ct.valide}" class="badge bg-dark p-2">
+                    <i class="fas fa-times-circle me-1"></i> REFUSÉ
+                </span>
+            </div>
+
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="info-label text-muted small uppercase">Date du contrôle</div>
+                    <div class="date-badge mt-1">
+                        <i class="far fa-calendar-alt me-2"></i>
+                        <span th:text="${#temporals.format(ct.dateControle, 'dd MMMM yyyy')}"></span>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="info-label text-muted small uppercase">Date d'expiration</div>
+                    <div class="fw-bold mt-1" th:classappend="${ct.dateExpiration.isBefore(aujourdhui.plusDays(30)) ? 'text-danger' : 'text-dark'}">
+                        <i class="fas fa-hourglass-half me-2"></i>
+                        <span th:text="${#temporals.format(ct.dateExpiration, 'dd MMMM yyyy')}"></span>
+                    </div>
+                    <small th:if="${ct.isExpiringSoon(30) and ct.dateExpiration.isAfter(aujourdhui)}" class="text-warning fw-bold">
+                        <i class="fas fa-bell me-1"></i> Expire bientôt !
+                    </small>
+                </div>
+            </div>
+
+            <hr class="my-3 opacity-25">
+
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <div class="info-label text-muted small uppercase">Commentaires de l'expert</div>
+                    <p class="mb-0 text-secondary italic" th:text="${ct.commentaire ?: 'Aucun commentaire.'}"></p>
+                </div>
+                <div class="col-md-4 text-md-end">
+                    <span th:if="${ct.notifie}" class="text-success small">
+                        <i class="fas fa-envelope-open-text me-1"></i> Notification envoyée
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-4 text-center">
+        <a th:href="@{/controletechnique/nouveau/{id}(id=${vehicule.id})}"
+           class="btn btn-primary btn-lg rounded-pill px-5 shadow">
+            <i class="fas fa-plus-circle me-2"></i> Enregistrer un nouveau contrôle
+        </a>
+    </div>
+</div>
+
+</body>
+</html>

@@ -4,9 +4,13 @@ import com.example.gestion_location_vehicule.model.ControleTechnique;
 import com.example.gestion_location_vehicule.model.Vehicule;
 import com.example.gestion_location_vehicule.repository.VehiculeRepository;
 import com.example.gestion_location_vehicule.service.ControleTechniqueService.IControleTechniqueService;
+import com.example.gestion_location_vehicule.service.VehiculeService.VehiculeService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
+import java.util.List;
 
 @Controller
 @RequestMapping("/controletechnique")
@@ -14,13 +18,15 @@ public class ControleTechniqueController {
 
     private final IControleTechniqueService controleTechniqueService;
     private final VehiculeRepository vehiculeRepository;
+    private final VehiculeService vehiculeService;
 
     public ControleTechniqueController(
             IControleTechniqueService controleTechniqueService,
-            VehiculeRepository vehiculeRepository
+            VehiculeRepository vehiculeRepository, VehiculeService vehiculeService
     ) {
         this.controleTechniqueService = controleTechniqueService;
         this.vehiculeRepository = vehiculeRepository;
+        this.vehiculeService = vehiculeService;
     }
 
     // AFFICHER LE FORMULAIRE
@@ -48,5 +54,22 @@ public class ControleTechniqueController {
     ) {
         controleTechniqueService.enregistrerControleTechnique(controleTechnique);
         return "redirect:/vehicule/liste";
+    }
+
+    @GetMapping("/vehicule/{id}/controles")
+    public String afficherHistoriqueControles(@PathVariable Long id, Model model) {
+        Vehicule vehicule = vehiculeService.getVehiculeByid(id);
+
+        if(vehicule==null)
+            return "redirect:/vehicule/liste";
+        // On récupère les contrôles (si vous n'avez pas de méthode filtrée,
+        // vous pouvez utiliser vehicule.getControlesTechniques() si la relation est définie)
+        List<ControleTechnique> controles = controleTechniqueService.getControlesByVehiculeID(id);
+
+        model.addAttribute("vehicule", vehicule);
+        model.addAttribute("controles", controles);
+        model.addAttribute("aujourdhui", LocalDate.now());
+
+        return "controletechnique/affichercontroles";
     }
 }
