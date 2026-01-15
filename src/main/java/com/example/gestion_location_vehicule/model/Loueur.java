@@ -1,9 +1,7 @@
 package com.example.gestion_location_vehicule.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.DiscriminatorValue;
-import jakarta.persistence.Entity;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.List;
@@ -31,4 +29,14 @@ public class Loueur extends Utilisateur {
     @JsonIgnore
     @OneToMany(mappedBy = "loueur")
     private List<Contratlocation> contratlocations;
+
+    // Parrainages où ce loueur est le parrain
+    @OneToMany(mappedBy = "parrain", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<Parrainage> parrainages;
+
+    // Parrainage où ce loueur est le filleul (max 1)
+    @OneToOne(mappedBy = "filleul")
+    @JsonIgnore
+    private Parrainage parrainageRecu;
 }

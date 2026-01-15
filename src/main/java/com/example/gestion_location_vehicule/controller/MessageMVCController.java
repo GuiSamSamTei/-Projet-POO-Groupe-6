@@ -141,6 +141,10 @@ public class MessageMVCController {
             return "redirect:/utilisateur/connexion";
         }
 
+        if (contientEmailOuTelephone(contenu)) {
+            return "redirect:/messages/" + destinataireId + "?error=contact_interdit";
+        }
+
         Utilisateur sender = utilisateurRepository.findById(senderId).orElseThrow();
         Utilisateur receiver = utilisateurRepository.findById(destinataireId).orElseThrow();
 
@@ -159,4 +163,12 @@ public class MessageMVCController {
 
         return "redirect:/messages/" + receiver.getId();
     }
+
+    private boolean contientEmailOuTelephone(String texte) {
+        String emailRegex = "\\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}\\b";
+        String phoneRegex = "\\b(\\+?\\d{1,3}[\\s.-]?)?(\\(?\\d{1,4}\\)?[\\s.-]?){2,}\\d{2,4}\\b";
+
+        return texte.matches(".*(" + emailRegex + "|" + phoneRegex + ").*");
+    }
+
 }
