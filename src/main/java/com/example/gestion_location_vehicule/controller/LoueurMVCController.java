@@ -30,10 +30,11 @@ public class LoueurMVCController {
     private final VehiculeService vehiculeService;
     private final AssuranceService assuranceService;
     private final TarificationService tarificationService;
+    private final com.example.gestion_location_vehicule.service.ParrainageService.IParrainageService parrainageService;
 
     public LoueurMVCController(ILoueurService loueurService,
                                VehiculeRepository vehiculeRepository,
-                               ContratlocationService contratlocationService, ParkingService parkingService, VehiculeService vehiculeService, AssuranceService assuranceService, TarificationService tarificationService) {
+                               ContratlocationService contratlocationService, ParkingService parkingService, VehiculeService vehiculeService, AssuranceService assuranceService, TarificationService tarificationService, com.example.gestion_location_vehicule.service.ParrainageService.IParrainageService parrainageService) {
         this.loueurService = loueurService;
         this.vehiculeRepository = vehiculeRepository;
         this.contratlocationService = contratlocationService;
@@ -41,6 +42,7 @@ public class LoueurMVCController {
         this.vehiculeService = vehiculeService;
         this.assuranceService = assuranceService;
         this.tarificationService = tarificationService;
+        this.parrainageService = parrainageService;
     }
 
     /* ===================== INSCRIPTION ===================== */
@@ -167,6 +169,18 @@ public class LoueurMVCController {
         Long anneeCourante = (long) java.time.LocalDate.now().getYear();
 
         Double tarifFixe = tarificationService.getbyAnnee(anneeCourante).getPrixfixe();
+        
+        // --- Gestion Affichage Gain Parrain ---
+        try {
+            Parrainage parrainage = parrainageService.findParrainageEnAttenteByFilleul(loueur_id);
+            if (parrainage != null) {
+                model.addAttribute("parrainage", parrainage);
+                model.addAttribute("gainParrain", parrainage.getMontantCredit());
+            }
+        } catch (Exception e) {
+            // Ignorer si erreur ou pas de parrainage
+        }
+        
         session.setAttribute("vehiculeEnCours", vehicule);
         model.addAttribute("vehicule", vehicule);
         model.addAttribute("parkings" , parkings);

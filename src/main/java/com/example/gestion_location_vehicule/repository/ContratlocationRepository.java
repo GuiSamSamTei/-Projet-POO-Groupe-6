@@ -8,7 +8,7 @@ import java.util.Date;
 import java.util.List;
 
 @Repository
-public interface ContralocationRepository extends JpaRepository<Contratlocation, Long> {
+public interface ContratlocationRepository extends JpaRepository<Contratlocation, Long> {
 
     List<Contratlocation> findByDatedebut(Date datedebut);
 
@@ -20,5 +20,8 @@ public interface ContralocationRepository extends JpaRepository<Contratlocation,
     Contratlocation findByAssuranceId(Long assurance_id);
 
     List<Contratlocation> findByLoueur_Id(Long loueur_id);
+    
+    // Compter le nombre de locations d'un loueur
+    long countByLoueurId(Long loueurId);
 
 }

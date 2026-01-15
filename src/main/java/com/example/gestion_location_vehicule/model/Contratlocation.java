@@ -3,13 +3,7 @@ package com.example.gestion_location_vehicule.model;
 
 import java.time.LocalDate;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -53,4 +47,11 @@ public class Contratlocation {
     @ManyToOne
     @JoinColumn(name = "parking_id")
     private Parking parking;
+
+    @Column(name = "montant_paye_porte_monnaie")
+    private Double montantPayePorteMonnaie = 0.0; // Montant payé avec le porte-monnaie
+
+    @Column(name = "montant_paye_autre")
+    private Double montantPayeAutre = 0.0; // Montant payé par autre moyen (CB, etc.)
+
 }

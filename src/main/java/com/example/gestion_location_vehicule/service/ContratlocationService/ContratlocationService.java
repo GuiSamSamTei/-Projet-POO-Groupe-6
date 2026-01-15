@@ -2,7 +2,7 @@ package com.example.gestion_location_vehicule.service.ContratlocationService;
 
 
 import com.example.gestion_location_vehicule.model.Contratlocation;
-import com.example.gestion_location_vehicule.repository.ContralocationRepository;
+import com.example.gestion_location_vehicule.repository.ContratlocationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -13,7 +13,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ContratlocationService implements IContratlocationService{
 
-    private final ContralocationRepository contralocationRepository;
+    private final ContratlocationRepository contralocationRepository;
 
     @Override
     public Contratlocation ajouterContralocation(Contratlocation contratlocation) {
