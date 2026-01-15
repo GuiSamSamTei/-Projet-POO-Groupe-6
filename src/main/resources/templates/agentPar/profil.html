@@ -340,7 +340,7 @@
                                     </p>
 
                                     <div class="action-buttons">
-                                        <a th:href="@{'/vehicule/details/' + ${#strings.toLowerCase(vehicule.typeVehicule)} + '/' + ${vehicule.id}}"
+                                        <a th:href="@{'/vehicule/afficher/' +  ${vehicule.id}}"
                                            class="btn btn-outline-primary btn-sm flex-fill">
                                             <i class="fas fa-eye me-1"></i> Voir
                                         </a>
