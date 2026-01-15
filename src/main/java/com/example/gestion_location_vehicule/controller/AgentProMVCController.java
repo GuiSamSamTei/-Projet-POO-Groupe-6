@@ -2,9 +2,11 @@ package com.example.gestion_location_vehicule.controller;
 
 import com.example.gestion_location_vehicule.model.AgentPro;
 import com.example.gestion_location_vehicule.model.Contratlocation;
+import com.example.gestion_location_vehicule.model.EvalA;
 import com.example.gestion_location_vehicule.model.Vehicule;
 import com.example.gestion_location_vehicule.service.AgentProService.IAgentProService;
 import com.example.gestion_location_vehicule.service.ContratlocationService.ContratlocationService;
+import com.example.gestion_location_vehicule.service.EvalAService.EvalAService;
 import com.example.gestion_location_vehicule.service.VehiculeService.IVehiculeService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
@@ -21,11 +23,14 @@ public class AgentProMVCController {
     private final IAgentProService agentProService;
     private final IVehiculeService vehiculeService;
     private final ContratlocationService contratlocationService;
+    private final EvalAService evalAService;
 
-    public AgentProMVCController(IAgentProService agentProService, IVehiculeService vehiculeService, ContratlocationService contratlocationService) {
+
+    public AgentProMVCController(IAgentProService agentProService, IVehiculeService vehiculeService, ContratlocationService contratlocationService, EvalAService evalAService) {
         this.agentProService = agentProService;
         this.vehiculeService = vehiculeService;
         this.contratlocationService = contratlocationService;
+        this.evalAService = evalAService;
     }
 
     // ------------------ INSCRIPTION ------------------
@@ -73,6 +78,9 @@ public class AgentProMVCController {
             model.addAttribute("vehicules", vehicules);
             List<Contratlocation> contratsEnAttente = contratlocationService.trouverparAgentIDetValideeFalse(userId);
             model.addAttribute("contratsAttente", contratsEnAttente);
+
+            List<EvalA> evalAS = evalAService.getByAgent(agentPro);
+            model.addAttribute("evaluations", evalAS);
             return "agentPro/profil";
         }
 

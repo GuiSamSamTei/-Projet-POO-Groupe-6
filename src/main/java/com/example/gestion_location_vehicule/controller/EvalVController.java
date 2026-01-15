@@ -4,19 +4,22 @@ import com.example.gestion_location_vehicule.model.EvalV;
 import com.example.gestion_location_vehicule.model.Loueur;
 import com.example.gestion_location_vehicule.model.Vehicule;
 import com.example.gestion_location_vehicule.service.EvalVService.EvalVService;
+import com.example.gestion_location_vehicule.service.VehiculeService.VehiculeService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/evaluations-vehicule")
+@RequestMapping("/api/evalv")
 public class EvalVController {
 
     private final EvalVService evalVService;
+    private final VehiculeService vehiculeService;
 
-    public EvalVController(EvalVService evalVService) {
+    public EvalVController(EvalVService evalVService, VehiculeService vehiculeService) {
         this.evalVService = evalVService;
+        this.vehiculeService = vehiculeService;
     }
 
     // 🔹 GET : toutes les évaluations
@@ -86,5 +89,14 @@ public class EvalVController {
         Vehicule vehicule = new Vehicule();
         vehicule.setId(vehiculeId);
         return evalVService.getByVehiculeAndNoteMin(vehicule, noteMin);
+    }
+
+
+    @GetMapping("/vehicule/{id}")
+    public List<EvalV> getAvisVehicule(@PathVariable Long id) {
+        // Cette méthode doit retourner la liste des avis liés au véhicule
+
+        Vehicule vehicule = vehiculeService.getVehiculeByid(id);
+        return evalVService.getByVehicule(vehicule);
     }
 }

@@ -2,9 +2,11 @@ package com.example.gestion_location_vehicule.controller;
 
 import com.example.gestion_location_vehicule.model.AgentPar;
 import com.example.gestion_location_vehicule.model.Contratlocation;
+import com.example.gestion_location_vehicule.model.EvalA;
 import com.example.gestion_location_vehicule.model.Vehicule;
 import com.example.gestion_location_vehicule.service.AgentParService.IAgentParService;
 import com.example.gestion_location_vehicule.service.ContratlocationService.ContratlocationService;
+import com.example.gestion_location_vehicule.service.EvalAService.EvalAService;
 import com.example.gestion_location_vehicule.service.VehiculeService.IVehiculeService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
@@ -21,11 +23,13 @@ public class AgentParMVCController {
     private final IAgentParService agentParService;
     private final IVehiculeService vehiculeService;
     private final ContratlocationService contratlocationService;
+    private final EvalAService evalAService;
 
-    public AgentParMVCController(IAgentParService agentParService, IVehiculeService vehiculeService, ContratlocationService contratlocationService) {
+    public AgentParMVCController(IAgentParService agentParService, IVehiculeService vehiculeService, ContratlocationService contratlocationService, EvalAService evalAService) {
         this.agentParService = agentParService;
         this.vehiculeService = vehiculeService;
         this.contratlocationService = contratlocationService;
+        this.evalAService = evalAService;
     }
 
     // ------------------ INSCRIPTION ------------------
@@ -72,6 +76,9 @@ public class AgentParMVCController {
             model.addAttribute("vehicules", mesVehicules);
             List<Contratlocation> contratsEnAttente = contratlocationService.trouverparAgentIDetValideeFalse(userId);
             model.addAttribute("contratsAttente", contratsEnAttente);
+
+            List<EvalA> evalAS = evalAService.getByAgent(agentParOpt.get());
+            model.addAttribute("evaluations", evalAS);
             return "agentPar/profil";
         }
 

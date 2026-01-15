@@ -5,11 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Détails du véhicule - AutoPartage</title>
 
-    <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome-->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <style>
@@ -49,6 +46,12 @@
             margin-bottom: 5px;
             display: inline-block;
         }
+
+        /* Style spécifique pour les avis */
+        .review-star {
+            color: #f1c40f;
+            font-size: 0.9rem;
+        }
     </style>
 </head>
 <body>
@@ -87,12 +90,10 @@
         </div>
 
         <div id="vehicleDetails" style="display: none;">
-            <!-- Les détails seront chargés ici via JavaScript -->
         </div>
     </div>
 </div>
 
-<!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 
 <script th:inline="javascript">
@@ -227,6 +228,7 @@
                     </div>
                 </div>
             </div>
+
             <div class="mt-4 pt-3 border-top">
                 <div class="d-flex justify-content-between align-items-center">
                     <a href="${backUrl}" class="btn btn-outline-secondary">
@@ -367,72 +369,9 @@
             return '';
         }
 
-        function deleteVehicle(type, id) {
-            Swal.fire({
-                title: 'Êtes-vous sûr?',
-                text: "Cette action ne peut pas être annulée!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#3085d6',
-                confirmButtonText: 'Oui, supprimer!',
-                cancelButtonText: 'Annuler'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    let apiUrl = '';
-
-                    switch(type) {
-                        case 'voiture': apiUrl = `/api/voitures/${id}`; break;
-                        case 'velo':    apiUrl = `/api/velos/${id}`; break;
-                        case 'scooter': apiUrl = `/api/scooters/${id}`; break;
-                        case 'moto':    apiUrl = `/api/motos/${id}`; break;
-                        case 'van':     apiUrl = `/api/vans/${id}`; break;
-                        case 'camion':  apiUrl = `/api/camions/${id}`; break;
-                        default:
-                            Swal.fire('Erreur', 'Type de véhicule non supporté: ' + type, 'error');
-                            return;
-                    }
-
-                    fetch(apiUrl, {
-                        method: 'DELETE'
-                    })
-                    .then(response => {
-                        if (response.ok) {
-                            Swal.fire(
-                                'Supprimé!',
-                                'Le véhicule a été supprimé.',
-                                'success'
-                            ).then(() => {
-                                const userRole = [[${session.role}]];
-                                if (userRole === 'AGENT_PRO') {
-                                    window.location.href = '/agent-pro/profil';
-                                } else if (userRole === 'AGENT_PAR') {
-                                    window.location.href = '/agent-par/profil';
-                                } else {
-                                    window.location.href = '/vehicule/liste';
-                                }
-                            });
-                        } else {
-                            Swal.fire(
-                                'Erreur!',
-                                'Erreur lors de la suppression.',
-                                'error'
-                            );
-                        }
-                    })
-                    .catch(error => {
-                        Swal.fire(
-                            'Erreur!',
-                            'Erreur réseau: ' + error.message,
-                            'error'
-                        );
-                    });
-                }
-            });
-        }
-
     function loadVehicleEvaluations(vehicleId) {
-        fetch(`/api/evaluations-vehicule/vehicule/${vehicleId}`)
+        // On suppose que l'API est /api/evalv/vehicule/{id} ou similaire
+        fetch(`/api/evalv/vehicule/${vehicleId}`)
             .then(response => {
                 if (!response.ok) throw new Error("Erreur chargement avis");
                 return response.json();
@@ -443,7 +382,7 @@
             .catch(err => {
                 console.error(err);
                 document.getElementById('evaluations-container').innerHTML =
-                    '<p class="text-muted text-center">Impossible de charger les avis pour le moment.</p>';
+                    '<p class="text-muted text-center">Aucun avis disponible pour le moment.</p>';
             });
     }
 
@@ -452,56 +391,40 @@
 
         if (!evaluations || evaluations.length === 0) {
             container.innerHTML = `
-                <div class="text-center py-4 text-muted">
-                    <i class="far fa-comment-dots fa-3x mb-3"></i>
-                    <p>Aucune évaluation pour ce véhicule pour le moment.</p>
+                <div class="text-center py-3 text-muted">
+                    <p>Aucun avis pour ce véhicule.</p>
                 </div>
             `;
             return;
         }
 
         let html = '<div class="list-group list-group-flush">';
-
-        evaluations.forEach(eval => {
-            const date = new Date(eval.dateEvaluation).toLocaleDateString('fr-FR', {
-                year: 'numeric', month: 'long', day: 'numeric'
-            });
-
-            const stars = generateStars(eval.note);
-
-            const loueurName = eval.loueur ? (eval.loueur.prenom + ' ' + eval.loueur.nom) : 'Utilisateur';
+        evaluations.forEach(ev => {
+            const stars = generateStars(ev.note);
+            const date = ev.datenote ? new Date(ev.datenote).toLocaleDateString('fr-FR') : '-';
+            const loueurName = ev.loueur ? (ev.loueur.prenom + " " + ev.loueur.nom) : "Utilisateur";
 
             html += `
-                <div class="list-group-item px-0 py-3">
-                    <div class="d-flex w-100 justify-content-between">
-                        <h6 class="mb-1 fw-bold">
-                            <i class="fas fa-user-circle me-2 text-secondary"></i>${loueurName}
-                        </h6>
-                        <small class="text-muted">${date}</small>
+                <div class="list-group-item px-0 py-3 bg-transparent">
+                    <div class="d-flex justify-content-between mb-1">
+                        <span class="fw-bold"><i class="fas fa-user-circle me-1"></i> ${loueurName}</span>
+                        <span class="text-muted small">${date}</span>
                     </div>
-                    <div class="mb-2 text-warning">${stars}</div>
-                    <p class="mb-1 text-secondary">
-                        <i class="fas fa-quote-left me-2 text-muted opacity-25"></i>
-                        ${eval.commentaire || 'Aucun commentaire.'}
-                    </p>
+                    <div class="review-star mb-2">${stars}</div>
+                    <p class="mb-0 text-secondary small italic">"${ev.commentaires || ev.commentaire || 'Pas de commentaire'}"</p>
                 </div>
             `;
         });
-
         html += '</div>';
         container.innerHTML = html;
     }
 
     function generateStars(rating) {
-        let starsHtml = '';
+        let stars = '';
         for (let i = 1; i <= 5; i++) {
-            if (i <= rating) {
-                starsHtml += '<i class="fas fa-star"></i>';
-            } else {
-                starsHtml += '<i class="far fa-star"></i>';
-            }
+            stars += `<i class="${i <= rating ? 'fas' : 'far'} fa-star"></i>`;
         }
-        return starsHtml;
+        return stars;
     }
 </script>
 </body>
