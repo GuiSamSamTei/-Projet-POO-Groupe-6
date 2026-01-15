@@ -603,16 +603,19 @@
             document.getElementById('gps').value = data.gps === null ? '' : data.gps.toString();
         }
         else if (type === 'velo') {
-            document.getElementById('marque_velo').value = data.marque;
-            document.getElementById('modele_velo').value = data.modele;
-            document.getElementById('prixjour_velo').value = data.prixjour;
-            document.getElementById('couleur_velo').value = data.couleur;
-            document.getElementById('villedispo_velo').value = data.villedispo;
+            document.getElementById('marque_velo').value = data.marque || '';
+            document.getElementById('modele_velo').value = data.modele || '';
+            document.getElementById('prixjour_velo').value = data.prixjour || '';
+            document.getElementById('couleur_velo').value = data.couleur || '';
+            document.getElementById('villedispo_velo').value = data.villedispo || '';
             document.getElementById('vehiculedispo_velo').checked = data.vehiculedispo;
 
-            document.getElementById('typeVelo').value = data.typeVelo;
-            document.getElementById('nombrevitesses').value = data.nombreVitesses; // Attention majuscule V
-            document.getElementById('electrique').value = data.electrique === null ? '' : data.electrique.toString();
+            document.getElementById('typeVelo').value = data.typeVelo || '';
+            let vitesse = data.nombreVitesses !== undefined ? data.nombreVitesses : data.nombrevitesses;
+            document.getElementById('nombrevitesses').value = vitesse || '';
+
+            let isElec = data.electrique;
+            document.getElementById('electrique').value = (isElec === null || isElec === undefined) ? '' : isElec.toString();
         }
         else if (type === 'van') {
             document.getElementById('marque_van').value = data.marque;
