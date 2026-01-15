@@ -50,12 +50,16 @@ public class ControleTechniqueController {
     // ENREGISTRER
     @PostMapping("/enregistrer")
     public String enregistrerControleTechnique(
-            @ModelAttribute ControleTechnique controleTechnique
+            @ModelAttribute("controleTechnique") ControleTechnique controleTechnique
     ) {
+        // 1. Sauvegarder le contrôle
         controleTechniqueService.enregistrerControleTechnique(controleTechnique);
-        return "redirect:/vehicule/liste";
-    }
 
+
+        Long vId = controleTechnique.getVehicule().getId();
+
+        return "redirect:/controletechnique/vehicule/" + vId + "/controles";
+    }
     @GetMapping("/vehicule/{id}/controles")
     public String afficherHistoriqueControles(@PathVariable Long id, Model model) {
         Vehicule vehicule = vehiculeService.getVehiculeByid(id);
