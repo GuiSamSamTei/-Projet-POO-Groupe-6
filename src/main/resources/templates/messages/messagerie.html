@@ -265,6 +265,10 @@
                 </div>
 
                 <div class="chat-footer">
+                    <div th:if="${param.error != null}" class="alert alert-danger py-2 mb-3">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        Les adresses e-mail et numéros de téléphone ne sont pas autorisés dans les messages.
+                    </div>
                     <form th:action="@{/messages/envoyer}" method="post">
                         <input type="hidden" name="destinataireId" th:value="${other.id}" />
                         <div class="input-group">

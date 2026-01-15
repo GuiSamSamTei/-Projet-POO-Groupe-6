@@ -53,7 +53,7 @@
         </a>
         <div class="d-flex align-items-center">
             <span class="me-3 fw-bold text-warning" th:text="'Modification: ' + ${type}"></span>
-            <a th:href="@{/agent-par/profil}" class="btn btn-outline-secondary me-2">
+            <a th:href="${redirectUrl}" class="btn btn-outline-secondary me-2">
                 <i class="fas fa-arrow-left me-1"></i> Retour au profil
             </a>
         </div>
@@ -69,7 +69,14 @@
                         <i class="fas fa-edit me-2 text-warning"></i>
                         <span th:text="'Modifier ' + ${type}">Modifier</span>
                     </h3>
-                    <span class="badge bg-warning text-dark text-uppercase" th:text="${type}">Type</span>
+
+                    <div>
+                        <a th:href="@{'/controletechnique/vehicule/' + ${id} + '/controles'}" class="btn btn-outline-danger me-2">
+                            <i class="fas fa-tools me-1"></i> Contrôle Technique
+                        </a>
+
+                        <span class="badge bg-warning text-dark text-uppercase" th:text="${type}">Type</span>
+                    </div>
                 </div>
 
                 <div id="loading" class="loading">

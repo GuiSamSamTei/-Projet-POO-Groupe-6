@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr" xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -27,7 +28,7 @@
             background: white;
             border-radius: 15px;
             padding: 30px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
             margin-bottom: 30px;
         }
 
@@ -36,7 +37,7 @@
             border-radius: 10px;
             padding: 20px;
             text-align: center;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
             margin-bottom: 20px;
         }
 
@@ -70,342 +71,357 @@
         }
     </style>
 </head>
+
 <body>
 
-<!-- Navigation Bar -->
-<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm mb-4">
-    <div class="container">
-        <a class="navbar-brand" href="/">
-            <i class="fas fa-car me-2 text-primary"></i>
-            <span class="fw-bold">AutoPartage</span>
-        </a>
-
-        <div class="d-flex align-items-center">
-            <a th:href="@{/}" class="btn btn-outline-primary me-2">
-                <i class="fas fa-home me-1"></i> Accueil
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm mb-4">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-car me-2 text-primary"></i>
+                <span class="fw-bold">AutoPartage</span>
             </a>
-            <a th:href="@{/vehicule/liste}" class="btn btn-primary me-2">
-                <i class="fas fa-search me-1"></i> Chercher un véhicule
-            </a>
-        </div>
-    </div>
-</nav>
 
-<div class="container">
-    <div class="row">
-        <!-- Left Column: Profile Info -->
-        <div class="col-md-4">
-            <div class="profile-card">
-                <div class="text-center mb-4">
-                    <div class="rounded-circle bg-primary d-inline-flex align-items-center justify-content-center"
-                         style="width: 80px; height: 80px; margin-bottom: 15px;">
-                        <i class="fas fa-user fa-2x text-white"></i>
-                    </div>
-                    <h4 th:text="${loueur.prenom + ' ' + loueur.nom}"></h4>
-                    <p class="text-muted mb-0">📍 <span th:text="${loueur.ville}"></span></p>
-                    <span class="badge bg-info text-white mt-2">LOUEUR</span>
-                </div>
-
-                <!-- Contact Info -->
-                <div class="mb-4">
-                    <h6><i class="fas fa-user-circle me-2 text-primary"></i> Informations personnelles</h6>
-                    <div class="info-item">
-                        <small class="text-muted">👤 Nom d'utilisateur</small>
-                        <p class="mb-0 fw-bold" th:text="${loueur.username}"></p>
-                    </div>
-                    <div class="info-item">
-                        <small class="text-muted">📧 Email</small>
-                        <p class="mb-0 fw-bold" th:text="${loueur.email}"></p>
-                    </div>
-                    <div class="info-item">
-                        <small class="text-muted">📞 Téléphone</small>
-                        <p class="mb-0 fw-bold" th:text="${loueur.telephone}"></p>
-                    </div>
-                    <div class="info-item">
-                        <small class="text-muted">📍 Ville</small>
-                        <p class="mb-0 fw-bold" th:text="${loueur.ville}"></p>
-                    </div>
-                    <div class="info-item">
-                        <small class="text-muted">🚗 Type de permis</small>
-                        <p class="mb-0 fw-bold" th:text="${loueur.typepermis}"></p>
-                    </div>
-                </div>
-
-                <hr>
-
-                <!-- Statistics -->
-                <h6 class="mb-3"><i class="fas fa-chart-line me-2 text-primary"></i> Statistiques</h6>
-                <div class="row">
-                    <div class="col-6">
-                        <div class="stat-card">
-                            <div class="stat-number" th:text="${loueur.notemoyenne}">0.0</div>
-                            <div class="stat-label">Note moyenne</div>
-                        </div>
-                    </div>
-                    <div class="col-6">
-                        <div class="stat-card">
-                            <div class="stat-number" th:text="${loueur.nombreevaluations}">0</div>
-                            <div class="stat-label">Évaluations</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Quick Actions -->
-            <div class="profile-card">
-                <h6><i class="fas fa-bolt me-2 text-primary"></i> Actions rapides</h6>
-                <div class="d-grid gap-2">
-                    <!-- button historique -->
-                    <a th:href="@{/historique-location}" class="btn btn-primary">
-                        <i class="fas fa-history me-1"></i> Voir mon historique de locations
-                    </a>
-                    <a th:href="@{/messages}" class="btn btn-success text-white">
-                        <i class="fas fa-envelope me-1"></i> Messagerie
-                    </a>
-                    <a th:href="@{/vehicule/liste}" class="btn btn-outline-primary">
-                        <i class="fas fa-search me-1"></i> Chercher un véhicule
-                    </a>
-                    <a th:href="@{/loueur/profil/modifier}" class="btn btn-outline-secondary">
-                        <i class="fas fa-user-edit me-1"></i> Modifier mon profil
-                    </a>
-                    <a th:href="@{/utilisateur/logout}" class="btn btn-outline-danger">
-                        <i class="fas fa-sign-out-alt me-1"></i> Déconnexion
-                    </a>
-                </div>
-            </div>
-
-            <div class="card share-card mt-3">
-                <div class="card-body">
-                    <h5 class="card-title"><i class="fas fa-share-alt me-2"></i>Partager votre profil</h5>
-                    <p class="card-text mb-3">Voici le lien vers votre profil public que vous pouvez partager :</p>
-                    <div class="input-group">
-                        <input type="text" class="form-control" id="profileLink"
-                               th:value="${'http://localhost:9191/utilisateur/profile/' + loueur.id}" readonly>
-                        <button class="btn btn-light" type="button" onclick="copyProfileLink()">
-                            <i class="fas fa-copy me-1"></i> Copier
-                        </button>
-                    </div>
-                    <small class="text-white-50 mt-2 d-block">
-                        <i class="fas fa-info-circle me-1"></i>
-                        Les autres utilisateurs pourront voir vos informations et évaluations.
-                    </small>
-                </div>
+            <div class="d-flex align-items-center">
+                <a th:href="@{/}" class="btn btn-outline-primary me-2">
+                    <i class="fas fa-home me-1"></i> Accueil
+                </a>
+                <a th:href="@{/vehicule/liste}" class="btn btn-primary me-2">
+                    <i class="fas fa-search me-1"></i> Chercher un véhicule
+                </a>
             </div>
         </div>
+    </nav>
 
-        <!-- Right Column: Main Content -->
-        <div class="col-md-8">
-            <!-- Welcome Message -->
-            <div class="profile-card">
-                <h4 class="mb-3">👋 Bienvenue, <span th:text="${loueur.prenom}"></span> !</h4>
-                <p class="text-muted">Vous êtes connecté en tant que <strong>Loueur</strong> sur AutoPartage.</p>
-
-                <div class="alert alert-info">
-                    <i class="fas fa-info-circle me-2"></i>
-                    <strong>Votre profil public :</strong> Les autres utilisateurs peuvent voir votre profil et vos évaluations.
-                </div>
-
-                <div class="row mt-4">
-                    <div class="col-md-6">
-                        <div class="card border-0 bg-light">
-                            <div class="card-body">
-                                <h6><i class="fas fa-car me-2 text-primary"></i> Louer un véhicule</h6>
-                                <p class="small text-muted mb-2">Trouvez le véhicule parfait pour vos besoins</p>
-                                <a th:href="@{/vehicule/liste}" class="btn btn-sm btn-primary">
-                                    Explorer les véhicules
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="card border-0 bg-light">
-                            <div class="card-body">
-                                <h6><i class="fas fa-history me-2 text-primary"></i> Historique de locations</h6>
-                                <p class="small text-muted mb-2">Consultez toutes vos locations passées</p>
-                                <a th:href="@{/historique-location}" class="btn btn-sm btn-primary">
-                                    Voir l'historique
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Profile Details -->
-            <div class="profile-card">
-                <h5 class="mb-4"><i class="fas fa-id-card me-2 text-primary"></i> Détails du profil</h5>
-
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="mb-3">
-                            <h6>Informations personnelles</h6>
-                            <table class="table table-sm">
-                                <tr>
-                                    <td class="text-muted border-0">Nom complet :</td>
-                                    <td class="fw-bold border-0" th:text="${loueur.prenom + ' ' + loueur.nom}"></td>
-                                </tr>
-                                <tr>
-                                    <td class="text-muted">Nom d'utilisateur :</td>
-                                    <td class="fw-bold" th:text="${loueur.username}"></td>
-                                </tr>
-                                <tr>
-                                    <td class="text-muted">Email :</td>
-                                    <td class="fw-bold" th:text="${loueur.email}"></td>
-                                </tr>
-                                <tr>
-                                    <td class="text-muted">Téléphone :</td>
-                                    <td class="fw-bold" th:text="${loueur.telephone}"></td>
-                                </tr>
-                            </table>
-                        </div>
-                    </div>
-
-                    <div class="col-md-6">
-                        <div class="mb-3">
-                            <h6>Localisation et permis</h6>
-                            <table class="table table-sm">
-                                <tr>
-                                    <td class="text-muted border-0">Ville :</td>
-                                    <td class="fw-bold border-0" th:text="${loueur.ville}"></td>
-                                </tr>
-                                <tr>
-                                    <td class="text-muted">Type de permis :</td>
-                                    <td class="fw-bold" th:text="${loueur.typepermis}"></td>
-                                </tr>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Ratings Section -->
-                <div class="profile-card mt-4">
-                    <h5 class="mb-4"><i class="fas fa-user-check me-2 text-primary"></i>Avis reçus des Agents</h5>
-
-                    <div th:if="${#lists.isEmpty(loueur.evalrecues)}" class="text-center py-4 text-muted">
-                        <p><i class="fas fa-comment-slash fa-2x mb-2 opacity-25"></i><br>Aucun agent n'a encore évalué ce loueur.</p>
-                    </div>
-
-                    <div th:each="eval : ${loueur.evalrecues}" class="mb-3 p-3 bg-light rounded shadow-sm border-start border-primary border-4">
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <div class="d-flex align-items-center">
-                                <div class="bg-secondary text-white rounded-circle p-2 me-2" style="width: 35px; height: 35px; display: flex; align-items: center; justify-content: center;">
-                                    <i class="fas fa-user-tie fa-sm"></i>
-                                </div>
-                                <strong th:text="${eval.agent.username}">Agent</strong>
-                            </div>
-                            <div class="text-warning">
-                <span th:each="i : ${#numbers.sequence(1, 5)}">
-                    <i th:class="${i <= eval.note ? 'fas fa-star' : 'far fa-star'}"></i>
-                </span>
-                            </div>
-                        </div>
-                        <p class="mb-1 small" th:text="${eval.commentaire}">Commentaire...</p>
-                        <div class="text-end">
-                            <small class="text-muted" style="font-size: 0.75rem;" th:text="${#temporals.format(eval.datenote, 'dd/MM/yyyy')}"></small>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="profile-card mt-4">
-                    <h5 class="mb-4"><i class="fas fa-star me-2 text-warning"></i>Mes avis sur les véhicules loués</h5>
-                    <div th:if="${#lists.isEmpty(loueur.evalvehicules)}" class="text-center py-3 text-muted">
-                        <small>Vous n'avez pas encore laissé d'avis sur les véhicules.</small>
-                    </div>
-                    <div th:each="evV : ${loueur.evalvehicules}" class="small mb-2 text-muted">
-                        <i class="fas fa-car me-1"></i>
-                        Vous avez noté <strong th:text="${evV.vehicule.marque}"></strong> :
-                        <span class="text-warning" th:text="${evV.note + '/5'}"></span>
-                    </div>
-                </div>
-
-                <div class="d-flex justify-content-between mt-4">
-                    <a th:href="@{/loueur/profil/modifier}" class="btn btn-primary">
-                        <i class="fas fa-edit me-1"></i> Modifier mon profil
-                    </a>
-                    <a th:href="@{/historique-location}" class="btn btn-outline-primary">
-                        <i class="fas fa-history me-1"></i> Voir l'historique de locations
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Footer -->
-<footer class="bg-dark text-white py-4 mt-5">
     <div class="container">
         <div class="row">
+            <!-- Left Column: Profile Info -->
             <div class="col-md-4">
-                <h5><i class="fas fa-car me-2"></i>AutoPartage</h5>
-                <p class="text-muted">Plateforme de location de véhicules entre particuliers et professionnels.</p>
+                <div class="profile-card">
+                    <div class="text-center mb-4">
+                        <div class="rounded-circle bg-primary d-inline-flex align-items-center justify-content-center"
+                            style="width: 80px; height: 80px; margin-bottom: 15px;">
+                            <i class="fas fa-user fa-2x text-white"></i>
+                        </div>
+                        <h4 th:text="${loueur.prenom + ' ' + loueur.nom}"></h4>
+                        <p class="text-muted mb-0">📍 <span th:text="${loueur.ville}"></span></p>
+                        <span class="badge bg-info text-white mt-2">LOUEUR</span>
+                    </div>
+
+                    <!-- Contact Info -->
+                    <div class="mb-4">
+                        <h6><i class="fas fa-user-circle me-2 text-primary"></i> Informations personnelles</h6>
+                        <div class="info-item">
+                            <small class="text-muted">👤 Nom d'utilisateur</small>
+                            <p class="mb-0 fw-bold" th:text="${loueur.username}"></p>
+                        </div>
+                        <div class="info-item">
+                            <small class="text-muted">📧 Email</small>
+                            <p class="mb-0 fw-bold" th:text="${loueur.email}"></p>
+                        </div>
+                        <div class="info-item">
+                            <small class="text-muted">📞 Téléphone</small>
+                            <p class="mb-0 fw-bold" th:text="${loueur.telephone}"></p>
+                        </div>
+                        <div class="info-item">
+                            <small class="text-muted">📍 Ville</small>
+                            <p class="mb-0 fw-bold" th:text="${loueur.ville}"></p>
+                        </div>
+                        <div class="info-item">
+                            <small class="text-muted">🚗 Type de permis</small>
+                            <p class="mb-0 fw-bold" th:text="${loueur.typepermis}"></p>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <!-- Statistics -->
+                    <h6 class="mb-3"><i class="fas fa-chart-line me-2 text-primary"></i> Statistiques</h6>
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="stat-card">
+                                <div class="stat-number" th:text="${loueur.notemoyenne}">0.0</div>
+                                <div class="stat-label">Note moyenne</div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="stat-card">
+                                <div class="stat-number" th:text="${loueur.nombreevaluations}">0</div>
+                                <div class="stat-label">Évaluations</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="profile-card">
+                    <h6><i class="fas fa-bolt me-2 text-primary"></i> Actions rapides</h6>
+                    <div class="d-grid gap-2">
+                        <!-- button historique -->
+                        <a th:href="@{/historique-location}" class="btn btn-primary">
+                            <i class="fas fa-history me-1"></i> Voir mon historique de locations
+                        </a>
+
+                        <!-- Bouton Parrainage -->
+                        <a th:href="@{/loueur/parrainage}" class="btn btn-info text-white">
+                            <i class="fas fa-gift me-1"></i> Porte-monnaie & Parrainage
+                        </a>
+
+                        <a th:href="@{/messages}" class="btn btn-success text-white">
+                            <i class="fas fa-envelope me-1"></i> Messagerie
+                        </a>
+                        <a th:href="@{/vehicule/liste}" class="btn btn-outline-primary">
+                            <i class="fas fa-search me-1"></i> Chercher un véhicule
+                        </a>
+                        <a th:href="@{/loueur/profil/modifier}" class="btn btn-outline-secondary">
+                            <i class="fas fa-user-edit me-1"></i> Modifier mon profil
+                        </a>
+                        <a th:href="@{/utilisateur/logout}" class="btn btn-outline-danger">
+                            <i class="fas fa-sign-out-alt me-1"></i> Déconnexion
+                        </a>
+                    </div>
+                </div>
+
+                <div class="card share-card mt-3">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="fas fa-share-alt me-2"></i>Partager votre profil</h5>
+                        <p class="card-text mb-3">Voici le lien vers votre profil public que vous pouvez partager :</p>
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="profileLink"
+                                th:value="${'http://localhost:9191/utilisateur/profile/' + loueur.id}" readonly>
+                            <button class="btn btn-light" type="button" onclick="copyProfileLink()">
+                                <i class="fas fa-copy me-1"></i> Copier
+                            </button>
+                        </div>
+                        <small class="text-white-50 mt-2 d-block">
+                            <i class="fas fa-info-circle me-1"></i>
+                            Les autres utilisateurs pourront voir vos informations et évaluations.
+                        </small>
+                    </div>
+                </div>
             </div>
-            <div class="col-md-4">
-                <h5>Liens utiles</h5>
-                <ul class="list-unstyled">
-                    <li><a th:href="@{/vehicule/liste}" class="text-white-50 text-decoration-none">Tous les véhicules</a></li>
-                    <li><a th:href="@{/}" class="text-white-50 text-decoration-none">Accueil</a></li>
-                </ul>
-            </div>
-            <div class="col-md-4">
-                <h5>Contact</h5>
-                <p class="text-muted mb-0">
-                    <i class="fas fa-envelope me-2"></i> contact@autopartage.fr<br>
-                    <i class="fas fa-phone me-2"></i> +33 1 23 45 67 89
-                </p>
+
+            <!-- Right Column: Main Content -->
+            <div class="col-md-8">
+                <!-- Welcome Message -->
+                <div class="profile-card">
+                    <h4 class="mb-3">👋 Bienvenue, <span th:text="${loueur.prenom}"></span> !</h4>
+                    <p class="text-muted">Vous êtes connecté en tant que <strong>Loueur</strong> sur AutoPartage.</p>
+
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <strong>Votre profil public :</strong> Les autres utilisateurs peuvent voir votre profil et vos
+                        évaluations.
+                    </div>
+
+                    <div class="row mt-4">
+                        <div class="col-md-6">
+                            <div class="card border-0 bg-light">
+                                <div class="card-body">
+                                    <h6><i class="fas fa-car me-2 text-primary"></i> Louer un véhicule</h6>
+                                    <p class="small text-muted mb-2">Trouvez le véhicule parfait pour vos besoins</p>
+                                    <a th:href="@{/vehicule/liste}" class="btn btn-sm btn-primary">
+                                        Explorer les véhicules
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card border-0 bg-light">
+                                <div class="card-body">
+                                    <h6><i class="fas fa-history me-2 text-primary"></i> Historique de locations</h6>
+                                    <p class="small text-muted mb-2">Consultez toutes vos locations passées</p>
+                                    <a th:href="@{/historique-location}" class="btn btn-sm btn-primary">
+                                        Voir l'historique
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Profile Details -->
+                <div class="profile-card">
+                    <h5 class="mb-4"><i class="fas fa-id-card me-2 text-primary"></i> Détails du profil</h5>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <h6>Informations personnelles</h6>
+                                <table class="table table-sm">
+                                    <tr>
+                                        <td class="text-muted border-0">Nom complet :</td>
+                                        <td class="fw-bold border-0" th:text="${loueur.prenom + ' ' + loueur.nom}"></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="text-muted">Nom d'utilisateur :</td>
+                                        <td class="fw-bold" th:text="${loueur.username}"></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="text-muted">Email :</td>
+                                        <td class="fw-bold" th:text="${loueur.email}"></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="text-muted">Téléphone :</td>
+                                        <td class="fw-bold" th:text="${loueur.telephone}"></td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <h6>Localisation et permis</h6>
+                                <table class="table table-sm">
+                                    <tr>
+                                        <td class="text-muted border-0">Ville :</td>
+                                        <td class="fw-bold border-0" th:text="${loueur.ville}"></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="text-muted">Type de permis :</td>
+                                        <td class="fw-bold" th:text="${loueur.typepermis}"></td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Ratings Section -->
+                    <div class="profile-card mt-4">
+                        <h5 class="mb-4"><i class="fas fa-user-check me-2 text-primary"></i>Avis reçus des Agents</h5>
+
+                        <div th:if="${#lists.isEmpty(loueur.evalrecues)}" class="text-center py-4 text-muted">
+                            <p><i class="fas fa-comment-slash fa-2x mb-2 opacity-25"></i><br>Aucun agent n'a encore
+                                évalué ce loueur.</p>
+                        </div>
+
+                        <div th:each="eval : ${loueur.evalrecues}"
+                            class="mb-3 p-3 bg-light rounded shadow-sm border-start border-primary border-4">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <div class="d-flex align-items-center">
+                                    <div class="bg-secondary text-white rounded-circle p-2 me-2"
+                                        style="width: 35px; height: 35px; display: flex; align-items: center; justify-content: center;">
+                                        <i class="fas fa-user-tie fa-sm"></i>
+                                    </div>
+                                    <strong th:text="${eval.agent.username}">Agent</strong>
+                                </div>
+                                <div class="text-warning">
+                                    <span th:each="i : ${#numbers.sequence(1, 5)}">
+                                        <i th:class="${i <= eval.note ? 'fas fa-star' : 'far fa-star'}"></i>
+                                    </span>
+                                </div>
+                            </div>
+                            <p class="mb-1 small" th:text="${eval.commentaire}">Commentaire...</p>
+                            <div class="text-end">
+                                <small class="text-muted" style="font-size: 0.75rem;"
+                                    th:text="${#temporals.format(eval.datenote, 'dd/MM/yyyy')}"></small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="profile-card mt-4">
+                        <h5 class="mb-4"><i class="fas fa-star me-2 text-warning"></i>Mes avis sur les véhicules loués
+                        </h5>
+                        <div th:if="${#lists.isEmpty(loueur.evalvehicules)}" class="text-center py-3 text-muted">
+                            <small>Vous n'avez pas encore laissé d'avis sur les véhicules.</small>
+                        </div>
+                        <div th:each="evV : ${loueur.evalvehicules}" class="small mb-2 text-muted">
+                            <i class="fas fa-car me-1"></i>
+                            Vous avez noté <strong th:text="${evV.vehicule.marque}"></strong> :
+                            <span class="text-warning" th:text="${evV.note + '/5'}"></span>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-between mt-4">
+                        <a th:href="@{/loueur/profil/modifier}" class="btn btn-primary">
+                            <i class="fas fa-edit me-1"></i> Modifier mon profil
+                        </a>
+                        <a th:href="@{/historique-location}" class="btn btn-outline-primary">
+                            <i class="fas fa-history me-1"></i> Voir l'historique de locations
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
-        <hr class="bg-secondary">
-        <p class="text-center text-muted mb-0">© 2026 AutoPartage. Projet POO Groupe 6.</p>
     </div>
-</footer>
 
-<!-- Bootstrap JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Footer -->
+    <footer class="bg-dark text-white py-4 mt-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <h5><i class="fas fa-car me-2"></i>AutoPartage</h5>
+                    <p class="text-muted">Plateforme de location de véhicules entre particuliers et professionnels.</p>
+                </div>
+                <div class="col-md-4">
+                    <h5>Liens utiles</h5>
+                    <ul class="list-unstyled">
+                        <li><a th:href="@{/vehicule/liste}" class="text-white-50 text-decoration-none">Tous les
+                                véhicules</a></li>
+                        <li><a th:href="@{/}" class="text-white-50 text-decoration-none">Accueil</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <h5>Contact</h5>
+                    <p class="text-muted mb-0">
+                        <i class="fas fa-envelope me-2"></i> contact@autopartage.fr<br>
+                        <i class="fas fa-phone me-2"></i> +33 1 23 45 67 89
+                    </p>
+                </div>
+            </div>
+            <hr class="bg-secondary">
+            <p class="text-center text-muted mb-0">© 2026 AutoPartage. Projet POO Groupe 6.</p>
+        </div>
+    </footer>
 
-<script>
-    // 更新后的复制函数，使用SweetAlert2
-    function copyProfileLink() {
-        const profileLinkInput = document.getElementById('profileLink');
-        profileLinkInput.select();
-        profileLinkInput.setSelectionRange(0, 99999); // Pour mobile
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 
-        try {
-            navigator.clipboard.writeText(profileLinkInput.value);
+    <script>
+        // 更新后的复制函数，使用SweetAlert2
+        function copyProfileLink() {
+            const profileLinkInput = document.getElementById('profileLink');
+            profileLinkInput.select();
+            profileLinkInput.setSelectionRange(0, 99999); // Pour mobile
 
-            // Utiliser SweetAlert2 pour une notification visuelle
-            Swal.fire({
-                icon: 'success',
-                title: 'Lien copié !',
-                text: 'Le lien de votre profil a été copié dans le presse-papier.',
-                toast: true,
-                position: 'top-end',
-                showConfirmButton: false,
-                timer: 3000,
-                timerProgressBar: true,
-                didOpen: (toast) => {
-                    toast.addEventListener('mouseenter', Swal.stopTimer)
-                    toast.addEventListener('mouseleave', Swal.resumeTimer)
-                }
-            });
-        } catch (err) {
-            console.error('Erreur lors de la copie : ', err);
-            // Fallback pour les anciens navigateurs
-            document.execCommand('copy');
+            try {
+                navigator.clipboard.writeText(profileLinkInput.value);
 
-            Swal.fire({
-                icon: 'info',
-                title: 'Lien copié',
-                text: 'Le lien a été copié dans le presse-papier.',
-                timer: 2000,
-                showConfirmButton: false
-            });
+                // Utiliser SweetAlert2 pour une notification visuelle
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Lien copié !',
+                    text: 'Le lien de votre profil a été copié dans le presse-papier.',
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    didOpen: (toast) => {
+                        toast.addEventListener('mouseenter', Swal.stopTimer)
+                        toast.addEventListener('mouseleave', Swal.resumeTimer)
+                    }
+                });
+            } catch (err) {
+                console.error('Erreur lors de la copie : ', err);
+                // Fallback pour les anciens navigateurs
+                document.execCommand('copy');
+
+                Swal.fire({
+                    icon: 'info',
+                    title: 'Lien copié',
+                    text: 'Le lien a été copié dans le presse-papier.',
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+            }
         }
-    }
 
-    document.addEventListener('DOMContentLoaded', function() {
-        console.log('Profil Loueur page loaded');
-    });
-</script>
+        document.addEventListener('DOMContentLoaded', function () {
+            console.log('Profil Loueur page loaded');
+        });
+    </script>
 
 </body>
+
 </html>
