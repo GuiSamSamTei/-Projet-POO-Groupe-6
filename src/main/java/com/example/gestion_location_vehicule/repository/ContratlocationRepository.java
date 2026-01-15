@@ -22,6 +22,6 @@ public interface ContratlocationRepository extends JpaRepository<Contratlocation
     List<Contratlocation> findByLoueur_Id(Long loueur_id);
     
     // Compter le nombre de locations d'un loueur
-    long countByLoueurId(Long loueurId);
+    long countByLoueur_Id(Long loueur_id);
 
 }

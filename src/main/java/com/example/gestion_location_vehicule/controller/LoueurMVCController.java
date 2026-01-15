@@ -15,6 +15,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.example.gestion_location_vehicule.service.PorteMonnaieService.IPorteMonnaieService;
+
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
@@ -31,10 +33,17 @@ public class LoueurMVCController {
     private final AssuranceService assuranceService;
     private final TarificationService tarificationService;
     private final com.example.gestion_location_vehicule.service.ParrainageService.IParrainageService parrainageService;
+    private final IPorteMonnaieService porteMonnaieService;
 
     public LoueurMVCController(ILoueurService loueurService,
                                VehiculeRepository vehiculeRepository,
-                               ContratlocationService contratlocationService, ParkingService parkingService, VehiculeService vehiculeService, AssuranceService assuranceService, TarificationService tarificationService, com.example.gestion_location_vehicule.service.ParrainageService.IParrainageService parrainageService) {
+                               ContratlocationService contratlocationService,
+                               ParkingService parkingService,
+                               VehiculeService vehiculeService,
+                               AssuranceService assuranceService,
+                               TarificationService tarificationService,
+                               com.example.gestion_location_vehicule.service.ParrainageService.IParrainageService parrainageService,
+                               IPorteMonnaieService porteMonnaieService) {
         this.loueurService = loueurService;
         this.vehiculeRepository = vehiculeRepository;
         this.contratlocationService = contratlocationService;
@@ -43,6 +52,7 @@ public class LoueurMVCController {
         this.assuranceService = assuranceService;
         this.tarificationService = tarificationService;
         this.parrainageService = parrainageService;
+        this.porteMonnaieService = porteMonnaieService;
     }
 
     /* ===================== INSCRIPTION ===================== */
@@ -186,6 +196,15 @@ public class LoueurMVCController {
         model.addAttribute("parkings" , parkings);
         model.addAttribute("assurances", assuranceList);
         model.addAttribute("fraisServiceValue",tarifFixe);
+        
+        // --- Porte-Monnaie ---
+        try {
+            double solde = porteMonnaieService.getSolde(loueur_id);
+            model.addAttribute("solde", solde);
+        } catch (Exception e) {
+            model.addAttribute("solde", 0.0);
+        }
+        // ---------------------
         return "loueur/location";
     }
 
@@ -263,8 +282,41 @@ public class LoueurMVCController {
         // 6. Sauvegarde et mise à jour
         contratlocationService.ajouterContralocation(contrat);
 
+        // --- PAIEMENT PORTE-MONNAIE ---
+        if (formData.containsKey("useWallet")) {
+             try {
+                 double deduction = porteMonnaieService.calculerMontantAUtiliser(loueurId, montantTotal);
+                 if (deduction > 0) {
+                     porteMonnaieService.debiterPourLocation(loueurId, deduction, contrat);
+                     contrat.setMontantPayePorteMonnaie(deduction);
+                     contrat.setMontantPayeAutre(montantTotal - deduction);
+                     contratlocationService.ajouterContralocation(contrat); // Mise à jour
+                 } else {
+                     contrat.setMontantPayeAutre(montantTotal);
+                     contratlocationService.ajouterContralocation(contrat);
+                 }
+             } catch (Exception e) {
+                 System.err.println("Erreur paiement porte-monnaie: " + e.getMessage());
+                 // En cas d'erreur, on considère que tout est payé par "Autre" par sécurité
+                 contrat.setMontantPayeAutre(montantTotal);
+                 contratlocationService.ajouterContralocation(contrat);
+             }
+        } else {
+             contrat.setMontantPayeAutre(montantTotal);
+             contratlocationService.ajouterContralocation(contrat);
+        }
+        // ------------------------------
+
         vehicule.setVehiculedispo(false);
         vehiculeRepository.save(vehicule);
+
+        // --- VALIDATION PARRAINAGE ---
+        try {
+             parrainageService.checkEtValiderPremiereLocation(loueurId);
+        } catch (Exception e) {
+             System.err.println("Erreur validation parrainage : " + e.getMessage());
+        }
+        // -----------------------------
 
         session.removeAttribute("vehiculeEnCours");
         session.setAttribute("dernierContrat", contrat);
