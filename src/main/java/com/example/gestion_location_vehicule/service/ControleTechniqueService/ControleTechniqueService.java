@@ -6,6 +6,8 @@ import com.example.gestion_location_vehicule.repository.ControleTechniqueReposit
 import com.example.gestion_location_vehicule.repository.VehiculeRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class ControleTechniqueService implements com.example.gestion_location_vehicule.service.ControleTechniqueService.IControleTechniqueService {
 
@@ -32,5 +34,10 @@ public class ControleTechniqueService implements com.example.gestion_location_ve
 
         return controleTechniqueRepository.findByVehicule(vehicule)
                 .orElse(null);
+    }
+
+    @Override
+    public List<ControleTechnique> getControlesByVehiculeID(Long vehicule_id) {
+        return controleTechniqueRepository.findByVehicule_Id(vehicule_id);
     }
 }
