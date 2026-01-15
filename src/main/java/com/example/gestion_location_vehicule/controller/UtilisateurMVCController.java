@@ -4,6 +4,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import com.example.gestion_location_vehicule.service.EvalAService.EvalAService;
+import com.example.gestion_location_vehicule.service.EvalLService.EvalLService;
+import com.example.gestion_location_vehicule.service.EvalVService.EvalVService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -50,6 +53,9 @@ public class UtilisateurMVCController {
     private final MessageService messageService;
     private final ControleTechniqueService controleTechniqueService;
     private final VehiculeService vehiculeService;
+    private final EvalLService evalLService;
+    private final EvalVService evalVService;
+    private final EvalAService evalAService;
 
     @GetMapping("/connexion")
     public String showForm(Model model, HttpSession session) {
@@ -181,11 +187,21 @@ public class UtilisateurMVCController {
             model.addAttribute("isViewingOwnProfile", isViewingOwnProfile);
 
             if (currentUser instanceof Loueur) {
+                List<EvalL> evalLS = evalLService.getByLoueur((Loueur) currentUser);
+                model.addAttribute("evaluations", evalLS);
+
                 model.addAttribute("currentUserProfileUrl", "/loueur/profil");
-            } else if (currentUser instanceof AgentPar) {
-                model.addAttribute("currentUserProfileUrl", "/agent-par/profil");
-            } else if (currentUser instanceof AgentPro) {
-                model.addAttribute("currentUserProfileUrl", "/agent-pro/profil");
+            } else {
+                List<EvalA> evalAS = evalAService.getByAgent((Agent) currentUser);
+                model.addAttribute("evaluations", evalAS);
+
+                if (currentUser instanceof AgentPar) {
+
+
+                    model.addAttribute("currentUserProfileUrl", "/agent-par/profil");
+                } else if (currentUser instanceof AgentPro) {
+                    model.addAttribute("currentUserProfileUrl", "/agent-pro/profil");
+                }
             }
 
             if (userToView instanceof Loueur) {

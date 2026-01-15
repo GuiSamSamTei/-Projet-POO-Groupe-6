@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,48 +9,37 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
     <style>
-        body {
-            background-color: #f8f9fa;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
+        body { background-color: #f8f9fa; font-family: 'Segoe UI', sans-serif; }
         .contract-card {
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-            margin-bottom: 30px;
-            overflow: hidden;
-            border: none;
-            transition: transform 0.2s;
+            background: white; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            margin-bottom: 30px; overflow: hidden; border: none;
         }
-        .contract-card:hover {
-            transform: translateY(-5px);
+        .contract-header { background: linear-gradient(135deg, #3498db, #2c3e50); color: white; padding: 15px 20px; }
+        .info-label { font-size: 0.8rem; color: #6c757d; text-transform: uppercase; font-weight: 700; }
+        .info-value { font-weight: 600; color: #2c3e50; }
+        .rating-box { background-color: #f8f9fa; padding: 15px; border-radius: 12px; margin-bottom: 15px; border-left: 5px solid #ddd; }
+        .badge-assurance { background-color: #fff3cd; color: #856404; border: 1px solid #ffeeba; }
+        .already-evaluated { background-color: #e8f5e9; border: 1px solid #c8e6c9; border-radius: 10px; padding: 10px; }
+
+        /* Style des étoiles interactives */
+        .star-rating {
+            display: flex;
+            flex-direction: row-reverse;
+            justify-content: flex-end;
+            margin-bottom: 10px;
         }
-        .contract-header {
-            background: linear-gradient(135deg, #3498db, #2c3e50);
-            color: white;
-            padding: 15px 20px;
-        }
-        .spec-badge {
-            background-color: #f1f3f5;
-            color: #495057;
-            border: 1px solid #dee2e6;
-            padding: 5px 10px;
-            border-radius: 20px;
-            font-size: 0.85rem;
+        .star-rating input { display: none; }
+        .star-rating label {
+            font-size: 25px;
+            color: #ddd;
+            cursor: pointer;
+            transition: color 0.2s;
             margin-right: 5px;
-            margin-bottom: 5px;
-            display: inline-block;
         }
-        .info-label {
-            font-size: 0.85rem;
-            color: #6c757d;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            font-weight: 700;
-        }
-        .info-value {
-            font-weight: 600;
-            color: #2c3e50;
+        .star-rating input:checked ~ label,
+        .star-rating label:hover,
+        .star-rating label:hover ~ label {
+            color: #f1c40f;
         }
     </style>
 </head>
@@ -58,140 +47,122 @@
 
 <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm mb-4">
     <div class="container">
-        <a class="navbar-brand" href="/">
-            <i class="fas fa-car me-2 text-primary"></i>
-            <span class="fw-bold">AutoPartage</span>
-        </a>
-        <div class="d-flex align-items-center">
-            <a th:href="@{/loueur/profil}" class="btn btn-outline-secondary">
-                <i class="fas fa-arrow-left me-1"></i> Retour au profil
-            </a>
-        </div>
+        <a class="navbar-brand" href="/"><i class="fas fa-car me-2 text-primary"></i><span class="fw-bold">AutoPartage</span></a>
+        <a th:href="@{/loueur/profil}" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-left me-1"></i> Mon Profil</a>
     </div>
 </nav>
 
 <div class="container py-4">
-    <h2 class="fw-bold mb-4"><i class="fas fa-history me-2 text-primary"></i>Historique de mes locations</h2>
+    <h2 class="fw-bold mb-4 text-center text-md-start"><i class="fas fa-history me-2 text-primary"></i>Historique de mes locations</h2>
 
     <div th:if="${contratlocationList.isEmpty()}" class="text-center py-5">
-        <div class="mb-3">
-            <i class="fas fa-folder-open fa-4x text-muted"></i>
-        </div>
-        <h4 class="text-muted">Aucune location trouvée.</h4>
-        <p class="text-muted">Vous n'avez pas encore effectué de location.</p>
-        <a th:href="@{/vehicule/liste}" class="btn btn-primary mt-3">Louer un véhicule</a>
+        <i class="fas fa-folder-open fa-4x text-muted mb-3"></i>
+        <h4 class="text-muted">Aucune location effectuée.</h4>
     </div>
 
     <div th:each="contrat : ${contratlocationList}" class="contract-card">
-
         <div class="contract-header d-flex justify-content-between align-items-center">
-            <h4 class="mb-0 fw-bold">
-                <i class="fas fa-car me-2"></i>
-                <span th:text="${contrat.vehicule.marque + ' ' + contrat.vehicule.modele}"></span>
-            </h4>
-            <span class="badge bg-light text-dark">
-                <i class="fas fa-tag me-1"></i>
-                <span th:text="${contrat.vehicule.typeVehicule}"></span>
-            </span>
+            <h5 class="mb-0 fw-bold"><i class="fas fa-car me-2"></i> <span th:text="${contrat.vehicule.marque + ' ' + contrat.vehicule.modele}"></span></h5>
+            <span class="badge bg-light text-dark shadow-sm" th:text="${#temporals.format(contrat.datedebut, 'dd/MM/yyyy')}"></span>
         </div>
 
         <div class="card-body">
-
             <div class="row mb-4">
-                <div class="col-md-4 col-6 mb-3">
-                    <div class="info-label">Couleur</div>
-                    <div class="info-value"><i class="fas fa-palette me-1 text-primary"></i> <span th:text="${contrat.vehicule.couleur}"></span></div>
+                <div class="col-md-3 col-6 mb-3">
+                    <div class="info-label">Lieu de dépôt</div>
+                    <div class="info-value"><i class="fas fa-map-marker-alt text-danger me-1"></i> <span th:text="${contrat.lieudepot}"></span></div>
                 </div>
-                <div class="col-md-4 col-6 mb-3">
-                    <div class="info-label">Ville</div>
-                    <div class="info-value"><i class="fas fa-map-marker-alt me-1 text-danger"></i> <span th:text="${contrat.vehicule.villedispo}"></span></div>
+                <div class="col-md-3 col-6 mb-3">
+                    <div class="info-label">Durée</div>
+                    <div class="info-value"><i class="far fa-clock text-primary me-1"></i> <span th:text="${contrat.nombreJours + ' jours'}"></span></div>
                 </div>
-                <div class="col-md-4 col-6 mb-3">
-                    <div class="info-label">Prix / jour</div>
-                    <div class="info-value"><i class="fas fa-euro-sign me-1 text-success"></i> <span th:text="${contrat.vehicule.prixjour}"></span> €</div>
+                <div class="col-md-3 col-6 mb-3">
+                    <div class="info-label">Prix Total</div>
+                    <div class="info-value text-success font-monospace" th:text="${contrat.prixtotal + ' €'}"></div>
                 </div>
-            </div>
-
-            <div class="mb-4 bg-light p-3 rounded">
-                <h6 class="fw-bold mb-3"><i class="fas fa-cogs me-2"></i>Détails techniques</h6>
-
-                <div th:if="${contrat.vehicule instanceof T(com.example.gestion_location_vehicule.model.Voiture)}">
-                    <span class="spec-badge"><i class="fas fa-door-open"></i> Portes : <span th:text="${contrat.vehicule.nombreportes}"></span></span>
-                    <span class="spec-badge"><i class="fas fa-users"></i> Places : <span th:text="${contrat.vehicule.nombreplaces}"></span></span>
-                    <span class="spec-badge"><i class="fas fa-cog"></i> Auto : <span th:text="${contrat.vehicule.automatique ? 'Oui' : 'Non'}"></span></span>
-                    <span class="spec-badge"><i class="fas fa-gas-pump"></i> <span th:text="${contrat.vehicule.carburant}"></span></span>
-                    <span class="spec-badge"><i class="fas fa-map-marked-alt"></i> GPS : <span th:text="${contrat.vehicule.gps ? 'Oui' : 'Non'}"></span></span>
-                </div>
-
-                <div th:if="${contrat.vehicule instanceof T(com.example.gestion_location_vehicule.model.Velo)}">
-                    <span class="spec-badge"><i class="fas fa-bolt"></i> Électrique : <span th:text="${contrat.vehicule.electrique ? 'Oui' : 'Non'}"></span></span>
-                    <span class="spec-badge"><i class="fas fa-cogs"></i> Vitesses : <span th:text="${contrat.vehicule.nombreVitesses}"></span></span>
-                    <span class="spec-badge"><i class="fas fa-bicycle"></i> Type : <span th:text="${contrat.vehicule.typeVelo}"></span></span>
-                </div>
-
-                <div th:if="${contrat.vehicule instanceof T(com.example.gestion_location_vehicule.model.Moto)}">
-                    <span class="spec-badge"><i class="fas fa-tachometer-alt"></i> Cylindrée : <span th:text="${contrat.vehicule.cylindree}"></span> cc</span>
-                    <span class="spec-badge"><i class="fas fa-horse"></i> Chevaux : <span th:text="${contrat.vehicule.nbchevaux}"></span></span>
-                </div>
-
-                <div th:if="${contrat.vehicule instanceof T(com.example.gestion_location_vehicule.model.Camion)}">
-                    <span class="spec-badge"><i class="fas fa-weight-hanging"></i> Charge max : <span th:text="${contrat.vehicule.chargemax}"></span> kg</span>
-                    <span class="spec-badge"><i class="fas fa-box"></i> Volume : <span th:text="${contrat.vehicule.volume}"></span> m³</span>
-                </div>
-
-                <div th:if="${contrat.vehicule instanceof T(com.example.gestion_location_vehicule.model.Van)}">
-                    <span class="spec-badge"><i class="fas fa-users"></i> Places : <span th:text="${contrat.vehicule.nombreplaces}"></span></span>
+                <div class="col-md-3 col-6 mb-3 text-md-end">
+                    <div class="info-label">Assurance</div>
+                    <span class="badge badge-assurance px-2 py-1" th:text="${contrat.assurance != null ? contrat.assurance.nom : 'Standard'}"></span>
                 </div>
             </div>
 
-            <hr>
-
-            <div class="row align-items-center">
-                <div class="col-md-5 mb-3 mb-md-0">
-                    <h5 class="fw-bold text-primary mb-3"><i class="far fa-calendar-alt me-2"></i>Période de location</h5>
-                    <div class="d-flex justify-content-between align-items-center bg-white border rounded p-2">
-                        <div class="text-center">
-                            <small class="text-muted d-block">Début</small>
-                            <strong th:text="${contrat.datedebut}"></strong>
-                        </div>
-                        <i class="fas fa-arrow-right text-muted"></i>
-                        <div class="text-center">
-                            <small class="text-muted d-block">Fin</small>
-                            <strong th:text="${contrat.datefin}"></strong>
-                        </div>
+            <div th:if="${contrat.evalV != null}" class="already-evaluated mb-3">
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <p class="mb-0 text-success fw-bold small"><i class="fas fa-check-circle me-1"></i> Évaluation enregistrée</p>
+                        <small class="text-muted italic" th:text="${'« ' + contrat.evalV.commentaire + ' »'}"></small>
                     </div>
-                </div>
-
-                <div class="col-md-7">
-                    <div class="row g-3">
-                        <div class="col-6">
-                            <div class="p-2 border rounded bg-light h-100">
-                                <small class="text-muted d-block"><i class="fas fa-map-pin me-1"></i> Lieu de dépôt</small>
-                                <span class="fw-bold" th:text="${contrat.lieudepot}"></span>
-                            </div>
-                        </div>
-                        <div class="col-6">
-                            <div class="p-2 border rounded bg-light h-100">
-                                <small class="text-muted d-block"><i class="fas fa-shield-alt me-1"></i> Assurance</small>
-                                <span class="fw-bold text-secondary">Assurance vide</span>
-                            </div>
-                        </div>
-                        <div class="col-12">
-                            <div class="p-2 border rounded bg-light">
-                                <small class="text-muted d-block"><i class="fas fa-parking me-1"></i> Parking</small>
-                                <span class="fw-bold text-secondary">Parking vide</span>
-                            </div>
-                        </div>
+                    <div class="col-md-4 text-md-end text-warning">
+                        <span th:text="${contrat.evalV.note}"></span> <i class="fas fa-star small"></i> (Véhicule) |
+                        <span th:text="${contrat.evalA.note}"></span> <i class="fas fa-star small"></i> (Agent)
                     </div>
                 </div>
             </div>
 
+            <div class="d-flex justify-content-end pt-3 border-top">
+                <th:block th:if="${contrat.evalV == null}">
+                    <button class="btn btn-primary rounded-pill px-5 shadow-sm" data-bs-toggle="modal" th:data-bs-target="'#modalEval' + ${contrat.id}">
+                        <i class="fas fa-star-half-alt me-2"></i> Évaluer le service
+                    </button>
+                </th:block>
+
+                <th:block th:unless="${contrat.evalV == null}">
+                    <button class="btn btn-outline-success rounded-pill px-4" disabled>
+                        <i class="fas fa-check me-1"></i> Avis envoyé
+                    </button>
+                </th:block>
+            </div>
+        </div>
+
+        <div th:if="${contrat.evalV == null}" class="modal fade" th:id="'modalEval' + ${contrat.id}" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content shadow border-0">
+                    <form th:action="@{/loueur/evaluer-tout}" method="post">
+                        <div class="modal-header border-0 pb-0">
+                            <h5 class="fw-bold"><i class="fas fa-star text-warning me-2"></i>Votre avis</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <input type="hidden" name="contratId" th:value="${contrat.id}">
+                            <input type="hidden" name="agentId" th:value="${contrat.vehicule.agent.id}">
+                            <input type="hidden" name="vehiculeId" th:value="${contrat.vehicule.id}">
+
+                            <div class="rating-box" style="border-left-color: #3498db;">
+                                <label class="form-label fw-bold small uppercase text-primary">Note pour l'Agent</label>
+                                <div class="star-rating">
+                                    <input type="radio" th:id="'a5-'+${contrat.id}" name="noteAgent" value="5" required /><label th:for="'a5-'+${contrat.id}"><i class="fas fa-star"></i></label>
+                                    <input type="radio" th:id="'a4-'+${contrat.id}" name="noteAgent" value="4" /><label th:for="'a4-'+${contrat.id}"><i class="fas fa-star"></i></label>
+                                    <input type="radio" th:id="'a3-'+${contrat.id}" name="noteAgent" value="3" checked /><label th:for="'a3-'+${contrat.id}"><i class="fas fa-star"></i></label>
+                                    <input type="radio" th:id="'a2-'+${contrat.id}" name="noteAgent" value="2" /><label th:for="'a2-'+${contrat.id}"><i class="fas fa-star"></i></label>
+                                    <input type="radio" th:id="'a1-'+${contrat.id}" name="noteAgent" value="1" /><label th:for="'a1-'+${contrat.id}"><i class="fas fa-star"></i></label>
+                                </div>
+                                <textarea name="comAgent" class="form-control" rows="2" placeholder="Commentaire sur l'agent..."></textarea>
+                            </div>
+
+                            <div class="rating-box" style="border-left-color: #27ae60;">
+                                <label class="form-label fw-bold small uppercase text-success">Note pour le Véhicule</label>
+                                <div class="star-rating">
+                                    <input type="radio" th:id="'v5-'+${contrat.id}" name="noteVehicule" value="5" required /><label th:for="'v5-'+${contrat.id}"><i class="fas fa-star"></i></label>
+                                    <input type="radio" th:id="'v4-'+${contrat.id}" name="noteVehicule" value="4" /><label th:for="'v4-'+${contrat.id}"><i class="fas fa-star"></i></label>
+                                    <input type="radio" th:id="'v3-'+${contrat.id}" name="noteVehicule" value="3" checked /><label th:for="'v3-'+${contrat.id}"><i class="fas fa-star"></i></label>
+                                    <input type="radio" th:id="'v2-'+${contrat.id}" name="noteVehicule" value="2" /><label th:for="'v2-'+${contrat.id}"><i class="fas fa-star"></i></label>
+                                    <input type="radio" th:id="'v1-'+${contrat.id}" name="noteVehicule" value="1" /><label th:for="'v1-'+${contrat.id}"><i class="fas fa-star"></i></label>
+                                </div>
+                                <textarea name="comVehicule" class="form-control" rows="2" placeholder="Commentaire sur le véhicule..."></textarea>
+                            </div>
+                        </div>
+                        <div class="modal-footer border-0">
+                            <button type="submit" class="btn btn-primary w-100 rounded-pill py-2 fw-bold shadow">
+                                Envoyer mon évaluation
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
-
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-
 </body>
 </html>

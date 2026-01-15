@@ -55,6 +55,18 @@ public class Contratlocation {
     private Double montantPayePorteMonnaie = 0.0; // Montant payé avec le porte-monnaie
 
     @Column(name = "montant_paye_autre")
-    private Double montantPayeAutre = 0.0; // Montant payé par autre moyen (CB, etc.)
+    private Double montantPayeAutre = 0.0;// Montant payé par autre moyen (CB, etc.)
 
+    @ManyToOne
+    @JoinColumn(name = "evalv_id")
+    private EvalV evalV;
+
+    @ManyToOne
+    @JoinColumn(name = "evala_id")
+    private EvalA evalA;
+
+
+    @ManyToOne
+    @JoinColumn(name = "evall_id")
+    private EvalL evalL;
 }

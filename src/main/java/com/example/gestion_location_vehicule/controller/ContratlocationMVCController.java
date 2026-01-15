@@ -67,6 +67,7 @@ public class ContratlocationMVCController {
             @RequestParam boolean disponibilite,   // Doit être ici
             @RequestParam Integer note,            // Doit être ici
             @RequestParam String commentaire,
+                    @RequestParam Double nouveauKilometrage,
             HttpSession session
             ) {
         Long agentId = (Long) session.getAttribute("user");
@@ -82,7 +83,9 @@ public class ContratlocationMVCController {
 
         // 2. Mettre à jour la disponibilité du véhicule
         Vehicule v = contrat.getVehicule();
+
         v.setVehiculedispo(true);
+        v.setKilometrage(nouveauKilometrage);
         vehiculeService.addVehicule(v); // Assurez-vous d'avoir une méthode save
 
 
@@ -94,6 +97,10 @@ public class ContratlocationMVCController {
         evalL.setCommentaire(commentaire);
 
         evalLService.saveEvalL(evalL);
+
+
+        contrat.setEvalL(evalL);
+        contratlocationService.ajouterContralocation(contrat);
 
 
         if(agent instanceof AgentPar)

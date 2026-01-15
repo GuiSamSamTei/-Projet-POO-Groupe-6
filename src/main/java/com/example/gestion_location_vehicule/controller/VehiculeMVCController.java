@@ -1,6 +1,7 @@
 package com.example.gestion_location_vehicule.controller;
 
 import com.example.gestion_location_vehicule.model.*;
+import com.example.gestion_location_vehicule.service.EvalVService.EvalVService;
 import com.example.gestion_location_vehicule.service.UtilisateurService.UtilisateurService;
 import com.example.gestion_location_vehicule.service.VehiculeService.VehiculeService;
 import jakarta.servlet.http.HttpSession;
@@ -21,10 +22,12 @@ public class VehiculeMVCController {
 
     private final VehiculeService vehiculeService;
     private final UtilisateurService utilisateurService;
+    private final EvalVService evalVService;
 
-    public VehiculeMVCController(VehiculeService vehiculeService, UtilisateurService utilisateurService) {
+    public VehiculeMVCController(VehiculeService vehiculeService, UtilisateurService utilisateurService, EvalVService evalVService) {
         this.vehiculeService = vehiculeService;
         this.utilisateurService = utilisateurService;
+        this.evalVService = evalVService;
     }
 
     //afficher la page
@@ -55,8 +58,11 @@ public class VehiculeMVCController {
     {
         Vehicule vehicule = vehiculeService.getVehiculeByid(id);
 
+
         model.addAttribute("vehicule", vehicule);
 
+        List<EvalV> evalV = evalVService.getByVehicule(vehicule);
+        model.addAttribute("evaluations",evalV);
         return "vehicule/afficherVehicule";
 
     }

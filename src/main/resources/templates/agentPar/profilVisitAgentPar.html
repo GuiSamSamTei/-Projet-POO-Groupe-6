@@ -9,48 +9,39 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
     <style>
+        body { background-color: #f8f9fa; }
         .profile-header {
             background: linear-gradient(135deg, #3498db, #2c3e50);
             color: white;
             padding: 40px 0;
             border-radius: 0 0 20px 20px;
         }
-
         .avatar-circle {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            background: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 50px;
-            color: #3498db;
-            margin: 0 auto 20px;
-            border: 5px solid white;
+            width: 120px; height: 120px;
+            border-radius: 50%; background: white;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 50px; color: #3498db;
+            margin: 0 auto 20px; border: 5px solid white;
         }
-
         .stat-card {
-            background: white;
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
-            text-align: center;
+            background: white; border-radius: 12px; padding: 20px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.05); margin-bottom: 20px; text-align: center;
         }
-
         .vehicle-card {
-            background: white;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-            transition: transform 0.3s;
-            height: 100%;
+            background: white; border-radius: 12px; overflow: hidden;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.05); transition: transform 0.3s; height: 100%;
         }
+        .vehicle-card:hover { transform: translateY(-5px); }
 
-        .vehicle-card:hover {
-            transform: translateY(-5px);
+        /* Styles pour les évaluations */
+        .review-card {
+            background: white; border-radius: 12px; padding: 20px;
+            margin-bottom: 15px; border-left: 5px solid #3498db;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
         }
+        .star-rating-display { color: #f1c40f; font-size: 0.85rem; }
+        .review-date { font-size: 0.8rem; color: #95a5a6; }
+        .review-comment { font-style: italic; color: #555; margin-top: 10px; }
     </style>
 </head>
 <body>
@@ -58,85 +49,43 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
     <div class="container">
         <a class="navbar-brand" href="/">
-            <i class="fas fa-car me-2 text-primary"></i>
-            <span class="fw-bold">AutoPartage</span>
+            <i class="fas fa-car me-2 text-primary"></i><span class="fw-bold">AutoPartage</span>
         </a>
-
         <div class="d-flex align-items-center">
-            <a th:href="@{/}" class="btn btn-outline-primary me-2">
-                <i class="fas fa-home me-1"></i> Accueil
-            </a>
-
+            <a th:href="@{/}" class="btn btn-outline-primary me-2"><i class="fas fa-home me-1"></i> Accueil</a>
             <th:block th:if="${currentUser != null}">
                 <div class="dropdown">
-                    <button class="btn btn-primary dropdown-toggle" type="button"
-                            data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="fas fa-user me-1"></i>
-                        <span th:text="${currentUser.username}"></span>
+                    <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                        <i class="fas fa-user me-1"></i><span th:text="${currentUser.username}"></span>
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end">
-                        <li>
-                            <a class="dropdown-item" th:href="${currentUserProfileUrl}">
-                                <i class="fas fa-user-circle me-2"></i>Mon profil
-                            </a>
-                        </li>
-                        <li>
-                            <a class="dropdown-item" th:href="@{/utilisateur/logout}">
-                                <i class="fas fa-sign-out-alt me-2"></i>Déconnexion
-                            </a>
-                        </li>
+                        <li><a class="dropdown-item" th:href="${currentUserProfileUrl}"><i class="fas fa-user-circle me-2"></i>Mon profil</a></li>
+                        <li><a class="dropdown-item" th:href="@{/utilisateur/logout}"><i class="fas fa-sign-out-alt me-2"></i>Déconnexion</a></li>
                     </ul>
                 </div>
             </th:block>
-
-            <th:block th:unless="${currentUser != null}">
-                <a th:href="@{/utilisateur/connexion}" class="btn btn-primary">
-                    <i class="fas fa-sign-in-alt me-1"></i> Se connecter
-                </a>
-            </th:block>
-        </div>
-
-        <div th:if="${currentUser == null}" class="alert alert-warning mt-3">
-            <div class="container">
-                <i class="fas fa-exclamation-triangle me-2"></i>
-                Vous devez être connecté pour voir les profils des autres utilisateurs.
-                <a th:href="@{/utilisateur/connexion}" class="btn btn-sm btn-warning ms-3">
-                    Se connecter
-                </a>
-            </div>
         </div>
     </div>
 </nav>
-<section class="profile-header">
+
+<section class="profile-header text-center text-md-start">
     <div class="container">
         <div class="row align-items-center">
-            <div class="col-md-3 text-center">
-                <div class="avatar-circle">
-                    <i class="fas fa-user-tie"></i>
-                </div>
+            <div class="col-md-3">
+                <div class="avatar-circle"><i class="fas fa-user-circle"></i></div>
             </div>
             <div class="col-md-9">
-                <h1 class="fw-bold mb-2" th:text="${userToView.username}"></h1>
-                <p class="lead mb-1">
-                    <i class="fas fa-map-marker-alt me-2"></i>
-                    <span th:text="${userToView.ville != null ? userToView.ville : 'Non spécifiée'}">Ville</span>
-                </p>
-                <p class="mb-3">
-                    <span class="badge bg-light text-dark">
-                        <i class="fas fa-user-tie me-1"></i> Agent Particulier
-                    </span>
-                </p>
-
-                <th:block th:if="${isViewingOwnProfile}">
-                    <a th:href="@{/agent-par/profil}" class="btn btn-light">
-                        <i class="fas fa-edit me-1"></i> Modifier mon profil
-                    </a>
-                </th:block>
-                <th:block th:unless="${isViewingOwnProfile}">
-                    <a th:href="@{'/messages/' + ${userToView.id}}" class="btn btn-light ms-2">
-                        <i class="fas fa-envelope me-1"></i> Contacter
-                    </a>
-                </th:block>
+                <h1 class="fw-bold mb-2" th:text="${userToView.username}">Username</h1>
+                <p class="lead mb-1"><i class="fas fa-map-marker-alt me-2"></i><span th:text="${userToView.ville != null ? userToView.ville : 'Ville non renseignée'}"></span></p>
+                <span class="badge bg-light text-dark mb-3"><i class="fas fa-user-tie me-1"></i> Agent Particulier</span>
+                <div class="mt-2">
+                    <th:block th:if="${isViewingOwnProfile}">
+                        <a th:href="@{/agent-par/profil}" class="btn btn-light"><i class="fas fa-edit me-1"></i> Modifier mon profil</a>
+                    </th:block>
+                    <th:block th:unless="${isViewingOwnProfile}">
+                        <a th:href="@{'/messages/' + ${userToView.id}}" class="btn btn-light"><i class="fas fa-envelope me-1"></i> Contacter</a>
+                    </th:block>
+                </div>
             </div>
         </div>
     </div>
@@ -145,91 +94,76 @@
 <div class="container mt-5">
     <div class="row">
         <div class="col-md-4">
-
             <div class="stat-card">
                 <i class="fas fa-star fa-3x mb-3 text-warning"></i>
-                <h4 th:text="${userToView.notemoyenne != null ? userToView.notemoyenne + ' / 5' : 'Non évalué'}">4.5 / 5</h4>
-                <p class="text-muted">
-                    <i class="fas fa-comment me-1"></i>
-                    <span th:text="${userToView.nombreevaluations} + ' évaluations'">12 évaluations</span>
-                </p>
+                <h4 th:text="${userToView.notemoyenne != null ? userToView.notemoyenne + ' / 5' : '0 / 5'}"></h4>
+                <p class="text-muted"><span th:text="${userToView.nombreevaluations}">0</span> évaluations</p>
             </div>
+            <div class="stat-card text-start">
+                <h5><i class="fas fa-info-circle me-2 text-primary"></i>À propos</h5>
+                <hr>
+                <p class="mb-1"><strong>Nom complet :</strong></p>
+                <p th:text="${userToView.nom} + ' ' + ${userToView.prenom}" class="text-muted"></p>
 
-            <div class="stat-card">
-                <h5><i class="fas fa-info-circle me-2"></i>À propos</h5>
-                <div class="mt-3">
-                    <p>
-                        <strong><i class="fas fa-user me-2"></i>Nom complet:</strong><br>
-                        <span th:text="${userToView.nom} + ' ' + ${userToView.prenom}">Nom Prénom</span>
-                    </p>
-                </div>
             </div>
         </div>
 
         <div class="col-md-8">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h3><i class="fas fa-car me-2"></i>Ses véhicules</h3>
-            </div>
-
-            <div th:if="${vehicles != null and !vehicles.isEmpty()}">
-                <div class="row g-4">
-                    <th:block th:each="vehicle : ${vehicles}">
-                        <div class="col-md-6">
-                            <div class="vehicle-card">
-                                <div style="width: 100%; height: 200px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center;">
-                                    <th:block th:if="${vehicle.typeVehicule == 'Moto'}">
-                                        <i class="fas fa-motorcycle fa-3x text-white"></i>
-                                    </th:block>
-                                    <th:block th:if="${vehicle.typeVehicule == 'Voiture'}">
-                                        <i class="fas fa-car fa-3x text-white"></i>
-                                    </th:block>
-                                    <th:block th:if="${vehicle.typeVehicule == 'Utilitaire'}">
-                                        <i class="fas fa-truck fa-3x text-white"></i>
-                                    </th:block>
-                                    <th:block th:if="${vehicle.typeVehicule == 'Camionnette'}">
-                                        <i class="fas fa-truck-pickup fa-3x text-white"></i>
-                                    </th:block>
-                                    <th:block th:if="${vehicle.typeVehicule != 'Moto' and vehicle.typeVehicule != 'Voiture' and vehicle.typeVehicule != 'Utilitaire' and vehicle.typeVehicule != 'Camionnette'}">
-                                        <i class="fas fa-car fa-3x text-white"></i>
-                                    </th:block>
-                                </div>
-                                <div class="p-3">
-                                    <h5 th:text="${vehicle.marque} + ' ' + ${vehicle.modele}"></h5>
-                                    <p class="text-muted mb-2">
-                                        <i class="fas fa-tag me-1"></i>
-                                        <span th:text="${vehicle.typeVehicule}">Type</span>
-                                    </p>
-
-                                    <p class="text-muted mb-2" th:if="${vehicle.villedispo != null}">
-                                        <i class="fas fa-map-marker-alt me-1"></i>
-                                        <span th:text="${vehicle.villedispo}">Ville</span>
-                                    </p>
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <span class="fw-bold text-primary" th:text="${vehicle.prixjour} + ' €/jour'">45 €/jour</span>
-                                        <a th:href="@{'/vehicule/details/' + ${#strings.toLowerCase(vehicle.typeVehicule)} + '/' + ${vehicle.id}}"
-                                           class="btn btn-sm btn-outline-primary">
-                                            Voir détails
-                                        </a>
-                                    </div>
-                                </div>
+            <h3 class="mb-4"><i class="fas fa-car me-2"></i>Véhicules disponibles</h3>
+            <div th:if="${vehicles != null and !vehicles.isEmpty()}" class="row g-4">
+                <div th:each="vehicle : ${vehicles}" class="col-md-6">
+                    <div class="vehicle-card">
+                        <div class="text-center py-5 bg-dark text-white" style="background: linear-gradient(135deg, #2c3e50, #4ca1af);">
+                            <i th:class="${vehicle.typeVehicule == 'Moto' ? 'fas fa-motorcycle fa-3x' : (vehicle.typeVehicule == 'Voiture' ? 'fas fa-car fa-3x' : 'fas fa-truck fa-3x')}"></i>
+                        </div>
+                        <div class="p-3">
+                            <h5 class="fw-bold" th:text="${vehicle.marque} + ' ' + ${vehicle.modele}"></h5>
+                            <p class="text-muted small mb-2"><i class="fas fa-tag me-1"></i> <span th:text="${vehicle.typeVehicule}"></span></p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="fw-bold text-primary" th:text="${vehicle.prixjour} + ' €/j'"></span>
+                                <a th:href="@{'/vehicule/details/' + ${#strings.toLowerCase(vehicle.typeVehicule)} + '/' + ${vehicle.id}}" class="btn btn-sm btn-primary">Détails</a>
                             </div>
                         </div>
-                    </th:block>
+                    </div>
                 </div>
             </div>
+            <div th:unless="${vehicles != null and !vehicles.isEmpty()}" class="alert alert-light border text-center py-5">
+                <i class="fas fa-car fa-3x text-muted mb-3"></i>
+                <p class="text-muted">Aucun véhicule disponible pour le moment.</p>
+            </div>
 
-            <div th:unless="${vehicles != null and !vehicles.isEmpty()}" class="text-center py-5">
-                <i class="fas fa-car fa-4x text-muted mb-3"></i>
-                <h4 class="text-muted">Aucun véhicule disponible</h4>
-                <p class="text-muted">Cet agent n'a pas encore publié de véhicules.</p>
+            <hr class="my-5">
+
+            <h3 class="mb-4"><i class="fas fa-comments me-2"></i>Derniers avis reçus</h3>
+
+            <div th:if="${evaluations != null and !evaluations.isEmpty()}">
+                <div th:each="eval : ${evaluations}" class="review-card">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <span class="fw-bold" th:text="${eval.loueur.username}">Loueur</span>
+                            <div class="star-rating-display mt-1">
+                                <i th:each="star : ${#numbers.sequence(1, 5)}"
+                                   th:class="${star <= eval.note ? 'fas fa-star' : 'far fa-star text-muted'}"></i>
+                            </div>
+                        </div>
+                        <span class="review-date" th:text="${#temporals.format(eval.datenote, 'dd/MM/yyyy')}">Date</span>
+                    </div>
+                    <p class="review-comment">
+                        <i class="fas fa-quote-left me-2 opacity-50"></i>
+                        <span th:text="${eval.commentaire}"></span>
+                    </p>
+                </div>
+            </div>
+            <div th:unless="${evaluations != null and !evaluations.isEmpty()}" class="text-center py-4 bg-white border rounded">
+                <p class="text-muted mb-0 italic">Cet agent n'a pas encore reçu d'évaluation.</p>
             </div>
         </div>
     </div>
 </div>
 
 <footer class="bg-dark text-white py-4 mt-5">
-    <div class="container">
-        <p class="text-center text-muted mb-0">© 2026 AutoPartage. Tous droits réservés.</p>
+    <div class="container text-center">
+        <p class="mb-0 small opacity-50">© 2026 AutoPartage - Plateforme de confiance</p>
     </div>
 </footer>
 

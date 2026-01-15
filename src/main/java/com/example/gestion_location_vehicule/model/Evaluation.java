@@ -5,6 +5,7 @@ import lombok.*;
 
 import java.time.LocalDate;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Data
@@ -29,4 +30,6 @@ public abstract class Evaluation {
     private double note;
     private LocalDate datenote;
     private String commentaire;
+
+
 }

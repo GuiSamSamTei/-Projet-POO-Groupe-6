@@ -2,8 +2,10 @@ package com.example.gestion_location_vehicule.controller;
 
 import com.example.gestion_location_vehicule.model.*;
 import com.example.gestion_location_vehicule.repository.VehiculeRepository;
+import com.example.gestion_location_vehicule.service.AgentService.AgentService;
 import com.example.gestion_location_vehicule.service.AssuranceService.AssuranceService;
 import com.example.gestion_location_vehicule.service.ContratlocationService.ContratlocationService;
+import com.example.gestion_location_vehicule.service.EvaluationService.EvaluationService;
 import com.example.gestion_location_vehicule.service.LoueurService.ILoueurService;
 import com.example.gestion_location_vehicule.service.ParkingService.ParkingService;
 import com.example.gestion_location_vehicule.service.TarificationService.TarificationService;
@@ -34,6 +36,8 @@ public class LoueurMVCController {
     private final TarificationService tarificationService;
     private final com.example.gestion_location_vehicule.service.ParrainageService.IParrainageService parrainageService;
     private final IPorteMonnaieService porteMonnaieService;
+    private final EvaluationService evaluationService;
+    private final AgentService agentService;
 
     public LoueurMVCController(ILoueurService loueurService,
                                VehiculeRepository vehiculeRepository,
@@ -43,7 +47,7 @@ public class LoueurMVCController {
                                AssuranceService assuranceService,
                                TarificationService tarificationService,
                                com.example.gestion_location_vehicule.service.ParrainageService.IParrainageService parrainageService,
-                               IPorteMonnaieService porteMonnaieService) {
+                               IPorteMonnaieService porteMonnaieService, EvaluationService evaluationService, AgentService agentService) {
         this.loueurService = loueurService;
         this.vehiculeRepository = vehiculeRepository;
         this.contratlocationService = contratlocationService;
@@ -53,6 +57,8 @@ public class LoueurMVCController {
         this.tarificationService = tarificationService;
         this.parrainageService = parrainageService;
         this.porteMonnaieService = porteMonnaieService;
+        this.evaluationService = evaluationService;
+        this.agentService = agentService;
     }
 
     /* ===================== INSCRIPTION ===================== */
@@ -351,4 +357,50 @@ public class LoueurMVCController {
 
         return "loueur/consulterProfil";
     }
+
+    @PostMapping("/evaluer-tout")
+    public String enregistrerEvaluations(
+            @RequestParam Long contratId,
+            @RequestParam Long agentId,
+            @RequestParam Long vehiculeId,
+            @RequestParam int noteAgent,
+            @RequestParam String comAgent,
+            @RequestParam int noteVehicule,
+            @RequestParam String comVehicule,
+            HttpSession session) {
+
+        Long loueurId = (Long) session.getAttribute("user");
+        Loueur loueur = loueurService.getById(loueurId);
+        LocalDate dateAujourdhui = LocalDate.now();
+
+        Contratlocation contratlocation = contratlocationService.trouverContraById(contratId);
+
+        // 1. Enregistrement de l'évaluation de l'Agent (EvalA)
+        EvalA evalA = new EvalA();
+        evalA.setAgent(agentService.getAgentById(agentId).get());
+        evalA.setLoueur(loueur);
+        evalA.setNote(noteAgent);
+        evalA.setCommentaire(comAgent);
+        evalA.setDatenote(dateAujourdhui);
+        evaluationService.saveEvaluation(evalA);
+
+
+
+        // 2. Enregistrement de l'évaluation du Véhicule (EvalV)
+        EvalV evalV = new EvalV();
+        evalV.setVehicule(vehiculeService.getVehiculeByid(vehiculeId));
+        evalV.setLoueur(loueur);
+        evalV.setNote(noteVehicule);
+        evalV.setCommentaire(comVehicule);
+        evalV.setDatenote(dateAujourdhui);
+        evaluationService.saveEvaluation(evalV);
+
+        contratlocation.setEvalA(evalA);
+        contratlocation.setEvalV(evalV);
+        contratlocationService.ajouterContralocation(contratlocation);
+
+
+        return "redirect:/historique-location?success=true";
+    }
 }
+

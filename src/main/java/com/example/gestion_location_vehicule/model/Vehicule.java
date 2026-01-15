@@ -31,7 +31,7 @@ public class Vehicule {
     private String marque;
     private String modele;
     private String couleur;
-    private double notevehicule;
+    private Double notevehicule;
 
     @Column(nullable = false)
     private Boolean vehiculedispo;
@@ -40,8 +40,8 @@ public class Vehicule {
     private Date datedispo;
 
     private String villedispo;
-    private double kilometrage;
-    private double prixjour;
+    private Double kilometrage;
+    private Double prixjour;
 
 
     @ManyToOne
