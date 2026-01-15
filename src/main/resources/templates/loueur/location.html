@@ -252,13 +252,34 @@
                                 </div>
                             </div>
 
+                            <!-- Section Porte-Monnaie -->
+                            <div class="bg-light p-3 rounded mb-3" th:if="${solde > 0}">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="useWallet" name="useWallet"
+                                        value="true">
+                                    <label class="form-check-label" for="useWallet">
+                                        Utiliser mon porte-monnaie
+                                        <div class="text-success small fw-bold">
+                                            Solde disponible : <span
+                                                th:text="${#numbers.formatDecimal(solde, 1, 'NONE', 2, 'POINT')} + ' €'">0.00
+                                                €</span>
+                                        </div>
+                                    </label>
+                                </div>
+                                <div id="walletDeductionInfo"
+                                    class="d-none mt-2 small text-muted d-flex justify-content-between">
+                                    <span>Déduction appliquée :</span>
+                                    <span class="fw-bold text-success" id="walletDeductionAmount">- 0.00 €</span>
+                                </div>
+                            </div>
+
                             <hr class="bg-white">
                             <div class="d-flex justify-content-between align-items-center mb-4">
-                                <span class="h5 mb-0">Total estimé</span>
+                                <span class="h5 mb-0">Total à payer</span>
                                 <span class="h3 mb-0 fw-bold" id="totalPrice">-- €</span>
                             </div>
 
-                            <button type="button" class="btn btn-light btn-lg w-100 fw-bold text-primary py-3 shadow-sm"
+                            <button type="submit" class="btn btn-light btn-lg w-100 fw-bold text-primary py-3 shadow-sm"
                                 data-bs-toggle="modal" data-bs-target="#confirmModal">
                                 CONFIRMER LA LOCATION
                             </button>
@@ -310,12 +331,20 @@
         const subtotalLoc = document.getElementById("subtotalLocation");
         const subtotalAssu = document.getElementById("subtotalAssurance");
 
+        // PAIEMENT PORTE-MONNAIE
+        const useWalletCheckbox = document.getElementById("useWallet");
+        const walletDeductionInfo = document.getElementById("walletDeductionInfo");
+        const walletDeductionAmount = document.getElementById("walletDeductionAmount");
+
+
         // Utilisation de syntaxe compatible IDE et parsing float explicite
         const prixJourBaseRaw = /*[[${#numbers.formatDecimal(vehicule.prixjour, 1, 'NONE', 2, 'POINT')}]]*/ '0.00';
         const fraisServiceRaw = /*[[${#numbers.formatDecimal(fraisServiceValue, 1, 'NONE', 2, 'POINT')}]]*/ '0.00';
+        const userSoldeRaw = /*[[${#numbers.formatDecimal(solde != null ? solde : 0, 1, 'NONE', 2, 'POINT')}]]*/ '0.00';
 
         const prixJourBase = parseFloat(prixJourBaseRaw);
         const fraisService = parseFloat(fraisServiceRaw);
+        const userSolde = parseFloat(userSoldeRaw);
 
         const today = new Date().toISOString().split("T")[0];
         dateDebutInput.min = today;
@@ -339,12 +368,27 @@
                         totalAssu = (prixJourBase * (pourcentage / 100)) + prixFixe;
                     }
 
-                    const totalFinal = totalLoc + totalAssu + fraisService;
+                    let totalBrut = totalLoc + totalAssu + fraisService;
+                    let totalFinal = totalBrut;
+
+                    // Gestion Porte-Monnaie
+                    if (useWalletCheckbox && useWalletCheckbox.checked) {
+                        const deduction = Math.min(totalBrut, userSolde);
+                        totalFinal = totalBrut - deduction;
+
+                        // Affichage info déduction
+                        if (walletDeductionInfo) {
+                            walletDeductionInfo.classList.remove('d-none');
+                            walletDeductionAmount.innerText = "- " + deduction.toFixed(2) + " €";
+                        }
+                    } else {
+                        if (walletDeductionInfo) walletDeductionInfo.classList.add('d-none');
+                    }
 
                     // Mise à jour de l'affichage principal
-                    nbJoursLabel.innerText = diffDays;
-                    subtotalLoc.innerText = totalLoc.toFixed(2) + " €";
-                    subtotalAssu.innerText = totalAssu.toFixed(2) + " €";
+                    if (nbJoursLabel) nbJoursLabel.innerText = diffDays;
+                    if (subtotalLoc) subtotalLoc.innerText = totalLoc.toFixed(2) + " €";
+                    if (subtotalAssu) subtotalAssu.innerText = totalAssu.toFixed(2) + " €";
                     totalDisplay.innerText = totalFinal.toFixed(2) + " €";
 
                     // Mise à jour de la modale
@@ -371,6 +415,10 @@
         document.querySelectorAll('.assurance-radio').forEach(radio => {
             radio.addEventListener("change", calculateTotal);
         });
+
+        if (useWalletCheckbox) {
+            useWalletCheckbox.addEventListener("change", calculateTotal);
+        }
 
         window.onload = calculateTotal;
     </script>
