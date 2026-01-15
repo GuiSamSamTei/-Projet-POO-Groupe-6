@@ -70,6 +70,8 @@ public class Vehicule {
     private List<DisponibiliteVehicule> disponibilites = new ArrayList<>(); // <-- relation vers disponibilités
 
     @OneToMany(mappedBy = "vehicule", cascade = CascadeType.ALL)
+    @ToString.Exclude
+    @JsonIgnore
     private List<ControleTechnique> controlesTechniques;
 
     public String getTypeVehicule() {

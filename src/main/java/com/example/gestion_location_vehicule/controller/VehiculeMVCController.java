@@ -1,7 +1,10 @@
 package com.example.gestion_location_vehicule.controller;
 
-import com.example.gestion_location_vehicule.model.Vehicule;
+import com.example.gestion_location_vehicule.model.*;
+import com.example.gestion_location_vehicule.service.UtilisateurService.UtilisateurService;
 import com.example.gestion_location_vehicule.service.VehiculeService.VehiculeService;
+import jakarta.servlet.http.HttpSession;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,9 +20,11 @@ import java.util.Map;
 public class VehiculeMVCController {
 
     private final VehiculeService vehiculeService;
+    private final UtilisateurService utilisateurService;
 
-    public VehiculeMVCController(VehiculeService vehiculeService) {
+    public VehiculeMVCController(VehiculeService vehiculeService, UtilisateurService utilisateurService) {
         this.vehiculeService = vehiculeService;
+        this.utilisateurService = utilisateurService;
     }
 
     //afficher la page
@@ -54,6 +59,25 @@ public class VehiculeMVCController {
 
         return "vehicule/afficherVehicule";
 
+    }
+
+    @ModelAttribute
+    public void addGlobalAttributes(Model model, HttpSession session) {
+        Long userId = (Long) session.getAttribute("user");
+        if (userId != null) {
+            Utilisateur currentUser = utilisateurService.getUserbyID(userId);
+            model.addAttribute("currentUser", currentUser);
+
+            String profileUrl = "#";
+            if (currentUser instanceof Loueur) {
+                profileUrl = "/loueur/profil";
+            } else if (currentUser instanceof AgentPar) {
+                profileUrl = "/agent-par/profil";
+            } else if (currentUser instanceof AgentPro) {
+                profileUrl = "/agent-pro/profil";
+            }
+            model.addAttribute("profileUrl", profileUrl);
+        }
     }
 
 }
