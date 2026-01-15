@@ -18,6 +18,8 @@ public interface IContratlocationService {
     Contratlocation trouverContraByAssurence(Long assurance_id);
     List<Contratlocation> trouverContraByVehiculeId(Long vehicule_id);
 
+    List<Contratlocation> trouverparAgentIDetValideeFalse( Long agent_id);
+
 
 
 

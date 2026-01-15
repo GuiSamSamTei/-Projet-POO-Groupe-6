@@ -63,4 +63,9 @@ public class ContratlocationService implements IContratlocationService{
     public List<Contratlocation> trouverContraByVehiculeId(Long vehicule_id) {
         return contralocationRepository.findByVehicule_Id(vehicule_id);
     }
+
+    @Override
+    public List<Contratlocation> trouverparAgentIDetValideeFalse(Long agent_id) {
+        return contralocationRepository.findByValideeIsFalseAndVehicule_Agent_Id(agent_id);
+    }
 }

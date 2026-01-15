@@ -1,8 +1,10 @@
 package com.example.gestion_location_vehicule.controller;
 
 import com.example.gestion_location_vehicule.model.AgentPro;
+import com.example.gestion_location_vehicule.model.Contratlocation;
 import com.example.gestion_location_vehicule.model.Vehicule;
 import com.example.gestion_location_vehicule.service.AgentProService.IAgentProService;
+import com.example.gestion_location_vehicule.service.ContratlocationService.ContratlocationService;
 import com.example.gestion_location_vehicule.service.VehiculeService.IVehiculeService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
@@ -18,10 +20,12 @@ public class AgentProMVCController {
 
     private final IAgentProService agentProService;
     private final IVehiculeService vehiculeService;
+    private final ContratlocationService contratlocationService;
 
-    public AgentProMVCController(IAgentProService agentProService, IVehiculeService vehiculeService) {
+    public AgentProMVCController(IAgentProService agentProService, IVehiculeService vehiculeService, ContratlocationService contratlocationService) {
         this.agentProService = agentProService;
         this.vehiculeService = vehiculeService;
+        this.contratlocationService = contratlocationService;
     }
 
     // ------------------ INSCRIPTION ------------------
@@ -67,9 +71,11 @@ public class AgentProMVCController {
             model.addAttribute("user", agentPro);
             List<Vehicule> vehicules = vehiculeService.getVehiculesParAgent(userId);
             model.addAttribute("vehicules", vehicules);
-
+            List<Contratlocation> contratsEnAttente = contratlocationService.trouverparAgentIDetValideeFalse(userId);
+            model.addAttribute("contratsAttente", contratsEnAttente);
             return "agentPro/profil";
         }
+
 
         session.invalidate();
         return "redirect:/utilisateur/connexion";

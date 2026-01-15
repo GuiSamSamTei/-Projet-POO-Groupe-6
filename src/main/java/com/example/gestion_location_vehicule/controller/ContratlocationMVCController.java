@@ -102,4 +102,58 @@ public class ContratlocationMVCController {
             return "redirect:/agent-pro/historique-location?success=true";
     }
 
+    @PostMapping("/valider-contrat")
+    public String validerContrat(@RequestParam Long idContrat,HttpSession session) {
+        Contratlocation contrat = contratlocationService.trouverContraById(idContrat);
+
+
+        Long agentId = (Long) session.getAttribute("user");
+        if (agentId == null) {
+            return "redirect:/utilisateur/connexion";
+        }
+
+        Agent agent = agentService.getAgentById(agentId).get();
+
+
+
+        if (contrat != null) {
+            contrat.setValidee(true);
+
+            // Optionnel : Marquer le véhicule comme indisponible
+            // contrat.getVehicule().setVehiculedispo(false);
+
+            contratlocationService.ajouterContralocation(contrat);
+        }
+        if (agent instanceof AgentPro)
+          return "redirect:/agent-pro/profil?success=Validated";
+        else
+            return "redirect:/agent-par/profil?success=Validated";
+    }
+
+    @PostMapping("/refuser-contrat")
+    public String refuserContract(@RequestParam Long idContrat,HttpSession session)
+    {
+        Contratlocation contrat = contratlocationService.trouverContraById(idContrat);
+
+        Long agentId = (Long) session.getAttribute("user");
+        if (agentId == null) {
+            return "redirect:/utilisateur/connexion";
+        }
+
+        Agent agent = agentService.getAgentById(agentId).get();
+        if (contrat != null) {
+
+
+            // Optionnel : Marquer le véhicule comme indisponible
+            // contrat.getVehicule().setVehiculedispo(false);
+
+            contratlocationService.supprimerContralocation(contrat.getId());
+        }
+        if (agent instanceof AgentPro)
+            return "redirect:/agent-pro/profil?success=Deleted";
+        else
+            return "redirect:/agent-par/profil?success=Deleted";
+
+    }
+
 }

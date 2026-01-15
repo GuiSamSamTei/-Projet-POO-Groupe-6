@@ -20,6 +20,8 @@ public interface ContratlocationRepository extends JpaRepository<Contratlocation
     Contratlocation findByAssuranceId(Long assurance_id);
 
     List<Contratlocation> findByLoueur_Id(Long loueur_id);
+
+    List<Contratlocation> findByValideeIsFalseAndVehicule_Agent_Id(Long agentId);
     
     // Compter le nombre de locations d'un loueur
     long countByLoueur_Id(Long loueur_id);

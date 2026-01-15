@@ -129,6 +129,56 @@
         </div>
     </div>
 </nav>
+<div class="stat-card mb-4 text-start">
+    <h3 class="mb-4 text-danger"><i class="fas fa-file-signature me-2"></i>Contrats en attente de validation</h3>
+
+    <div th:if="${contratsAttente != null and !contratsAttente.isEmpty()}" class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead class="table-light">
+            <tr>
+                <th>Véhicule</th>
+                <th>Locataire</th>
+                <th>Dates</th>
+                <th>Total</th>
+                <th class="text-center">Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="contrat : ${contratsAttente}">
+                <td>
+                    <strong th:text="${contrat.vehicule.marque + ' ' + contrat.vehicule.modele}"></strong>
+                </td>
+                <td th:text="${contrat.loueur.prenom + ' ' + contrat.loueur.nom}"></td>
+                <td>
+                    <small>
+                        Du <span th:text="${#temporals.format(contrat.datedebut, 'dd/MM/yy')}"></span><br>
+                        Au <span th:text="${#temporals.format(contrat.datefin, 'dd/MM/yy')}"></span>
+                    </small>
+                </td>
+                <td class="fw-bold text-success" th:text="${contrat.prixtotal + ' €'}"></td>
+                <td class="text-center">
+                    <form th:action="@{/historique-location/valider-contrat}" method="post" class="d-inline">
+                        <input type="hidden" name="idContrat" th:value="${contrat.id}"/>
+                        <button type="submit" class="btn btn-sm btn-success rounded-pill px-3">
+                            <i class="fas fa-check me-1"></i> Valider
+                        </button>
+                    </form>
+                    <form th:action="@{/historique-location/refuser-contrat}" method="post" class="d-inline ms-1">
+                        <input type="hidden" name="idContrat" th:value="${contrat.id}"/>
+                        <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill px-3">
+                            <i class="fas fa-times me-1"></i> Refuser
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div th:unless="${contratsAttente != null and !contratsAttente.isEmpty()}" class="py-3 text-center">
+        <p class="text-muted mb-0"><i class="fas fa-check-double me-2"></i>Tous les contrats sont à jour.</p>
+    </div>
+</div>
 
 <div class="container mt-4">
     <div class="row">
@@ -220,6 +270,7 @@
             </div>
 
         </div>
+
 
         <div class="col-md-8">
             <div class="d-flex justify-content-between align-items-center mb-4">

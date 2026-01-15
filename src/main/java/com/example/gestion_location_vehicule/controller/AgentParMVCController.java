@@ -1,8 +1,10 @@
 package com.example.gestion_location_vehicule.controller;
 
 import com.example.gestion_location_vehicule.model.AgentPar;
+import com.example.gestion_location_vehicule.model.Contratlocation;
 import com.example.gestion_location_vehicule.model.Vehicule;
 import com.example.gestion_location_vehicule.service.AgentParService.IAgentParService;
+import com.example.gestion_location_vehicule.service.ContratlocationService.ContratlocationService;
 import com.example.gestion_location_vehicule.service.VehiculeService.IVehiculeService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
@@ -18,10 +20,12 @@ public class AgentParMVCController {
 
     private final IAgentParService agentParService;
     private final IVehiculeService vehiculeService;
+    private final ContratlocationService contratlocationService;
 
-    public AgentParMVCController(IAgentParService agentParService, IVehiculeService vehiculeService) {
+    public AgentParMVCController(IAgentParService agentParService, IVehiculeService vehiculeService, ContratlocationService contratlocationService) {
         this.agentParService = agentParService;
         this.vehiculeService = vehiculeService;
+        this.contratlocationService = contratlocationService;
     }
 
     // ------------------ INSCRIPTION ------------------
@@ -65,8 +69,9 @@ public class AgentParMVCController {
         if (agentParOpt.isPresent()) {
             model.addAttribute("user", agentParOpt.get());
             List<Vehicule> mesVehicules = vehiculeService.getVehiculesParAgent(userId);
-//            System.out.println("当前用户ID: " + userId + ", 查到的车辆数量: " + mesVehicules.size());
             model.addAttribute("vehicules", mesVehicules);
+            List<Contratlocation> contratsEnAttente = contratlocationService.trouverparAgentIDetValideeFalse(userId);
+            model.addAttribute("contratsAttente", contratsEnAttente);
             return "agentPar/profil";
         }
 
