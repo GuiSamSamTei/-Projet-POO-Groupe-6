@@ -17,6 +17,11 @@ public interface IParrainageService {
      * Crée un parrainage par email du filleul
      */
     Parrainage creerParrainageParEmail(Long parrainId, String emailFilleul);
+
+    /**
+     * Crée un parrainage par username du filleul
+     */
+    Parrainage creerParrainageParUsername(Long parrainId, String usernameFilleul);
     
     /**
      * Valide un parrainage et attribue le crédit au parrain

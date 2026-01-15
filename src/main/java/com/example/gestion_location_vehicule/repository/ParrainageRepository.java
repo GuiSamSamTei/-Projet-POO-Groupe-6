@@ -30,14 +30,14 @@ public interface ParrainageRepository extends JpaRepository<Parrainage, Long> {
     Optional<Parrainage> findByFilleulId(Long filleulId);
     
     /**
-     * Vérifie si un filleul a déjà un parrain
+     * Vérifie si un filleul a déjà un parrain (count > 0)
      */
-    boolean existsByFilleulId(Long filleulId);
+    long countByFilleulId(Long filleulId);
     
     /**
-     * Vérifie si un parrain a déjà parrainé un filleul
+     * Vérifie si un parrain a déjà parrainé un filleul (count > 0)
      */
-    boolean existsByParrainIdAndFilleulId(Long parrainId, Long filleulId);
+    long countByParrainIdAndFilleulId(Long parrainId, Long filleulId);
     
     /**
      * Compte le nombre de filleuls d'un parrain

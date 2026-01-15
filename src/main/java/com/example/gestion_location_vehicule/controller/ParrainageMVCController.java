@@ -53,7 +53,7 @@ public class ParrainageMVCController {
     }
 
     @PostMapping("/inviter")
-    public String inviterFilleul(@RequestParam String emailFilleul, 
+    public String inviterFilleul(@RequestParam String usernameFilleul, 
                                  HttpSession session, 
                                  RedirectAttributes redirectAttributes) {
         Long loueurId = (Long) session.getAttribute("user");
@@ -62,8 +62,8 @@ public class ParrainageMVCController {
         }
 
         try {
-            parrainageService.creerParrainageParEmail(loueurId, emailFilleul);
-            redirectAttributes.addFlashAttribute("success", "Invitation envoyée avec succès à " + emailFilleul);
+            parrainageService.creerParrainageParUsername(loueurId, usernameFilleul);
+            redirectAttributes.addFlashAttribute("success", "Invitation envoyée avec succès à " + usernameFilleul);
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Erreur : " + e.getMessage());
         }

@@ -26,4 +26,7 @@ public interface LoueurRepository extends JpaRepository<Loueur, Long> {
     
     // Trouver par email (hérité de Utilisateur)
     java.util.Optional<Loueur> findByEmail(String email);
+
+    // Trouver par username (hérité de Utilisateur)
+    java.util.Optional<Loueur> findByUsername(String username);
 }

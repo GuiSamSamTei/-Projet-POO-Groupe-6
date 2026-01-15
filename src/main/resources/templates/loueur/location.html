@@ -310,8 +310,12 @@
         const subtotalLoc = document.getElementById("subtotalLocation");
         const subtotalAssu = document.getElementById("subtotalAssurance");
 
-        const prixJourBase = [[${ vehicule.prixjour }]];
-        const fraisService = [[${ fraisServiceValue }]];
+        // Utilisation de syntaxe compatible IDE et parsing float explicite
+        const prixJourBaseRaw = /*[[${#numbers.formatDecimal(vehicule.prixjour, 1, 'NONE', 2, 'POINT')}]]*/ '0.00';
+        const fraisServiceRaw = /*[[${#numbers.formatDecimal(fraisServiceValue, 1, 'NONE', 2, 'POINT')}]]*/ '0.00';
+
+        const prixJourBase = parseFloat(prixJourBaseRaw);
+        const fraisService = parseFloat(fraisServiceRaw);
 
         const today = new Date().toISOString().split("T")[0];
         dateDebutInput.min = today;

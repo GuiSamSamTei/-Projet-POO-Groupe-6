@@ -62,6 +62,14 @@ public class ParrainageService implements IParrainageService {
 
     @Override
     @Transactional
+    public Parrainage creerParrainageParUsername(Long parrainId, String usernameFilleul) {
+        Loueur filleul = loueurRepository.findByUsername(usernameFilleul)
+                .orElseThrow(() -> new IllegalArgumentException("Aucun loueur trouvé avec ce nom d'utilisateur"));
+        return creerParrainage(parrainId, filleul.getId());
+    }
+
+    @Override
+    @Transactional
     public void validerParrainage(Long parrainageId) {
         Parrainage parrainage = parrainageRepository.findById(parrainageId)
                 .orElseThrow(() -> new IllegalArgumentException("Parrainage introuvable"));
@@ -125,12 +133,12 @@ public class ParrainageService implements IParrainageService {
         }
 
         // Vérifier que le filleul n'a pas déjà un parrain
-        if (parrainageRepository.existsByFilleulId(filleulId)) {
+        if (parrainageRepository.countByFilleulId(filleulId) > 0) {
             return false;
         }
 
         // Vérifier que le parrain n'a pas déjà parrainé ce filleul
-        if (parrainageRepository.existsByParrainIdAndFilleulId(parrainId, filleulId)) {
+        if (parrainageRepository.countByParrainIdAndFilleulId(parrainId, filleulId) > 0) {
             return false;
         }
 
