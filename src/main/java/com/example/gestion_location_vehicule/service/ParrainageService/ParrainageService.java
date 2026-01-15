@@ -101,9 +101,11 @@ public class ParrainageService implements IParrainageService {
         parrainageRepository.findParrainageEnAttenteByFilleul(filleulId)
                 .ifPresent(parrainage -> {
                     // Vérifier si c'est bien la première location
-                    long nombreLocations = contratlocationRepository.countByLoueurId(filleulId);
-                    if (nombreLocations == 1) {
-                        // C'est la première location, valider le parrainage
+                    // Vérifier si c'est bien la première location (ou plus si échec précédent)
+                    long nombreLocations = contratlocationRepository.countByLoueur_Id(filleulId);
+                    System.out.println("Debug Parrainage: Filleul " + filleulId + " a " + nombreLocations + " locations.");
+                    if (nombreLocations >= 1) {
+                        // C'est la première location (ou rattrapage), valider le parrainage
                         validerParrainage(parrainage.getId());
                     }
                 });
