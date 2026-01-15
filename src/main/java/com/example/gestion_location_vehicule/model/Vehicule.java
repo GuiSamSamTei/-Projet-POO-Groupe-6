@@ -31,16 +31,19 @@ public class Vehicule {
     private String marque;
     private String modele;
     private String couleur;
-    private Double notevehicule;
+    @Column(nullable = false)
+    private Double notevehicule = 0.0;
 
     @Column(nullable = false)
-    private Boolean vehiculedispo;
+    private Boolean vehiculedispo ;
 
     @Temporal(TemporalType.DATE)
     private Date datedispo;
 
     private String villedispo;
-    private Double kilometrage;
+
+    @Column(nullable = false)
+    private Double kilometrage = 0.0;
     private Double prixjour;
 
 
