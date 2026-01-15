@@ -41,7 +41,6 @@ public class VeloService implements IVeloService{
         velo.setMarque(veloRequest.getMarque());
         velo.setModele(veloRequest.getModele());
         velo.setPrixjour(veloRequest.getPrixjour());
-        velo.setCouleur(veloRequest.getCouleur());
         velo.setVehiculedispo(veloRequest.getVehiculedispo());
         velo.setVilledispo(veloRequest.getVilledispo());
 
@@ -82,6 +81,18 @@ public class VeloService implements IVeloService{
 
         if (veloRequest.getElectrique() != null) {
             veloExistante.setElectrique(veloRequest.getElectrique());
+        }
+
+        if(veloRequest.getPrixjour() != 0) {
+            veloExistante.setPrixjour(veloRequest.getPrixjour());
+        }
+
+        if(veloRequest.getVehiculedispo() != null){
+            veloExistante.setVehiculedispo(veloRequest.getVehiculedispo());
+        }
+
+        if(veloRequest.getVilledispo() != null){
+            veloExistante.setVilledispo(veloRequest.getVilledispo());
         }
 
         return veloRepository.save(veloExistante);
