@@ -278,22 +278,43 @@
                 </div>
 
                 <!-- Ratings Section -->
-                <div class="mt-4">
-                    <h6><i class="fas fa-star me-2 text-primary"></i> Évaluations</h6>
-                    <div class="d-flex align-items-center">
-                        <div class="display-4 fw-bold text-warning me-3" th:text="${loueur.notemoyenne}">0.0</div>
-                        <div>
-                            <div class="text-muted small">
-                                Basé sur <span th:text="${loueur.nombreevaluations}"></span> évaluation(s)
+                <div class="profile-card mt-4">
+                    <h5 class="mb-4"><i class="fas fa-user-check me-2 text-primary"></i>Avis reçus des Agents</h5>
+
+                    <div th:if="${#lists.isEmpty(loueur.evalrecues)}" class="text-center py-4 text-muted">
+                        <p><i class="fas fa-comment-slash fa-2x mb-2 opacity-25"></i><br>Aucun agent n'a encore évalué ce loueur.</p>
+                    </div>
+
+                    <div th:each="eval : ${loueur.evalrecues}" class="mb-3 p-3 bg-light rounded shadow-sm border-start border-primary border-4">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <div class="d-flex align-items-center">
+                                <div class="bg-secondary text-white rounded-circle p-2 me-2" style="width: 35px; height: 35px; display: flex; align-items: center; justify-content: center;">
+                                    <i class="fas fa-user-tie fa-sm"></i>
+                                </div>
+                                <strong th:text="${eval.agent.username}">Agent</strong>
                             </div>
                             <div class="text-warning">
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="far fa-star"></i>
+                <span th:each="i : ${#numbers.sequence(1, 5)}">
+                    <i th:class="${i <= eval.note ? 'fas fa-star' : 'far fa-star'}"></i>
+                </span>
                             </div>
                         </div>
+                        <p class="mb-1 small" th:text="${eval.commentaire}">Commentaire...</p>
+                        <div class="text-end">
+                            <small class="text-muted" style="font-size: 0.75rem;" th:text="${#temporals.format(eval.datenote, 'dd/MM/yyyy')}"></small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="profile-card mt-4">
+                    <h5 class="mb-4"><i class="fas fa-star me-2 text-warning"></i>Mes avis sur les véhicules loués</h5>
+                    <div th:if="${#lists.isEmpty(loueur.evalvehicules)}" class="text-center py-3 text-muted">
+                        <small>Vous n'avez pas encore laissé d'avis sur les véhicules.</small>
+                    </div>
+                    <div th:each="evV : ${loueur.evalvehicules}" class="small mb-2 text-muted">
+                        <i class="fas fa-car me-1"></i>
+                        Vous avez noté <strong th:text="${evV.vehicule.marque}"></strong> :
+                        <span class="text-warning" th:text="${evV.note + '/5'}"></span>
                     </div>
                 </div>
 

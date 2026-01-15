@@ -3,6 +3,7 @@ package com.example.gestion_location_vehicule.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @Entity
@@ -14,8 +15,18 @@ import java.util.Date;
 public abstract class Evaluation {
 
     @Id
+    @GeneratedValue(
+            strategy = GenerationType.SEQUENCE,
+            generator = "evaluation_seq"
+    )
+    @SequenceGenerator(
+            name = "evaluation_seq_seq",
+            sequenceName = "EVALUATION_SEQ",
+            allocationSize = 1
+    )
     private Long id;
 
     private double note;
-    private Date datenote;
+    private LocalDate datenote;
+    private String commentaire;
 }

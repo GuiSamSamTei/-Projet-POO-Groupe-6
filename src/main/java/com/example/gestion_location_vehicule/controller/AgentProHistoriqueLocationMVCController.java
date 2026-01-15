@@ -48,6 +48,7 @@ public class AgentProHistoriqueLocationMVCController {
                 contratsParVehicule.put(v.getId(), contrats);
             }
         }
+        model.addAttribute("aujourdhui", java.time.LocalDate.now());
         model.addAttribute("vehicules", vehicules); // ✅ passe la liste des véhicules
         model.addAttribute("contratsParVehicule", contratsParVehicule); // ✅ passe la map à la vue
 

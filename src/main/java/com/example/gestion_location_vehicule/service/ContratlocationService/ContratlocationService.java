@@ -40,6 +40,11 @@ public class ContratlocationService implements IContratlocationService{
     }
 
     @Override
+    public Contratlocation trouverContraById(Long id) {
+        return contralocationRepository.findById(id).get();
+    }
+
+    @Override
     public List<Contratlocation> getAllContralocations() {
         return contralocationRepository.findAll();
     }

@@ -47,6 +47,7 @@ public class AgentParHistoriqueLocationMVCController {
                 contratsParVehicule.put(v.getId(), contrats);
             }
         }
+        model.addAttribute("aujourdhui", java.time.LocalDate.now());
         model.addAttribute("vehicules", vehicules);
         model.addAttribute("contratsParVehicule", contratsParVehicule);
 
