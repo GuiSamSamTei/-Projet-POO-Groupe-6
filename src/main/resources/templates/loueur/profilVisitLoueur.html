@@ -154,14 +154,6 @@
                         <strong><i class="fas fa-user-tag me-2"></i>Nom d'utilisateur:</strong><br>
                         <span th:text="${userToView.username}"></span>
                     </p>
-                    <p th:if="${userToView.email != null}">
-                        <strong><i class="fas fa-envelope me-2"></i>Email:</strong><br>
-                        <span th:text="${userToView.email}"></span>
-                    </p>
-                    <p th:if="${userToView.telephone != null}">
-                        <strong><i class="fas fa-phone me-2"></i>Téléphone:</strong><br>
-                        <span th:text="${userToView.telephone}"></span>
-                    </p>
                     <p th:if="${userToView.ville != null}">
                         <strong><i class="fas fa-map-marker-alt me-2"></i>Ville:</strong><br>
                         <span th:text="${userToView.ville}"></span>
