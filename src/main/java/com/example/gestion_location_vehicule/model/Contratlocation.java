@@ -24,7 +24,7 @@ public class Contratlocation {
     private LocalDate datefin;
     private String lieudepot;
 
-    // --- Amélioration des prix ---
+
     private Double prixLocationJour; // Le prix du véhicule par jour au moment de la loc
     private Double prixAssuranceApplique; // Le coût calculé de l'assurance pour ce contrat
     private Double fraisServiceApplique; // Les frais de service au moment de la loc

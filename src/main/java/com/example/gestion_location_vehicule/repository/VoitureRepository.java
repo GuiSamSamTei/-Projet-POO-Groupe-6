@@ -10,7 +10,7 @@ import java.util.List;
 @Repository
 public interface VoitureRepository extends JpaRepository<Voiture, Long> {
 
-    // Vraiment disponible
+    // disponible
     List<Voiture> findByVehiculedispoTrue();
 
     // Par ville
@@ -51,9 +51,7 @@ public interface VoitureRepository extends JpaRepository<Voiture, Long> {
     // Filtrer par agent propriétaire
     List<Voiture> findByAgent(Agent agent);
 
-    // Combinaisons utiles : ville + dispo + automatique
     List<Voiture> findByVehiculedispoTrueAndVilledispoAndAutomatiqueTrue(String ville);
 
-    // Ville + places minimum + GPS
     List<Voiture> findByVilledispoAndNombreplacesGreaterThanEqualAndGpsTrue(String ville, int nbPlacesMin);
 }

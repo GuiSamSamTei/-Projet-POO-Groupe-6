@@ -17,10 +17,8 @@ public interface UtilisateurRepository extends JpaRepository<Utilisateur, Long> 
     // Récupérer un utilisateur par email exact
     Optional<Utilisateur> findByEmail(String email);
 
-    // Récupérer tous les utilisateurs dont le username contient une chaîne (insensible à la casse)
     List<Utilisateur> findByUsernameContainingIgnoreCase(String usernamePart);
 
-    // Récupérer tous les utilisateurs dont l'email contient une chaîne
     List<Utilisateur> findByEmailContainingIgnoreCase(String emailPart);
 
     // Récupérer tous les utilisateurs ayant une note moyenne supérieure ou égale à une valeur

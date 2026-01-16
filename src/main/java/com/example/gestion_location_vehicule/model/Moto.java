@@ -14,7 +14,6 @@ import lombok.*;
 public class Moto extends Vehicule {
 
     private Integer cylindree;
-
     private Integer nbchevaux;
 
 }

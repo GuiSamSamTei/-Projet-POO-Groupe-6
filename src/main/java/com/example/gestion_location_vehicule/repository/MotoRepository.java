@@ -25,9 +25,7 @@ public interface MotoRepository extends JpaRepository<Moto, Long> {
     List<Moto> findByNbchevauxLessThanEqual(int nbChevauxMax);
     List<Moto> findByNbchevauxBetween(int min, int max);
 
-    // Combinaison possible : ville + dispo + cylindrée
     List<Moto> findByVilledispoAndVehiculedispoTrueAndCylindreeGreaterThanEqual(String ville, int cylindreeMin);
 
-    // Combinaison possible : ville + dispo + nbchevaux
     List<Moto> findByVilledispoAndVehiculedispoTrueAndNbchevauxGreaterThanEqual(String ville, int nbChevauxMin);
 }

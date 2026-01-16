@@ -13,7 +13,7 @@ public interface DisponibiliteVehiculeRepository
     // Pour afficher TOUTES les disponibilités d’un véhicule
     List<DisponibiliteVehicule> findByVehicule(Vehicule vehicule);
 
-    // Pour les recherches avec filtre de dates (plus tard)
+    // Pour les recherches avec filtre de dates
     List<DisponibiliteVehicule>
     findByVehiculeAndDateDebutLessThanEqualAndDateFinGreaterThanEqual(
             Vehicule vehicule,
