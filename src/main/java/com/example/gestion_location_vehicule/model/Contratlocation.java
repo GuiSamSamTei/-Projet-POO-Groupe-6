@@ -45,7 +45,7 @@ public class Contratlocation {
     private Loueur loueur;
 
     @Column(nullable = false)
-    private Boolean validee;
+    private Boolean validee = false;
 
     @ManyToOne
     @JoinColumn(name = "parking_id")

@@ -274,6 +274,7 @@ public class LoueurMVCController {
         contrat.setFraisServiceApplique(fraisService);
         contrat.setPrixtotal(montantTotal);
         contrat.setNombreJours((int) nbJours);
+        contrat.setValidee(false);
 
         // Gestion du lieu de dépôt / parking
         if(Long.parseLong(formData.get("parkingId")) != 0) {
