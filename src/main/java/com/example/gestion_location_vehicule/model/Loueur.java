@@ -18,25 +18,37 @@ public class Loueur extends Utilisateur {
     private String typepermis;
 
     @OneToMany(mappedBy = "loueur")
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private List<EvalA> evaldonnees;
 
     @OneToMany(mappedBy = "loueur")
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private List<EvalV> evalvehicules;
 
     @OneToMany(mappedBy = "loueur")
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private List<EvalL> evalrecues;
 
     @JsonIgnore
     @OneToMany(mappedBy = "loueur")
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private List<Contratlocation> contratlocations;
 
     // Parrainages où ce loueur est le parrain
     @OneToMany(mappedBy = "parrain", cascade = CascadeType.ALL)
     @JsonIgnore
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private List<Parrainage> parrainages;
 
     // Parrainage où ce loueur est le filleul (max 1)
     @OneToOne(mappedBy = "filleul")
     @JsonIgnore
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private Parrainage parrainageRecu;
 }

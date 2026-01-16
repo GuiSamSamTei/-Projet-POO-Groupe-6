@@ -24,10 +24,14 @@ public class Parrainage {
 
     @ManyToOne
     @JoinColumn(name = "parrain_id", nullable = false)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private Loueur parrain;
 
     @ManyToOne
     @JoinColumn(name = "filleul_id", nullable = false)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private Loueur filleul;
 
     @Column(nullable = false)
