@@ -16,7 +16,6 @@ public class OptionPayanteService implements IOptionPayanteService {
         this.optionPayanteRepository = optionPayanteRepository;
     }
 
-    // 🔹 CRUD
     @Override
     public List<OptionPayante> getAllOptions() {
         return optionPayanteRepository.findAll();
@@ -37,7 +36,6 @@ public class OptionPayanteService implements IOptionPayanteService {
         optionPayanteRepository.deleteById(id);
     }
 
-    // 🔹 Recherches spécifiques
     @Override
     public List<OptionPayante> getActiveOptions() {
         return optionPayanteRepository.findByActiveTrue();

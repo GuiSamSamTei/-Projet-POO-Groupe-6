@@ -15,7 +15,7 @@ public interface LoueurRepository extends JpaRepository<Loueur, Long> {
     // Trouver par prénom exact
     List<Loueur> findByPrenom(String prenom);
 
-    // Recherche partielle (nom ou prénom)
+    // Recherche nom ou prénom
     List<Loueur> findByNomContainingIgnoreCaseOrPrenomContainingIgnoreCase(
             String nom,
             String prenom

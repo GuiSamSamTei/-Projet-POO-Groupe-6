@@ -16,7 +16,6 @@ public class EvaluationService implements IEvaluationService {
     private final EvaluationRepository evaluationRepository;
 
 
-    // 🔹 CRUD
     @Override
     public List<Evaluation> getAllEvaluations() {
         return evaluationRepository.findAll();
@@ -37,7 +36,6 @@ public class EvaluationService implements IEvaluationService {
         evaluationRepository.deleteById(id);
     }
 
-    // 🔹 Recherches spécifiques
     @Override
     public List<Evaluation> getByNoteMin(double noteMin) {
         return evaluationRepository.findByNoteGreaterThanEqual(noteMin);

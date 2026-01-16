@@ -31,7 +31,6 @@ public class KilometrageVehicule {
     @Column(name = "photo_retour", length = 255)
     private String photoRetour;
 
-    // ⚡ Lien vers le véhicule
     @ManyToOne
     @JoinColumn(name = "vehicule_id", nullable = false)
     private Vehicule vehicule;

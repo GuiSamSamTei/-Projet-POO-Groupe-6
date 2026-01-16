@@ -10,7 +10,6 @@ import com.example.gestion_location_vehicule.model.Utilisateur;
 
 public interface IMessageService {
 
-    // 🔹 CRUD
     List<Message> getAllMessages();
 
     Optional<Message> getMessageById(Long id);
@@ -19,7 +18,6 @@ public interface IMessageService {
 
     void deleteMessage(Long id);
 
-    // 🔹 Recherches spécifiques
     List<Message> getMessagesByUtilisateur(Utilisateur utilisateur);
 
     List<Message> getMessagesNonLus(Utilisateur utilisateur);

@@ -18,8 +18,6 @@ public class MotoService implements IMotoService {
     private final MotoRepository motoRepository;
     private final AgentRepository agentRepository;
 
-
-    // 🔹 CRUD
     @Override
     public List<Moto> getAllMotos() {
         return motoRepository.findAll();
@@ -33,7 +31,6 @@ public class MotoService implements IMotoService {
     public Moto ajouterMoto(MotoRequest request) {
         Moto moto = new Moto();
 
-        // 1. Champs communs
         moto.setMarque(request.getMarque());
         moto.setModele(request.getModele());
         moto.setPrixjour(request.getPrixjour());
@@ -42,11 +39,9 @@ public class MotoService implements IMotoService {
         moto.setVehiculedispo(request.getVehiculedispo());
         // Pas de note, par défaut 0.0
 
-        // 2. Champs spécifiques Moto
         moto.setCylindree(request.getCylindree());
         moto.setNbchevaux(request.getNbchevaux());
 
-        // 3. Liaison Agent
         if (request.getAgent_id() != null) {
             Optional<Agent> agentOptional = agentRepository.findById(request.getAgent_id());
             if (agentOptional.isPresent()) {
@@ -90,7 +85,6 @@ public class MotoService implements IMotoService {
         motoRepository.deleteById(id);
     }
 
-    // 🔹 Recherches spécifiques
     @Override
     public List<Moto> getMotosDispo() {
         return motoRepository.findByVehiculedispoTrue();

@@ -8,7 +8,6 @@ import java.util.Optional;
 
 public interface IFactureService {
 
-    // 🔹 CRUD
     List<Facture> getAllFactures();
 
     Optional<Facture> getFactureById(Long id);
@@ -17,7 +16,6 @@ public interface IFactureService {
 
     void deleteFacture(Long id);
 
-    // 🔹 Recherches spécifiques
     List<Facture> getFacturesPayees();
 
     List<Facture> getFacturesNonPayees();

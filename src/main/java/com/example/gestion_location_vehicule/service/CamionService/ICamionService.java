@@ -16,7 +16,6 @@ public interface ICamionService {
 
     void deleteCamion(Long id);
 
-    // 🔹 Recherches spécifiques
     List<Camion> getCamionsDispo();
 
     List<Camion> getCamionsByVille(String ville);

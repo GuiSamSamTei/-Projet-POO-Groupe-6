@@ -9,7 +9,6 @@ import java.util.Optional;
 
 public interface IEvalVService {
 
-    // 🔹 CRUD
     List<EvalV> getAllEvalV();
 
     Optional<EvalV> getEvalVById(Long id);
@@ -18,7 +17,6 @@ public interface IEvalVService {
 
     void deleteEvalV(Long id);
 
-    // 🔹 Recherches spécifiques
     List<EvalV> getByLoueur(Loueur loueur);
 
     List<EvalV> getByVehicule(Vehicule vehicule);

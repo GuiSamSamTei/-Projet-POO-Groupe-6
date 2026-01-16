@@ -16,7 +16,6 @@ public class TarificationService implements ITarificationService {
         this.tarificationRepository = tarificationRepository;
     }
 
-    // 🔹 CRUD
     @Override
     public List<Tarification> getAllTarifications() {
         return tarificationRepository.findAll();
@@ -37,7 +36,6 @@ public class TarificationService implements ITarificationService {
         tarificationRepository.deleteById(id);
     }
 
-    // 🔹 Recherches spécifiques
     @Override
     public Optional<Tarification> getByAnnee(long annee) {
         return tarificationRepository.findByAnnee(annee);

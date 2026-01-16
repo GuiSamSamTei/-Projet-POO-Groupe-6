@@ -9,7 +9,6 @@ import java.util.Optional;
 
 public interface IEvalAService {
 
-    // 🔹 CRUD
     List<EvalA> getAllEvalA();
 
     Optional<EvalA> getEvalAById(Long id);
@@ -18,7 +17,6 @@ public interface IEvalAService {
 
     void deleteEvalA(Long id);
 
-    // 🔹 Recherches spécifiques
     List<EvalA> getByAgent(Agent agent);
 
     List<EvalA> getByLoueur(Loueur loueur);

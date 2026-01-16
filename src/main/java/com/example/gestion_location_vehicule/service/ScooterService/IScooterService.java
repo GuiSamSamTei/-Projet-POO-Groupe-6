@@ -7,7 +7,6 @@ import java.util.Optional;
 
 public interface IScooterService {
 
-    // 🔹 CRUD
     List<Scooter> getAllScooters();
 
     Optional<Scooter> getScooterById(Long id);
@@ -16,7 +15,6 @@ public interface IScooterService {
 
     void deleteScooter(Long id);
 
-    // 🔹 Recherches spécifiques
     List<Scooter> getAvailableScooters();
 
     List<Scooter> getByVille(String ville);

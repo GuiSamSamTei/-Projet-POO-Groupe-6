@@ -24,9 +24,7 @@ public interface ScooterRepository extends JpaRepository<Scooter, Long> {
     List<Scooter> findByElectriqueTrue();
     List<Scooter> findByElectriqueFalse();
 
-    // Combinaison possible : ville + dispo + cylindrée
     List<Scooter> findByVilledispoAndVehiculedispoTrueAndCylindreeGreaterThanEqual(String ville, int cylindreeMin);
 
-    // Combinaison possible : ville + dispo + électrique
     List<Scooter> findByVilledispoAndVehiculedispoTrueAndElectriqueTrue(String ville);
 }

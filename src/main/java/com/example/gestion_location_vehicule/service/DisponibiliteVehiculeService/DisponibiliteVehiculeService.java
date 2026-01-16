@@ -26,7 +26,6 @@ public class DisponibiliteVehiculeService
 
     @Override
     public List<DisponibiliteVehicule> getDisponibilitesPourVehicule(Vehicule vehicule) {
-        // ✅ PLUS DE LocalDate.MIN / MAX
         return repository.findByVehicule(vehicule);
     }
 }

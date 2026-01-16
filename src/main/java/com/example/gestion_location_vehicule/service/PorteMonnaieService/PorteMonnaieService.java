@@ -23,7 +23,6 @@ public class PorteMonnaieService implements IPorteMonnaieService {
     @Override
     @Transactional
     public PorteMonnaie creerPorteMonnaie(Utilisateur utilisateur) {
-        // Vérifier si un porte-monnaie existe déjà (compatibilité Oracle 11g)
         if (porteMonnaieRepository.countByUtilisateurId(utilisateur.getId()) > 0) {
             throw new IllegalStateException("Un porte-monnaie existe déjà pour cet utilisateur");
         }
@@ -41,8 +40,7 @@ public class PorteMonnaieService implements IPorteMonnaieService {
     public PorteMonnaie getByUtilisateur(Long utilisateurId) {
         return porteMonnaieRepository.findByUtilisateurId(utilisateurId)
                 .orElseGet(() -> {
-                    // Si le porte-monnaie n'existe pas, on le crée à la volée
-                    // Cela évite l'erreur 500 pour les utilisateurs existants
+
                     Utilisateur utilisateur = utilisateurRepository.findById(utilisateurId)
                             .orElseThrow(() -> new IllegalArgumentException("Utilisateur introuvable avec l'ID " + utilisateurId));
                     return creerPorteMonnaie(utilisateur);
@@ -65,15 +63,13 @@ public class PorteMonnaieService implements IPorteMonnaieService {
         PorteMonnaie porteMonnaie = getByUtilisateur(utilisateurId);
         double soldeAvant = porteMonnaie.getSolde();
 
-        // Créditer le porte-monnaie
         porteMonnaie.crediter(montant);
         porteMonnaieRepository.save(porteMonnaie);
 
-        // Créer la transaction
         TransactionPorteMonnaie transaction = new TransactionPorteMonnaie();
         transaction.setPorteMonnaie(porteMonnaie);
         transaction.setType(type);
-        transaction.setMontant(montant); // Positif pour crédit
+        transaction.setMontant(montant);
         transaction.setSoldeAvant(soldeAvant);
         transaction.setSoldeApres(porteMonnaie.getSolde());
         transaction.setDateTransaction(LocalDateTime.now());
@@ -105,20 +101,17 @@ public class PorteMonnaieService implements IPorteMonnaieService {
         PorteMonnaie porteMonnaie = getByUtilisateur(utilisateurId);
         double soldeAvant = porteMonnaie.getSolde();
 
-        // Vérifier le solde
         if (!porteMonnaie.peutPayer(montant)) {
             throw new IllegalStateException("Solde insuffisant. Solde actuel: " + soldeAvant + "€, montant demandé: " + montant + "€");
         }
 
-        // Débiter le porte-monnaie
         porteMonnaie.debiter(montant);
         porteMonnaieRepository.save(porteMonnaie);
 
-        // Créer la transaction
         TransactionPorteMonnaie transaction = new TransactionPorteMonnaie();
         transaction.setPorteMonnaie(porteMonnaie);
         transaction.setType(type);
-        transaction.setMontant(-montant); // Négatif pour débit
+        transaction.setMontant(-montant);
         transaction.setSoldeAvant(soldeAvant);
         transaction.setSoldeApres(porteMonnaie.getSolde());
         transaction.setDateTransaction(LocalDateTime.now());

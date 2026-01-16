@@ -8,7 +8,6 @@ import java.util.Optional;
 
 public interface IEvaluationService {
 
-    // 🔹 CRUD
     List<Evaluation> getAllEvaluations();
 
     Optional<Evaluation> getEvaluationById(Long id);
@@ -17,7 +16,6 @@ public interface IEvaluationService {
 
     void deleteEvaluation(Long id);
 
-    // 🔹 Recherches spécifiques
 
     List<Evaluation> getByNoteMin(double noteMin);
 

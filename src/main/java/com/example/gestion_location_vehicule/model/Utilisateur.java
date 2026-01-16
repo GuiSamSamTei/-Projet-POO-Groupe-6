@@ -54,7 +54,7 @@
         @JsonIgnore
         private List<Message> messagerecus;
 
-        // Messages envoyés → l'utilisateur est l'expéditeur
+
         @OneToMany(mappedBy = "utilisateursend")
         @JsonIgnore
         private List<Message> messagesenvoyes;

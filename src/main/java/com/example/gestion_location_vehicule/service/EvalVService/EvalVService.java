@@ -18,7 +18,6 @@ public class EvalVService implements IEvalVService {
         this.evalVRepository = evalVRepository;
     }
 
-    // 🔹 CRUD
     @Override
     public List<EvalV> getAllEvalV() {
         return evalVRepository.findAll();
@@ -39,7 +38,6 @@ public class EvalVService implements IEvalVService {
         evalVRepository.deleteById(id);
     }
 
-    // 🔹 Recherches spécifiques
     @Override
     public List<EvalV> getByLoueur(Loueur loueur) {
         return evalVRepository.findByLoueur(loueur);

@@ -28,9 +28,7 @@ public interface VeloRepository extends JpaRepository<Velo, Long> {
     // Vélos par agent propriétaire
     List<Velo> findByAgent(Agent agent);
 
-    // Combinaison : disponible + ville + électrique
     List<Velo> findByVehiculedispoTrueAndVilledispoAndElectriqueTrue(String ville);
 
-    // Combinaison : ville + vitesses minimum
     List<Velo> findByVilledispoAndNombreVitessesGreaterThanEqual(String ville, int vitessesMin);
 }

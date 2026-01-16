@@ -16,8 +16,6 @@ public class AssuranceService implements IAssuranceService {
         this.assuranceRepository = assuranceRepository;
     }
 
-    // 🔹 CRUD
-
     @Override
     public List<Assurance> getAllAssurances() {
         return assuranceRepository.findAll();
@@ -38,7 +36,6 @@ public class AssuranceService implements IAssuranceService {
         assuranceRepository.deleteById(id);
     }
 
-    // 🔹 Métier
 
     @Override
     public List<Assurance> getAssurancesActives() {

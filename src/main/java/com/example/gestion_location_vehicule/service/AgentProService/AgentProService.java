@@ -17,7 +17,6 @@ public class AgentProService implements IAgentProService {
         this.agentProRepository = agentProRepository;
     }
 
-    // 🔹 CRUD
 
     @Override
     public List<AgentPro> getAllAgentPro() {
@@ -39,7 +38,6 @@ public class AgentProService implements IAgentProService {
         agentProRepository.deleteById(id);
     }
 
-    // 🔹 Recherches spécifiques
 
     @Override
     public List<AgentPro> getByRaisonSociale(String raisonSociale) {

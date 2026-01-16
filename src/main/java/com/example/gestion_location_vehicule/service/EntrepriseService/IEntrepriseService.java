@@ -16,7 +16,6 @@ public interface IEntrepriseService {
 
     void deleteEntreprise(String nsiret);
 
-    // 🔹 Recherches spécifiques
     List<Entreprise> getActiveEntreprises();
 
     List<Entreprise> getInactiveEntreprises();

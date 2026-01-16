@@ -32,7 +32,7 @@ public interface VehiculeRepository extends JpaRepository<Vehicule, Long>,
     //Filtrer par prix/jour
     List<Vehicule> findByPrixjour(double prixjour);
 
-    // Filtrer par marque ou modèle partiel (insensible à la casse)
+    // Filtrer par marque ou modèle partiel
     List<Vehicule> findByMarqueContainingIgnoreCaseOrModeleContainingIgnoreCase(String marque, String modele);
 
     // Filtrer par note minimum
@@ -47,7 +47,6 @@ public interface VehiculeRepository extends JpaRepository<Vehicule, Long>,
     // Filtrer par agent propriétaire
     List<Vehicule> findByAgent(Agent agent);
 
-    // Combinaison : disponible + ville + note minimum
     List<Vehicule> findByVehiculedispoTrueAndVilledispoAndNotevehiculeGreaterThanEqual(String ville, int noteMin);
 
 

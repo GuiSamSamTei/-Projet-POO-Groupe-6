@@ -7,7 +7,6 @@ import java.util.Optional;
 
 public interface IVanService {
 
-    // 🔹 CRUD
     List<Van> getAllVans();
 
     Optional<Van> getVanById(Long id);
@@ -16,7 +15,6 @@ public interface IVanService {
 
     void deleteVan(Long id);
 
-    // 🔹 Recherches spécifiques
     List<Van> getVansDispo();
 
     List<Van> getVansByVille(String ville);

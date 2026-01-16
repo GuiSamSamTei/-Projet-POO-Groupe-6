@@ -17,7 +17,6 @@ public interface ICritereService {
 
     void deleteCritere(Long id);
 
-    // 🔹 Recherches spécifiques
     Critere getByNom(String nom);
 
     List<Critere> getByType(TypeCritere type);
