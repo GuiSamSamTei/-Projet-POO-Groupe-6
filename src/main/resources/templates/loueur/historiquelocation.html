@@ -21,7 +21,36 @@
         .badge-assurance { background-color: #fff3cd; color: #856404; border: 1px solid #ffeeba; }
         .already-evaluated { background-color: #e8f5e9; border: 1px solid #c8e6c9; border-radius: 10px; padding: 10px; }
 
-        /* Style des étoiles interactives */
+        .agent-info-link {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 15px;
+            background-color: #fff;
+            border: 1px solid #e0e0e0;
+            border-radius: 50px;
+            text-decoration: none;
+            color: #2c3e50;
+            transition: all 0.3s ease;
+            margin-top: 5px;
+        }
+        .agent-info-link:hover {
+            background-color: #f0f7ff;
+            border-color: #3498db;
+            color: #3498db;
+        }
+        .agent-avatar-mini {
+            width: 24px;
+            height: 24px;
+            background: #3498db;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            margin-right: 8px;
+        }
+
         .star-rating {
             display: flex;
             flex-direction: row-reverse;
@@ -73,16 +102,22 @@
                     <div class="info-value"><i class="fas fa-map-marker-alt text-danger me-1"></i> <span th:text="${contrat.lieudepot}"></span></div>
                 </div>
                 <div class="col-md-3 col-6 mb-3">
-                    <div class="info-label">Durée</div>
-                    <div class="info-value"><i class="far fa-clock text-primary me-1"></i> <span th:text="${contrat.nombreJours + ' jours'}"></span></div>
+                    <div class="info-label">Propriétaire</div>
+                    <a th:href="@{/utilisateur/profile/{id}(id=${contrat.vehicule.agent.id})}" class="agent-info-link">
+                        <div class="agent-avatar-mini">
+                            <i th:class="${contrat.vehicule.agent instanceof T(com.example.gestion_location_vehicule.model.AgentPro) ? 'fas fa-building' : 'fas fa-user'}"></i>
+                        </div>
+                        <span th:if="${contrat.vehicule.agent instanceof T(com.example.gestion_location_vehicule.model.AgentPro)}" th:text="${contrat.vehicule.agent.raisonsociale}"></span>
+                        <span th:if="${contrat.vehicule.agent instanceof T(com.example.gestion_location_vehicule.model.AgentPar)}" th:text="${contrat.vehicule.agent.username}"></span>
+                    </a>
                 </div>
                 <div class="col-md-3 col-6 mb-3">
                     <div class="info-label">Prix Total</div>
                     <div class="info-value text-success font-monospace" th:text="${contrat.prixtotal + ' €'}"></div>
                 </div>
                 <div class="col-md-3 col-6 mb-3 text-md-end">
-                    <div class="info-label">Assurance</div>
-                    <span class="badge badge-assurance px-2 py-1" th:text="${contrat.assurance != null ? contrat.assurance.nom : 'Standard'}"></span>
+                    <div class="info-label">Durée</div>
+                    <div class="info-value"><i class="far fa-clock text-primary me-1"></i> <span th:text="${contrat.nombreJours + ' jours'}"></span></div>
                 </div>
             </div>
 
