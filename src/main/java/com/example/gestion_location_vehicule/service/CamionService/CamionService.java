@@ -19,7 +19,6 @@ public class CamionService implements ICamionService {
     private final AgentRepository agentRepository;
 
 
-    // 🔹 CRUD
 
     @Override
     public List<Camion> getAllCamions() {
@@ -83,7 +82,6 @@ public class CamionService implements ICamionService {
         camionRepository.deleteById(id);
     }
 
-    // 🔹 Recherches spécifiques
 
     @Override
     public List<Camion> getCamionsDispo() {

@@ -97,15 +97,13 @@ public class ParrainageService implements IParrainageService {
     @Override
     @Transactional
     public void checkEtValiderPremiereLocation(Long filleulId) {
-        // Vérifier si le filleul a un parrainage en attente
+
         parrainageRepository.findParrainageEnAttenteByFilleul(filleulId)
                 .ifPresent(parrainage -> {
-                    // Vérifier si c'est bien la première location
-                    // Vérifier si c'est bien la première location (ou plus si échec précédent)
+
                     long nombreLocations = contratlocationRepository.countByLoueur_Id(filleulId);
                     System.out.println("Debug Parrainage: Filleul " + filleulId + " a " + nombreLocations + " locations.");
                     if (nombreLocations >= 1) {
-                        // C'est la première location (ou rattrapage), valider le parrainage
                         validerParrainage(parrainage.getId());
                     }
                 });
@@ -124,22 +122,18 @@ public class ParrainageService implements IParrainageService {
 
     @Override
     public boolean peutParrainer(Long parrainId, Long filleulId) {
-        // Vérifier que le parrain et le filleul sont différents
         if (parrainId.equals(filleulId)) {
             return false;
         }
 
-        // Vérifier que les deux sont des loueurs
         if (!loueurRepository.existsById(parrainId) || !loueurRepository.existsById(filleulId)) {
             return false;
         }
 
-        // Vérifier que le filleul n'a pas déjà un parrain
         if (parrainageRepository.countByFilleulId(filleulId) > 0) {
             return false;
         }
 
-        // Vérifier que le parrain n'a pas déjà parrainé ce filleul
         if (parrainageRepository.countByParrainIdAndFilleulId(parrainId, filleulId) > 0) {
             return false;
         }

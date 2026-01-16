@@ -7,7 +7,6 @@ import java.util.Optional;
 
 public interface IMotoService {
 
-    // 🔹 CRUD
     List<Moto> getAllMotos();
 
     Optional<Moto> getMotoById(Long id);
@@ -16,7 +15,6 @@ public interface IMotoService {
 
     void deleteMoto(Long id);
 
-    // 🔹 Recherches spécifiques
     List<Moto> getMotosDispo();
 
     List<Moto> getMotosByVille(String ville);

@@ -9,7 +9,7 @@ import java.util.Optional;
 
 public interface IPrixAssuranceService {
 
-    // 🔹 CRUD
+
     List<PrixAssurance> getAllPrixAssurances();
 
     Optional<PrixAssurance> getPrixAssuranceById(Long id);
@@ -18,7 +18,6 @@ public interface IPrixAssuranceService {
 
     void deletePrixAssurance(Long id);
 
-    // 🔹 Recherches spécifiques
     List<PrixAssurance> getByVehicule(Vehicule vehicule);
 
     List<PrixAssurance> getByAssurance(Assurance assurance);

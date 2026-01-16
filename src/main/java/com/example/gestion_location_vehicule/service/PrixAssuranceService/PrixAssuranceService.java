@@ -18,7 +18,6 @@ public class PrixAssuranceService implements IPrixAssuranceService {
         this.prixAssuranceRepository = prixAssuranceRepository;
     }
 
-    // 🔹 CRUD
     @Override
     public List<PrixAssurance> getAllPrixAssurances() {
         return prixAssuranceRepository.findAll();
@@ -39,7 +38,6 @@ public class PrixAssuranceService implements IPrixAssuranceService {
         prixAssuranceRepository.deleteById(id);
     }
 
-    // 🔹 Recherches spécifiques
     @Override
     public List<PrixAssurance> getByVehicule(Vehicule vehicule) {
         return prixAssuranceRepository.findByVehicule(vehicule);

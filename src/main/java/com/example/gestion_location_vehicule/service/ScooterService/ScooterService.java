@@ -18,7 +18,6 @@ public class ScooterService implements IScooterService {
     private final ScooterRepository scooterRepository;
     private final AgentRepository agentRepository;
 
-    // 🔹 CRUD
     @Override
     public List<Scooter> getAllScooters() {
         return scooterRepository.findAll();
@@ -32,20 +31,16 @@ public class ScooterService implements IScooterService {
     public Scooter ajouterScooter(ScooterRequest request) {
         Scooter scooter = new Scooter();
 
-        // 1. Champs communs
         scooter.setMarque(request.getMarque());
         scooter.setModele(request.getModele());
         scooter.setPrixjour(request.getPrixjour());
         scooter.setCouleur(request.getCouleur());
         scooter.setVilledispo(request.getVilledispo());
         scooter.setVehiculedispo(request.getVehiculedispo());
-        // Note par défaut 0.0
 
-        // 2. Champs spécifiques Scooter
         scooter.setCylindree(request.getCylindree() != null ? request.getCylindree() : 0);
         scooter.setElectrique(request.getElectrique() != null ? request.getElectrique() : false);
 
-        // 3. Liaison Agent
         if (request.getAgent_id() != null) {
             Optional<Agent> agentOptional = agentRepository.findById(request.getAgent_id());
             if (agentOptional.isPresent()) {
@@ -60,7 +55,7 @@ public class ScooterService implements IScooterService {
 
     public Scooter modifierScooter(Long id, ScooterRequest request) {
         return scooterRepository.findById(id).map(scooter -> {
-            // Champs communs
+
             if (request.getMarque() != null) scooter.setMarque(request.getMarque());
             if (request.getModele() != null) scooter.setModele(request.getModele());
             if (request.getPrixjour() != 0) scooter.setPrixjour(request.getPrixjour());
@@ -68,7 +63,6 @@ public class ScooterService implements IScooterService {
             if (request.getVilledispo() != null) scooter.setVilledispo(request.getVilledispo());
             if (request.getVehiculedispo() != null) scooter.setVehiculedispo(request.getVehiculedispo());
 
-            // Champs spécifiques Scooter
             if (request.getCylindree() != null) scooter.setCylindree(request.getCylindree());
             if (request.getElectrique() != null) scooter.setElectrique(request.getElectrique());
 
@@ -86,7 +80,6 @@ public class ScooterService implements IScooterService {
         scooterRepository.deleteById(id);
     }
 
-    // 🔹 Recherches spécifiques
     @Override
     public List<Scooter> getAvailableScooters() {
         return scooterRepository.findByVehiculedispoTrue();

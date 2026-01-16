@@ -24,7 +24,6 @@ public class VehiculeSpecification {
                 LocalDate dateDebut = LocalDate.parse(filters.get("dateDebut"));
                 LocalDate dateFin   = LocalDate.parse(filters.get("dateFin"));
 
-                // jointure avec disponibilites
                 Join<Vehicule, DisponibiliteVehicule> dispoJoin =
                         root.join("disponibilites", JoinType.INNER);
 
@@ -36,13 +35,10 @@ public class VehiculeSpecification {
                         )
                 );
 
-                // évite les doublons de véhicules
                 query.distinct(true);
             }
 
 
-
-            // 🔹 Champs communs
             if (filters.containsKey("marque") && !filters.get("marque").isEmpty()) {
                 predicates.add(cb.like(cb.lower(root.get("marque")),
                         "%" + filters.get("marque").toLowerCase() + "%"));
@@ -68,16 +64,13 @@ public class VehiculeSpecification {
                         Double.valueOf(filters.get("notevehicule"))));
             }
 
-            // 🔹 Disponible uniquement
             predicates.add(cb.isTrue(root.get("vehiculedispo")));
 
-            // 🔹 Filtre par TYPE
             String type = filters.getOrDefault("type", "");
             if (!type.isEmpty()) {
                 predicates.add(cb.equal(root.type(), getClassByType(type)));
             }
 
-            // 🔹 Filtres spécifiques selon le type
             switch (type.toLowerCase()) {
                 case "voiture":
                     var voitureRoot = cb.treat(root, Voiture.class);
@@ -131,14 +124,12 @@ public class VehiculeSpecification {
                     }
                     break;
 
-                // Vous pouvez ajouter d'autres types si nécessaire
             }
 
             return cb.and(predicates.toArray(new Predicate[0]));
         };
     }
 
-    //  Mapping String → Class
     private static Class<? extends Vehicule> getClassByType(String type) {
         return switch (type.toLowerCase()) {
             case "voiture" -> Voiture.class;

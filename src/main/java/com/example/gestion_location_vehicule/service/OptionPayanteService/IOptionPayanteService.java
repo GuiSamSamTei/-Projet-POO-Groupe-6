@@ -7,7 +7,6 @@ import java.util.Optional;
 
 public interface IOptionPayanteService {
 
-    // 🔹 CRUD
     List<OptionPayante> getAllOptions();
 
     Optional<OptionPayante> getOptionById(Long id);
@@ -16,7 +15,6 @@ public interface IOptionPayanteService {
 
     void deleteOption(Long id);
 
-    // 🔹 Recherches spécifiques
     List<OptionPayante> getActiveOptions();
 
     List<OptionPayante> getInactiveOptions();

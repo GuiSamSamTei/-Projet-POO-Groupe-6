@@ -19,7 +19,6 @@ public class VanService implements IVanService {
     private final VanRepository vanRepository;
     private final AgentRepository agentRepository;
 
-    // 🔹 CRUD
     @Override
     public List<Van> getAllVans() {
         return vanRepository.findAll();
@@ -78,7 +77,6 @@ public class VanService implements IVanService {
         vanRepository.deleteById(id);
     }
 
-    // 🔹 Recherches spécifiques
     @Override
     public List<Van> getVansDispo() {
         return vanRepository.findByVehiculedispoTrue();

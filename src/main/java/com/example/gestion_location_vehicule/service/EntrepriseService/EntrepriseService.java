@@ -16,7 +16,6 @@ public class EntrepriseService implements IEntrepriseService {
         this.entrepriseRepository = entrepriseRepository;
     }
 
-    // 🔹 CRUD
     @Override
     public List<Entreprise> getAllEntreprises() {
         return entrepriseRepository.findAll();
@@ -37,7 +36,6 @@ public class EntrepriseService implements IEntrepriseService {
         entrepriseRepository.deleteById(nsiret);
     }
 
-    // 🔹 Recherches spécifiques
     @Override
     public List<Entreprise> getActiveEntreprises() {
         return entrepriseRepository.findByActiveTrue();

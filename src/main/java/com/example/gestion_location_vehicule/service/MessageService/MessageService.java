@@ -25,7 +25,6 @@ public class MessageService implements IMessageService {
         this.messageRepository = messageRepository;
     }
 
-    // 🔹 CRUD
     @Override
     public List<Message> getAllMessages() {
         return messageRepository.findAll();
@@ -46,7 +45,6 @@ public class MessageService implements IMessageService {
         messageRepository.deleteById(id);
     }
 
-    // 🔹 Recherches spécifiques
     @Override
     public List<Message> getMessagesByUtilisateur(Utilisateur utilisateur) {
         return messageRepository.findByUtilisateursendOrUtilisateurreceive(utilisateur, utilisateur);

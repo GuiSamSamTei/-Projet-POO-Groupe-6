@@ -17,7 +17,6 @@ public class AgentParService implements IAgentParService {
         this.agentParRepository = agentParRepository;
     }
 
-    // 🔹 CRUD
 
     @Override
     public List<AgentPar> getAllAgentPar() {
@@ -39,7 +38,6 @@ public class AgentParService implements IAgentParService {
         agentParRepository.deleteById(id);
     }
 
-    // 🔹 Recherches spécifiques
 
     @Override
     public List<AgentPar> getByNom(String nom) {

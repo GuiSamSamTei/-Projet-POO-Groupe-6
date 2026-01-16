@@ -126,11 +126,11 @@ public class VehiculeService implements IVehiculeService{
 
             boolean debutOK =
                     !dateDebut.isBefore(dispo.getDateDebut());
-            // dateDebut >= dispo.dateDebut
+
 
             boolean finOK =
                     !dateFin.isAfter(dispo.getDateFin());
-            // dateFin <= dispo.dateFin
+
 
             if (debutOK && finOK) {
                 return true;

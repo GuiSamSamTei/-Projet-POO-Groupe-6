@@ -7,7 +7,6 @@ import java.util.Optional;
 
 public interface ITarificationService {
 
-    // 🔹 CRUD
     List<Tarification> getAllTarifications();
 
     Optional<Tarification> getTarificationById(Long id);
@@ -16,7 +15,6 @@ public interface ITarificationService {
 
     void deleteTarification(Long id);
 
-    // 🔹 Recherches spécifiques
     Optional<Tarification> getByAnnee(long annee);
 
     List<Tarification> getByPrixfixeMin(double prixMin);

@@ -17,7 +17,6 @@ public class CritereService implements ICritereService {
         this.critereRepository = critereRepository;
     }
 
-    // 🔹 CRUD
     @Override
     public List<Critere> getAllCriteres() {
         return critereRepository.findAll();
@@ -38,7 +37,6 @@ public class CritereService implements ICritereService {
         critereRepository.deleteById(id);
     }
 
-    // 🔹 Recherches spécifiques
     @Override
     public Critere getByNom(String nom) {
         return critereRepository.findByNom(nom);

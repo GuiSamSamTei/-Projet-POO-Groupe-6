@@ -18,7 +18,6 @@ public class EvalAService implements IEvalAService {
         this.evalARepository = evalARepository;
     }
 
-    // 🔹 CRUD
     @Override
     public List<EvalA> getAllEvalA() {
         return evalARepository.findAll();
@@ -39,7 +38,6 @@ public class EvalAService implements IEvalAService {
         evalARepository.deleteById(id);
     }
 
-    // 🔹 Recherches spécifiques
     @Override
     public List<EvalA> getByAgent(Agent agent) {
         return evalARepository.findByAgent(agent);
