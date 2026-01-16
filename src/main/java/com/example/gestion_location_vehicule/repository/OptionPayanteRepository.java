@@ -18,7 +18,7 @@ public interface OptionPayanteRepository extends JpaRepository<OptionPayante, Lo
     // Trouver par nom exact
     List<OptionPayante> findByNom(String nom);
 
-    // Trouver par nom partiel (insensible à la casse)
+    // Trouver par nom partiel
     List<OptionPayante> findByNomContainingIgnoreCase(String nom);
 
     // Filtrer par prix mensuel supérieur ou égal

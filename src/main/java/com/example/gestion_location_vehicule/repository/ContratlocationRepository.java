@@ -14,7 +14,7 @@ public interface ContratlocationRepository extends JpaRepository<Contratlocation
 
     List<Contratlocation> findByDatefin(Date datefin);
 
-    // ✅ Méthode utilisée par le controller AgentPro
+    // Méthode utilisée par le controller AgentPro
     List<Contratlocation> findByVehicule_Id(Long vehicule_id);
 
     Contratlocation findByAssuranceId(Long assurance_id);
