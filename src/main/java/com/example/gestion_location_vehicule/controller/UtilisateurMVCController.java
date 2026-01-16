@@ -4,9 +4,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-import com.example.gestion_location_vehicule.service.EvalAService.EvalAService;
-import com.example.gestion_location_vehicule.service.EvalLService.EvalLService;
-import com.example.gestion_location_vehicule.service.EvalVService.EvalVService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,30 +12,31 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.example.gestion_location_vehicule.model.Agent;
 import com.example.gestion_location_vehicule.model.AgentPar;
 import com.example.gestion_location_vehicule.model.AgentPro;
 import com.example.gestion_location_vehicule.model.ControleTechnique;
+import com.example.gestion_location_vehicule.model.EvalA;
+import com.example.gestion_location_vehicule.model.EvalL;
 import com.example.gestion_location_vehicule.model.Loueur;
 import com.example.gestion_location_vehicule.model.Message;
 import com.example.gestion_location_vehicule.model.Utilisateur;
-import com.example.gestion_location_vehicule.model.*;
+import com.example.gestion_location_vehicule.model.Vehicule;
 import com.example.gestion_location_vehicule.repository.UtilisateurRepository;
 import com.example.gestion_location_vehicule.request.ConnexionRequest;
 import com.example.gestion_location_vehicule.service.AgentParService.AgentParService;
 import com.example.gestion_location_vehicule.service.AgentProService.AgentProService;
 import com.example.gestion_location_vehicule.service.ControleTechniqueService.ControleTechniqueService;
+import com.example.gestion_location_vehicule.service.EvalAService.EvalAService;
+import com.example.gestion_location_vehicule.service.EvalLService.EvalLService;
+import com.example.gestion_location_vehicule.service.EvalVService.EvalVService;
 import com.example.gestion_location_vehicule.service.LoueurService.LoueurService;
 import com.example.gestion_location_vehicule.service.MessageService.MessageService;
 import com.example.gestion_location_vehicule.service.UtilisateurService.UtilisateurService;
 import com.example.gestion_location_vehicule.service.VehiculeService.VehiculeService;
+
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.Optional;
 
 @Controller
 @RequestMapping("/utilisateur")
@@ -85,7 +83,6 @@ public class UtilisateurMVCController {
         Optional<Utilisateur> userOpt = utilisateurService.connexionUser(connexionRequest);
 
         if (userOpt.isEmpty()) {
-            // Login échoué
             return "redirect:/utilisateur/connexion?error=true";
         }
 
@@ -105,7 +102,6 @@ public class UtilisateurMVCController {
         }
 
 
-        // 🔥 Redirection selon le type réel
         if (user instanceof Loueur) {
             session.setAttribute("role", "LOUEUR");
             return "redirect:/loueur/profil";
@@ -116,16 +112,13 @@ public class UtilisateurMVCController {
             Utilisateur admin = utilisateurRepository.findById(40L).orElse(null);
             List<ControleTechnique> controles = ((AgentPar) user).getAllControlesTechniques();
             for (ControleTechnique ct : controles) {
-                //if controle va expirer dans moins de 60 jours
                 if (ct.isExpiringSoon(60) && !ct.isNotifie() && admin != null) {
-                    //créer un message d'alerte
                     String alertContent = String.format("""
                             Message de part de l'administration:
                             Alerte: Le contrôle technique du véhicule avec l'ID %d expirera le %s. Veuillez prendre les mesures nécessaires.""",
                             ct.getVehicule().getId(), ct.getDateExpiration());
                     Message alertMessage = new Message(null, alertContent, new Date(), false, admin, user);
                     messageService.saveMessage(alertMessage);
-                    //marquer le controle comme notifié
                     ct.setNotifie(true);
                     controleTechniqueService.enregistrerControleTechnique(ct);
                 }   
@@ -138,16 +131,13 @@ public class UtilisateurMVCController {
             Utilisateur admin = utilisateurRepository.findById(40L).orElse(null);
             List<ControleTechnique> controles = ((AgentPro) user).getAllControlesTechniques();
             for (ControleTechnique ct : controles) {
-                //if controle va expirer dans moins de 60 jours
                 if (ct.isExpiringSoon(60) && !ct.isNotifie() && admin != null) {
-                    //créer un message d'alerte
                     String alertContent = String.format("""
                             Message de part de l'administration:
                             Alerte: Le contrôle technique du véhicule avec l'ID %d expirera le %s. Veuillez prendre les mesures nécessaires.""",
                             ct.getVehicule().getId(), ct.getDateExpiration());
                     Message alertMessage = new Message(null, alertContent, new Date(), false, admin, user);
                     messageService.saveMessage(alertMessage);
-                    //marquer le controle comme notifié
                     ct.setNotifie(true);
                     controleTechniqueService.enregistrerControleTechnique(ct);
                 }   
@@ -155,7 +145,6 @@ public class UtilisateurMVCController {
             return "redirect:/agent-pro/profil";
         }
 
-        // Sécurité : type inconnu
         session.invalidate();
         return "redirect:/utilisateur/connexion?error=true";
     }
@@ -235,7 +224,6 @@ public class UtilisateurMVCController {
         }
     }
 
-    // Déconnexion
     @GetMapping("/logout")
     public String logout(HttpSession session
     ) {

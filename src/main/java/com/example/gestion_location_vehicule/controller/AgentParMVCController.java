@@ -1,5 +1,15 @@
 package com.example.gestion_location_vehicule.controller;
 
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+
 import com.example.gestion_location_vehicule.model.AgentPar;
 import com.example.gestion_location_vehicule.model.Contratlocation;
 import com.example.gestion_location_vehicule.model.EvalA;
@@ -8,13 +18,8 @@ import com.example.gestion_location_vehicule.service.AgentParService.IAgentParSe
 import com.example.gestion_location_vehicule.service.ContratlocationService.ContratlocationService;
 import com.example.gestion_location_vehicule.service.EvalAService.EvalAService;
 import com.example.gestion_location_vehicule.service.VehiculeService.IVehiculeService;
-import jakarta.servlet.http.HttpSession;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Optional;
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 @RequestMapping("/agent-par")
@@ -32,19 +37,15 @@ public class AgentParMVCController {
         this.evalAService = evalAService;
     }
 
-    // ------------------ INSCRIPTION ------------------
-    // Afficher le formulaire d'inscription
     @GetMapping("/inscription")
     public String showForm(Model model) {
         model.addAttribute("user", new AgentPar());
         return "agentPar/inscription";
     }
 
-    // Traiter l'inscription
     @PostMapping("/inscription")
     public String submitForm(@ModelAttribute AgentPar agentPar, HttpSession session) {
 
-        // Valeurs par défaut héritées de Utilisateur / Agent
         agentPar.setNotemoyenne(0.0);
         agentPar.setNombreevaluations(0);
         agentPar.setNombrevehicules(0);
@@ -52,14 +53,12 @@ public class AgentParMVCController {
 
         agentParService.saveAgentPar(agentPar);
 
-        // Stockage de l'utilisateur connecté
         session.setAttribute("user", agentPar.getId());
         session.setAttribute("role", "AGENT_PAR");
 
         return "redirect:/agent-par/profil";
     }
 
-    // ------------------ PROFIL ------------------
     @GetMapping("/profil")
     public String profil(HttpSession session, Model model) {
 
@@ -81,17 +80,10 @@ public class AgentParMVCController {
             model.addAttribute("evaluations", evalAS);
             return "agentPar/profil";
         }
-
-
-//        model.addAttribute("vehicules", agentParOpt.get().getVehicules());
-
-        // Cas incohérent : utilisateur en session mais inexistant en base
         session.invalidate();
         return "redirect:/utilisateur/connexion";
     }
 
-    // ------------------ MODIFICATION PROFIL ------------------
-    // Afficher le formulaire de modification
     @GetMapping("/profil/modifier")
     public String afficherFormulaireModification(HttpSession session, Model model) {
 
@@ -111,7 +103,6 @@ public class AgentParMVCController {
         return "redirect:/agent-par/inscription";
     }
 
-    // Traiter le formulaire de modification
     @PostMapping("/profil/modifier")
     public String enregistrerModification(@ModelAttribute("user") AgentPar formUser, HttpSession session) {
 
@@ -124,7 +115,6 @@ public class AgentParMVCController {
         if (agentParOpt.isPresent()) {
             AgentPar existingUser = agentParOpt.get();
 
-            // Mettre à jour uniquement les champs modifiables
             existingUser.setNom(formUser.getNom());
             existingUser.setPrenom(formUser.getPrenom());
             existingUser.setUsername(formUser.getUsername());

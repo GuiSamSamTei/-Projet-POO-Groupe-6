@@ -1,6 +1,28 @@
 package com.example.gestion_location_vehicule.controller;
 
-import com.example.gestion_location_vehicule.model.*;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.server.ResponseStatusException;
+
+import com.example.gestion_location_vehicule.model.Assurance;
+import com.example.gestion_location_vehicule.model.Contratlocation;
+import com.example.gestion_location_vehicule.model.EvalA;
+import com.example.gestion_location_vehicule.model.EvalV;
+import com.example.gestion_location_vehicule.model.Loueur;
+import com.example.gestion_location_vehicule.model.Parking;
+import com.example.gestion_location_vehicule.model.Parrainage;
+import com.example.gestion_location_vehicule.model.Vehicule;
 import com.example.gestion_location_vehicule.repository.VehiculeRepository;
 import com.example.gestion_location_vehicule.service.AgentService.AgentService;
 import com.example.gestion_location_vehicule.service.AssuranceService.AssuranceService;
@@ -8,20 +30,11 @@ import com.example.gestion_location_vehicule.service.ContratlocationService.Cont
 import com.example.gestion_location_vehicule.service.EvaluationService.EvaluationService;
 import com.example.gestion_location_vehicule.service.LoueurService.ILoueurService;
 import com.example.gestion_location_vehicule.service.ParkingService.ParkingService;
+import com.example.gestion_location_vehicule.service.PorteMonnaieService.IPorteMonnaieService;
 import com.example.gestion_location_vehicule.service.TarificationService.TarificationService;
 import com.example.gestion_location_vehicule.service.VehiculeService.VehiculeService;
+
 import jakarta.servlet.http.HttpSession;
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
-
-import com.example.gestion_location_vehicule.service.PorteMonnaieService.IPorteMonnaieService;
-
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Map;
 
 @Controller
 @RequestMapping("/loueur")
@@ -256,18 +269,15 @@ public class LoueurMVCController {
         Long anneeCourante = (long) java.time.LocalDate.now().getYear();
 
         Double tarifFixe = tarificationService.getbyAnnee(anneeCourante).getPrixfixe();
-        double fraisService = tarifFixe; // À adapter selon votre attribut en base de données
-
-        // Formule Finale : (prixlocation * nbJours) + prixassurance + frais_service
+        double fraisService = tarifFixe;
         double montantTotal = (prixLocationBase * nbJours) + montantAssurance + fraisService;
 
-        // 5. Création du contrat
         Contratlocation contrat = new Contratlocation();
         contrat.setDatedebut(dateDebut);
         contrat.setDatefin(dateFin);
         contrat.setVehicule(vehicule);
         contrat.setLoueur(loueur);
-        contrat.setAssurance(assuranceChoisie); // Liaison avec l'assurance
+        contrat.setAssurance(assuranceChoisie);
         contrat.setPrixtotal(montantTotal);
         contrat.setPrixLocationJour(vehicule.getPrixjour());
         contrat.setPrixAssuranceApplique(montantAssurance);
@@ -276,20 +286,17 @@ public class LoueurMVCController {
         contrat.setNombreJours((int) nbJours);
         contrat.setValidee(false);
 
-        // Gestion du lieu de dépôt / parking
         if(Long.parseLong(formData.get("parkingId")) != 0) {
             Long parking_id = Long.parseLong(formData.get("parkingId"));
             Parking parking = parkingService.trouverParkingparId(parking_id);
             contrat.setParking(parking);
 
         } else {
-            contrat.setLieudepot(vehicule.getVilledispo()); // Lieu par défaut
+            contrat.setLieudepot(vehicule.getVilledispo());
         }
 
-        // 6. Sauvegarde et mise à jour
         contratlocationService.ajouterContralocation(contrat);
 
-        // --- PAIEMENT PORTE-MONNAIE ---
         if (formData.containsKey("useWallet")) {
              try {
                  double deduction = porteMonnaieService.calculerMontantAUtiliser(loueurId, montantTotal);
@@ -297,14 +304,13 @@ public class LoueurMVCController {
                      porteMonnaieService.debiterPourLocation(loueurId, deduction, contrat);
                      contrat.setMontantPayePorteMonnaie(deduction);
                      contrat.setMontantPayeAutre(montantTotal - deduction);
-                     contratlocationService.ajouterContralocation(contrat); // Mise à jour
+                     contratlocationService.ajouterContralocation(contrat);
                  } else {
                      contrat.setMontantPayeAutre(montantTotal);
                      contratlocationService.ajouterContralocation(contrat);
                  }
              } catch (Exception e) {
                  System.err.println("Erreur paiement porte-monnaie: " + e.getMessage());
-                 // En cas d'erreur, on considère que tout est payé par "Autre" par sécurité
                  contrat.setMontantPayeAutre(montantTotal);
                  contratlocationService.ajouterContralocation(contrat);
              }
@@ -312,18 +318,15 @@ public class LoueurMVCController {
              contrat.setMontantPayeAutre(montantTotal);
              contratlocationService.ajouterContralocation(contrat);
         }
-        // ------------------------------
 
         vehicule.setVehiculedispo(false);
         vehiculeRepository.save(vehicule);
 
-        // --- VALIDATION PARRAINAGE ---
         try {
              parrainageService.checkEtValiderPremiereLocation(loueurId);
         } catch (Exception e) {
              System.err.println("Erreur validation parrainage : " + e.getMessage());
         }
-        // -----------------------------
 
         session.removeAttribute("vehiculeEnCours");
         session.setAttribute("dernierContrat", contrat);
@@ -337,14 +340,12 @@ public class LoueurMVCController {
         Contratlocation contrat = (Contratlocation) session.getAttribute("dernierContrat");
         if (contrat == null) return "redirect:/vehicule/liste";
 
-        // Calcul de la durée pour l'affichage si non stocké
         long nbJours = java.time.temporal.ChronoUnit.DAYS.between(contrat.getDatedebut(), contrat.getDatefin()) + 1;
         model.addAttribute("nbJours", nbJours);
         model.addAttribute("c", contrat);
 
         return "loueur/recapitulatif";
     }
-    /* ===================== CONSULTER UN PROFIL DE LOUEUR ===================== */
     @GetMapping("/consulter/{id}")
     public String consulterProfil(@PathVariable Long id, Model model) {
 
@@ -376,7 +377,6 @@ public class LoueurMVCController {
 
         Contratlocation contratlocation = contratlocationService.trouverContraById(contratId);
 
-        // 1. Enregistrement de l'évaluation de l'Agent (EvalA)
         EvalA evalA = new EvalA();
         evalA.setAgent(agentService.getAgentById(agentId).get());
         evalA.setLoueur(loueur);
@@ -385,9 +385,6 @@ public class LoueurMVCController {
         evalA.setDatenote(dateAujourdhui);
         evaluationService.saveEvaluation(evalA);
 
-
-
-        // 2. Enregistrement de l'évaluation du Véhicule (EvalV)
         EvalV evalV = new EvalV();
         evalV.setVehicule(vehiculeService.getVehiculeByid(vehiculeId));
         evalV.setLoueur(loueur);

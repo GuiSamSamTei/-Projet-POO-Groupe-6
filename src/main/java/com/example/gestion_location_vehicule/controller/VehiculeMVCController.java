@@ -30,16 +30,11 @@ public class VehiculeMVCController {
         this.evalVService = evalVService;
     }
 
-    //afficher la page
-
-
-
     @GetMapping("/liste")
     public String showVehicules(Model model) {
-        // Récupère tous les véhicules disponibles
         List<Vehicule> vehicules = vehiculeService.getAllVehicules();
         model.addAttribute("vehicules", vehicules);
-        return "vehicule/vehicules"; // Correspond à src/main/resources/templates/vehicule/vehicules.html
+        return "vehicule/vehicules";
     }
 
     @GetMapping("/filtres")
@@ -50,7 +45,7 @@ public class VehiculeMVCController {
         List<Vehicule> vehicules = vehiculeService.filtrer(params);
         model.addAttribute("vehicules", vehicules);
 
-        return "vehicule/vehicules"; // on réutilise la même page
+        return "vehicule/vehicules";
     }
 
     @GetMapping("/afficher/{id}")

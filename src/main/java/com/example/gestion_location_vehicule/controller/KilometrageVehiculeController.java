@@ -1,17 +1,23 @@
 package com.example.gestion_location_vehicule.controller;
 
+import java.io.File;
+import java.io.IOException;
+import java.time.LocalDate;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
+
 import com.example.gestion_location_vehicule.model.KilometrageVehicule;
 import com.example.gestion_location_vehicule.model.Vehicule;
 import com.example.gestion_location_vehicule.repository.VehiculeRepository;
 import com.example.gestion_location_vehicule.service.KilometrageVehiculeService.IKilometrageVehiculeService;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.io.File;
-import java.io.IOException;
-import java.time.LocalDate;
 
 @Controller
 @RequestMapping("/kilometrage")
@@ -48,7 +54,6 @@ public class KilometrageVehiculeController {
             @RequestParam("photoRetourFile") MultipartFile photoRetourFile
     ) throws IOException {
 
-        // Stockage des fichiers localement (ex: dossier uploads/)
         if (!photoDepartFile.isEmpty()) {
             String cheminDepart = "uploads/" + photoDepartFile.getOriginalFilename();
             photoDepartFile.transferTo(new File(cheminDepart));

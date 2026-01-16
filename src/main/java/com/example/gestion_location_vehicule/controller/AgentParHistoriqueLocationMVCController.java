@@ -1,19 +1,21 @@
 package com.example.gestion_location_vehicule.controller;
-import com.example.gestion_location_vehicule.model.Contratlocation;
-import com.example.gestion_location_vehicule.model.Vehicule;
-import com.example.gestion_location_vehicule.service.ContratlocationService.ContratlocationService;
-import com.example.gestion_location_vehicule.service.VehiculeService.IVehiculeService;
-import jakarta.servlet.http.HttpSession;
-import lombok.RequiredArgsConstructor;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import com.example.gestion_location_vehicule.model.Contratlocation;
+import com.example.gestion_location_vehicule.model.Vehicule;
+import com.example.gestion_location_vehicule.service.ContratlocationService.ContratlocationService;
+import com.example.gestion_location_vehicule.service.VehiculeService.IVehiculeService;
+
+import jakarta.servlet.http.HttpSession;
+import lombok.RequiredArgsConstructor;
 
 @Controller
 @RequestMapping("/agent-par/historique-location")
@@ -26,7 +28,6 @@ public class AgentParHistoriqueLocationMVCController {
     @GetMapping
     public String afficherHistorique(HttpSession session, Model model) {
 
-        // 🔐 Vérification de la connexion
         Long agentId = (Long) session.getAttribute("user");
         if (agentId == null) {
             return "redirect:/utilisateur/connexion";

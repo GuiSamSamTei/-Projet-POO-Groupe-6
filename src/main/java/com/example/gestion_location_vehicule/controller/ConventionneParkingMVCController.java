@@ -2,21 +2,24 @@ package com.example.gestion_location_vehicule.controller;
 
 
 
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 import com.example.gestion_location_vehicule.model.Agent;
 import com.example.gestion_location_vehicule.model.Parking;
-import com.example.gestion_location_vehicule.model.Vehicule;
 import com.example.gestion_location_vehicule.service.AgentService.AgentService;
 import com.example.gestion_location_vehicule.service.ConventionneParkingService.ConventionneParkingService;
 import com.example.gestion_location_vehicule.service.ParkingService.ParkingService;
-import com.example.gestion_location_vehicule.service.VehiculeService.VehiculeService;
+
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Controller
 @RequiredArgsConstructor
@@ -42,17 +45,14 @@ public class ConventionneParkingMVCController {
         Long agent_id = (Long) session.getAttribute("user");
         Agent agent = agentService.getAgentById(agent_id).get();
 
-        // Récupérer tous les parkings
         List<Parking> parkingList = parkingService.getAllParking();
 
-        // Filtrer par ville si un paramètre est fourni
         if (ville != null && !ville.isEmpty()) {
             parkingList = parkingList.stream()
                     .filter(p -> p.getVille().equalsIgnoreCase(ville))
                     .collect(Collectors.toList());
         }
 
-        // Extraire la liste des villes uniques pour le select
         List<String> villes = parkingService.getAllParking().stream()
                 .map(Parking::getVille)
                 .distinct()
@@ -60,7 +60,7 @@ public class ConventionneParkingMVCController {
 
         model.addAttribute("parkings", parkingList);
         model.addAttribute("villes", villes);
-        model.addAttribute("villeSelectionnee", ville); // pour garder la ville sélectionnée
+        model.addAttribute("villeSelectionnee", ville); 
         model.addAttribute("parkingdeja", agent.getParkingConvIDs());
 
         return "agent/choixParking";
@@ -74,10 +74,9 @@ public class ConventionneParkingMVCController {
         Long agentId = (Long) session.getAttribute("user");
         Agent agent = agentService.getAgentById(agentId).get();
 
-        // Mettre à jour les parkings conventionnés de l'agent
         conventionneParkingService.updateAgentParkings(agent, parkingIds);
 
-        return "redirect:/parking"; // Retour à la page de choix après enregistrement
+        return "redirect:/parking";
     }
 
 

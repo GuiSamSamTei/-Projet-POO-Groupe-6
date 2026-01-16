@@ -1,5 +1,16 @@
 package com.example.gestion_location_vehicule.controller;
 
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+
 import com.example.gestion_location_vehicule.model.AgentPro;
 import com.example.gestion_location_vehicule.model.Contratlocation;
 import com.example.gestion_location_vehicule.model.EvalA;
@@ -8,13 +19,8 @@ import com.example.gestion_location_vehicule.service.AgentProService.IAgentProSe
 import com.example.gestion_location_vehicule.service.ContratlocationService.ContratlocationService;
 import com.example.gestion_location_vehicule.service.EvalAService.EvalAService;
 import com.example.gestion_location_vehicule.service.VehiculeService.IVehiculeService;
-import jakarta.servlet.http.HttpSession;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Optional;
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 @RequestMapping("/agent-pro")
@@ -33,7 +39,6 @@ public class AgentProMVCController {
         this.evalAService = evalAService;
     }
 
-    // ------------------ INSCRIPTION ------------------
     @GetMapping("/inscription")
     public String showForm(Model model) {
         model.addAttribute("user", new AgentPro());
@@ -43,7 +48,6 @@ public class AgentProMVCController {
     @PostMapping("/inscription")
     public String submitForm(@ModelAttribute AgentPro agentPro, HttpSession session) {
 
-        // Valeurs par défaut
         agentPro.setNotemoyenne(0.0);
         agentPro.setNombreevaluations(0);
         agentPro.setNombrevehicules(0);
@@ -51,14 +55,12 @@ public class AgentProMVCController {
 
         agentProService.saveAgentPro(agentPro);
 
-        // Stockage de l'utilisateur connecté
         session.setAttribute("user", agentPro.getId());
         session.setAttribute("role", "AGENT_PRO");
 
         return "redirect:/agent-pro/profil";
     }
 
-    // ------------------ PROFIL CONNECTÉ ------------------
     @GetMapping("/profil")
     public String profil(HttpSession session, Model model) {
 
@@ -72,7 +74,6 @@ public class AgentProMVCController {
         if (agentProOpt.isPresent()) {
             AgentPro agentPro = agentProOpt.get();
 
-            // Ajouter l'agent et ses véhicules dans le modèle
             model.addAttribute("user", agentPro);
             List<Vehicule> vehicules = vehiculeService.getVehiculesParAgent(userId);
             model.addAttribute("vehicules", vehicules);
@@ -89,7 +90,6 @@ public class AgentProMVCController {
         return "redirect:/utilisateur/connexion";
     }
 
-    // ------------------ MODIFICATION PROFIL ------------------
     @GetMapping("/profil/modifier")
     public String afficherFormulaireModification(HttpSession session, Model model) {
 
@@ -121,7 +121,6 @@ public class AgentProMVCController {
         if (agentProOpt.isPresent()) {
             AgentPro existingUser = agentProOpt.get();
 
-            // Mise à jour uniquement des champs modifiables
             existingUser.setRaisonsociale(formUser.getRaisonsociale());
             existingUser.setSiret(formUser.getSiret());
             existingUser.setUsername(formUser.getUsername());
@@ -141,7 +140,6 @@ public class AgentProMVCController {
         return "redirect:/agent-pro/inscription";
     }
 
-    // ------------------ CONSULTER UN PROFIL D'AGENT PRO ------------------
     @GetMapping("/consulter/{id}")
     public String consulterProfil(@PathVariable Long id, Model model) {
 
@@ -151,14 +149,12 @@ public class AgentProMVCController {
             AgentPro agentPro = agentProOpt.get();
             model.addAttribute("utilisateur", agentPro);
 
-            // Ajouter les véhicules pour consultation
             List<Vehicule> vehicules = vehiculeService.getVehiculesParAgent(id);
             model.addAttribute("vehicules", vehicules);
 
             return "agentPro/consulterProfil";
         }
 
-        // Profil inexistant
         return "redirect:/";
     }
 }

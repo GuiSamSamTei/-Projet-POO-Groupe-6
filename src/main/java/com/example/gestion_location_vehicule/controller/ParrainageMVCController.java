@@ -36,13 +36,11 @@ public class ParrainageMVCController {
         Loueur loueur = loueurRepository.findById(loueurId)
                 .orElseThrow(() -> new IllegalArgumentException("Loueur introuvable"));
 
-        // Récupérer les données
         double solde = porteMonnaieService.getSolde(loueurId);
         List<Parrainage> parrainages = parrainageService.getParrainagesByParrain(loueurId);
         Map<String, Object> stats = parrainageService.getStatistiquesParrainage(loueurId);
         Parrainage monParrain = parrainageService.getParrainageByFilleul(loueurId);
 
-        // Ajouter au modèle
         model.addAttribute("loueur", loueur);
         model.addAttribute("solde", solde);
         model.addAttribute("parrainages", parrainages);

@@ -34,9 +34,6 @@ public class MessageMVCController {
         this.messageService = messageService;
     }
 
-    /* ============================
-       Page messagerie + recherche
-       ============================ */
     @GetMapping
     public String messagerie(@RequestParam(required = false) String q,
                              Model model,
@@ -49,11 +46,9 @@ public class MessageMVCController {
 
         Utilisateur me = utilisateurRepository.findById(idMe).orElseThrow();
 
-        // Conversations existantes
         Map<Utilisateur, List<Message>> conversations =
                 messageService.getConversations(me);
 
-        // Recherche utilisateurs (hors soi-même)
         if (q != null && !q.isBlank()) {
             List<Utilisateur> resultats =
                     utilisateurRepository.findByUsernameContainingIgnoreCase(q);
@@ -63,7 +58,6 @@ public class MessageMVCController {
             model.addAttribute("q", q);
         }
 
-        // Non-lus par conversation
         Map<Long, Long> unreadByUser = new HashMap<>();
         for (Utilisateur other : conversations.keySet()) {
             unreadByUser.put(
@@ -80,9 +74,6 @@ public class MessageMVCController {
         return "messages/messagerie";
     }
 
-    /* ============================
-       Ouvrir une conversation
-       ============================ */
     @GetMapping("/{id}")
     public String messagerieAvecConversation(@PathVariable Long id,
                                              Model model,
@@ -105,7 +96,6 @@ public class MessageMVCController {
         Map<Utilisateur, List<Message>> conversations =
                 messageService.getConversations(me);
 
-        // Ajouter l'utilisateur même sans historique
         conversations.putIfAbsent(other, new ArrayList<>());
 
         Map<Long, Long> unreadByUser = new HashMap<>();
@@ -128,9 +118,6 @@ public class MessageMVCController {
         return "messages/messagerie";
     }
 
-    /* ============================
-       Envoyer un message
-       ============================ */
     @PostMapping("/envoyer")
     public String envoyerMessage(@RequestParam Long destinataireId,
                                  @RequestParam String contenu,

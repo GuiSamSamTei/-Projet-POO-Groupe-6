@@ -1,16 +1,21 @@
 package com.example.gestion_location_vehicule.controller;
 
+import java.time.LocalDate;
+import java.util.List;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+
 import com.example.gestion_location_vehicule.model.ControleTechnique;
 import com.example.gestion_location_vehicule.model.Vehicule;
 import com.example.gestion_location_vehicule.repository.VehiculeRepository;
 import com.example.gestion_location_vehicule.service.ControleTechniqueService.IControleTechniqueService;
 import com.example.gestion_location_vehicule.service.VehiculeService.VehiculeService;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
-
-import java.time.LocalDate;
-import java.util.List;
 
 @Controller
 @RequestMapping("/controletechnique")
@@ -29,7 +34,6 @@ public class ControleTechniqueController {
         this.vehiculeService = vehiculeService;
     }
 
-    // AFFICHER LE FORMULAIRE
     @GetMapping("/nouveau/{vehiculeId}")
     public String afficherFormulaire(
             @PathVariable Long vehiculeId,
@@ -47,12 +51,10 @@ public class ControleTechniqueController {
         return "controletechnique/controleTechnique";
     }
 
-    // ENREGISTRER
     @PostMapping("/enregistrer")
     public String enregistrerControleTechnique(
             @ModelAttribute("controleTechnique") ControleTechnique controleTechnique
     ) {
-        // 1. Sauvegarder le contrôle
         controleTechniqueService.enregistrerControleTechnique(controleTechnique);
 
 
@@ -66,8 +68,6 @@ public class ControleTechniqueController {
 
         if(vehicule==null)
             return "redirect:/vehicule/liste";
-        // On récupère les contrôles (si vous n'avez pas de méthode filtrée,
-        // vous pouvez utiliser vehicule.getControlesTechniques() si la relation est définie)
         List<ControleTechnique> controles = controleTechniqueService.getControlesByVehiculeID(id);
 
         model.addAttribute("vehicule", vehicule);

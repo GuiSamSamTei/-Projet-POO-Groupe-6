@@ -25,11 +25,9 @@ public class VehiculePageController {
      * Vérifie les attributs de session définis dans UtilisateurMVCController.
      */
     private boolean isAgentLoggedIn(HttpSession session) {
-        // Récupérer le rôle et l'ID utilisateur depuis la session
         String role = (String) session.getAttribute("role");
         Long userId = (Long) session.getAttribute("user");
 
-        // Vérifier si l'utilisateur est connecté et s'il a le rôle d'agent
         return userId != null && role != null &&
                 (role.equals("AGENT_PAR") || role.equals("AGENT_PRO"));
     }
@@ -40,20 +38,17 @@ public class VehiculePageController {
      */
     @GetMapping("/type-select")
     public String showTypeSelectPage(HttpSession session, RedirectAttributes redirectAttributes, Model model) {
-        // 1. Vérification de sécurité : est-ce un agent ?
         if (!isAgentLoggedIn(session)) {
             redirectAttributes.addFlashAttribute("error", "Accès refusé. Vous devez être connecté en tant qu'agent.");
             return "redirect:/utilisateur/connexion";
         }
 
-        // 2. Récupération des informations de l'agent
         Long userId = (Long) session.getAttribute("user");
         Utilisateur user = utilisateurService.getUserbyID(userId);
 
         Long agentId = user.getId();
         String agentName = user.getUsername();
 
-        // 3. Ajout au modèle pour l'affichage
         model.addAttribute("agentId", agentId);
         model.addAttribute("agentName", agentName);
 
@@ -69,26 +64,23 @@ public class VehiculePageController {
                               HttpSession session,
                               RedirectAttributes redirectAttributes,
                               Model model) {
-        // 1. Vérification de sécurité
         if (!isAgentLoggedIn(session)) {
             redirectAttributes.addFlashAttribute("error", "Accès refusé. Vous devez être connecté en tant qu'agent.");
             return "redirect:/utilisateur/connexion";
         }
 
-        // 2. Récupération des données utilisateur
         Long userId = (Long) session.getAttribute("user");
         Utilisateur user = utilisateurService.getUserbyID(userId);
 
         Long agentId = user.getId();
         String agentName = user.getUsername();
 
-        // 3. Préparation du modèle pour la vue Thymeleaf
         model.addAttribute("type", type);
-        model.addAttribute("agentId", agentId); // Important pour le champ caché dans le HTML
+        model.addAttribute("agentId", agentId);
         model.addAttribute("agentName", agentName);
 
         String role = (String) session.getAttribute("role");
-        String redirectUrl = "/agent-par/profil"; // Default
+        String redirectUrl = "/agent-par/profil";
 
         if ("AGENT_PRO".equals(role)) {
             redirectUrl = "/agent-pro/profil";
@@ -100,15 +92,12 @@ public class VehiculePageController {
 
     @GetMapping("/supprimer/{id}")
     public String deleteVehicule(@PathVariable Long id, HttpSession session, RedirectAttributes redirectAttributes) {
-        // 1. Vérification de sécurité
         if (!isAgentLoggedIn(session)) {
             redirectAttributes.addFlashAttribute("error", "Accès refusé.");
             return "redirect:/utilisateur/connexion";
         }
 
         try {
-            // 2. Suppression
-            // Optionnel : Vous pouvez vérifier ici si le véhicule appartient bien à l'agent connecté
             vehiculeService.deleteVehicule(id);
             redirectAttributes.addFlashAttribute("success", "Véhicule supprimé avec succès.");
         } catch (Exception e) {
@@ -116,7 +105,6 @@ public class VehiculePageController {
             redirectAttributes.addFlashAttribute("error", "Erreur lors de la suppression.");
         }
 
-        // 3. Redirection selon le rôle
         String role = (String) session.getAttribute("role");
         if ("AGENT_PRO".equals(role)) {
             return "redirect:/agent-pro/profil";
@@ -144,7 +132,7 @@ public class VehiculePageController {
         model.addAttribute("id", id);
 
         String role = (String) session.getAttribute("role");
-        String redirectUrl = "/agent-par/profil"; // Par défaut
+        String redirectUrl = "/agent-par/profil";
 
         if ("AGENT_PRO".equals(role)) {
             redirectUrl = "/agent-pro/profil";

@@ -109,7 +109,7 @@ public class VehiculeMapController {
         if (vehicule.getVilledispo() != null && !vehicule.getVilledispo().trim().isEmpty()) {
             baseCoords = cityCoordinatesService.getCoordinates(vehicule.getVilledispo());
         } else {
-            baseCoords = new double[]{43.6047, 1.4442}; // Toulouse 默认
+            baseCoords = new double[]{43.6047, 1.4442};
         }
 
         long seed = vehicule.getId() != null ? vehicule.getId() : System.nanoTime();

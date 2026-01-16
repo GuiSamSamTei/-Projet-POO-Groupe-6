@@ -18,9 +18,6 @@ public class ParrainageController {
 
     private final IParrainageService parrainageService;
 
-    /**
-     * Créer un parrainage
-     */
     @PostMapping
     public ResponseEntity<?> creerParrainage(
             @RequestParam(required = false) Long filleulId,
@@ -50,9 +47,6 @@ public class ParrainageController {
         }
     }
 
-    /**
-     * Récupère la liste des filleuls parrainés
-     */
     @GetMapping("/mes-parrainages")
     public ResponseEntity<?> getMesParrainages(HttpSession session) {
         Long parrainId = (Long) session.getAttribute("user");
@@ -68,9 +62,6 @@ public class ParrainageController {
         }
     }
 
-    /**
-     * Récupère les informations sur mon parrain (si je suis parrainé)
-     */
     @GetMapping("/mon-parrain")
     public ResponseEntity<?> getMonParrain(HttpSession session) {
         Long filleulId = (Long) session.getAttribute("user");

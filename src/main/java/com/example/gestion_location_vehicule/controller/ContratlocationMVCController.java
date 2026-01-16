@@ -1,20 +1,32 @@
 package com.example.gestion_location_vehicule.controller;
 
 
-import com.example.gestion_location_vehicule.model.*;
+import java.time.LocalDate;
+import java.util.List;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import com.example.gestion_location_vehicule.model.Agent;
+import com.example.gestion_location_vehicule.model.AgentPar;
+import com.example.gestion_location_vehicule.model.AgentPro;
+import com.example.gestion_location_vehicule.model.Contratlocation;
+import com.example.gestion_location_vehicule.model.EvalL;
+import com.example.gestion_location_vehicule.model.Loueur;
+import com.example.gestion_location_vehicule.model.Vehicule;
 import com.example.gestion_location_vehicule.service.AgentService.AgentService;
 import com.example.gestion_location_vehicule.service.ContratlocationService.ContratlocationService;
 import com.example.gestion_location_vehicule.service.EvalLService.EvalLService;
 import com.example.gestion_location_vehicule.service.LoueurService.LoueurService;
 import com.example.gestion_location_vehicule.service.VehiculeService.VehiculeService;
+
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
-
-import java.time.LocalDate;
-import java.util.List;
 
 @Controller
 @RequestMapping("/historique-location")
@@ -51,8 +63,6 @@ public class ContratlocationMVCController {
 
     }
 
-
-    // 1. Affiche la page de clôture
     @GetMapping("/contrat/terminer/{id}")
     public String pageTerminerContrat(@PathVariable Long id, Model model) {
         Contratlocation contrat = contratlocationService.trouverContraById(id);
@@ -60,12 +70,11 @@ public class ContratlocationMVCController {
         return "agent/cloture_contrat";
     }
 
-    // 2. Traite la soumission (Update Vehicule + Avis)
     @PostMapping("/contrat/valider-cloture")
     public String validerCloture(
-                    @RequestParam Long contratId,           // Doit être ici
-            @RequestParam boolean disponibilite,   // Doit être ici
-            @RequestParam Integer note,            // Doit être ici
+                    @RequestParam Long contratId,          
+            @RequestParam boolean disponibilite,
+            @RequestParam Integer note,           
             @RequestParam String commentaire,
                     @RequestParam Double nouveauKilometrage,
             HttpSession session
@@ -78,15 +87,13 @@ public class ContratlocationMVCController {
         Agent agent = agentService.getAgentById(agentId).get();
 
 
-        // 1. Récupérer le contrat
         Contratlocation contrat = contratlocationService.trouverContraById(contratId);
 
-        // 2. Mettre à jour la disponibilité du véhicule
         Vehicule v = contrat.getVehicule();
 
         v.setVehiculedispo(true);
         v.setKilometrage(nouveauKilometrage);
-        vehiculeService.addVehicule(v); // Assurez-vous d'avoir une méthode save
+        vehiculeService.addVehicule(v);
 
 
         EvalL evalL = new EvalL();
@@ -126,8 +133,6 @@ public class ContratlocationMVCController {
         if (contrat != null) {
             contrat.setValidee(true);
 
-            // Optionnel : Marquer le véhicule comme indisponible
-            // contrat.getVehicule().setVehiculedispo(false);
 
             contratlocationService.ajouterContralocation(contrat);
         }
@@ -149,10 +154,6 @@ public class ContratlocationMVCController {
 
         Agent agent = agentService.getAgentById(agentId).get();
         if (contrat != null) {
-
-
-            // Optionnel : Marquer le véhicule comme indisponible
-            // contrat.getVehicule().setVehiculedispo(false);
 
             contratlocationService.supprimerContralocation(contrat.getId());
         }

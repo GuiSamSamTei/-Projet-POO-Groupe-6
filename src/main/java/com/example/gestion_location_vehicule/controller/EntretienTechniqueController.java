@@ -1,12 +1,17 @@
 package com.example.gestion_location_vehicule.controller;
 
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+
 import com.example.gestion_location_vehicule.model.EntretienTechnique;
 import com.example.gestion_location_vehicule.model.Vehicule;
 import com.example.gestion_location_vehicule.repository.VehiculeRepository;
 import com.example.gestion_location_vehicule.service.EntretienTechniqueService.IEntretienTechniqueService;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequestMapping("/controletechnique/entretiens")
@@ -23,7 +28,6 @@ public class EntretienTechniqueController {
         this.vehiculeRepository = vehiculeRepository;
     }
 
-    // Afficher le formulaire et la liste des entretiens pour un véhicule
     @GetMapping("/{vehiculeId}")
     public String afficherFormulaire(
             @PathVariable Long vehiculeId,
@@ -42,7 +46,6 @@ public class EntretienTechniqueController {
         return "controletechnique/entretiens";
     }
 
-    // Traiter le formulaire pour enregistrer un entretien
     @PostMapping("/enregistrer")
     public String enregistrerEntretien(@ModelAttribute EntretienTechnique entretien) {
         entretienService.enregistrerEntretien(entretien);
