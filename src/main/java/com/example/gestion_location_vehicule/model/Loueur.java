@@ -45,7 +45,7 @@ public class Loueur extends Utilisateur {
     @EqualsAndHashCode.Exclude
     private List<Parrainage> parrainages;
 
-    // Parrainage où ce loueur est le filleul (max 1)
+    // Parrainage où ce loueur est le filleul
     @OneToOne(mappedBy = "filleul")
     @JsonIgnore
     @ToString.Exclude

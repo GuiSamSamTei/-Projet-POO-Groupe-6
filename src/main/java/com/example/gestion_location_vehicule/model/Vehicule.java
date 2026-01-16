@@ -70,7 +70,7 @@ public class Vehicule {
 
     @OneToMany(mappedBy = "vehicule")
     @JsonIgnore
-    private List<DisponibiliteVehicule> disponibilites = new ArrayList<>(); // <-- relation vers disponibilités
+    private List<DisponibiliteVehicule> disponibilites = new ArrayList<>();
 
     @OneToMany(mappedBy = "vehicule", cascade = CascadeType.ALL)
     @ToString.Exclude
@@ -103,11 +103,11 @@ public class Vehicule {
 
             boolean debutOK =
                     !dateDebut.isBefore(dispo.getDateDebut());
-            // dateDebut >= dispo.dateDebut
+
 
             boolean finOK =
                     !dateFin.isAfter(dispo.getDateFin());
-            // dateFin <= dispo.dateFin
+
 
             if (debutOK && finOK) {
                 return true;

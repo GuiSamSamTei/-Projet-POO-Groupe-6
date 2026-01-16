@@ -44,7 +44,7 @@ public class Parrainage {
     private LocalDateTime dateCreditAttribue;
 
     @Column(nullable = false)
-    private double montantCredit = 20.0; // Montant du crédit de parrainage (configurable)
+    private double montantCredit = 20.0; // Montant du crédit de parrainage
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
